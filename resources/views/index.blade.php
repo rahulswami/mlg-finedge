@@ -83,128 +83,26 @@
 
 @section('content')
 
-    <!-- Hero Section -->
-    <section class="hero" style="background: {!! $site['index_hero_bg'] ?? 'linear-gradient(135deg, #eef7f7 0%, #ffffff 100%)' !!};">
-        @if(isset($slides) && $slides->isNotEmpty())
-            <!-- Dynamic Homepage Slider -->
-            <div class="hero-slider" id="hero-slider" style="position: relative; width: 100%; overflow: hidden;">
-                <div class="hero-slides-track" id="hero-slides-track" style="display: flex; transition: transform 0.5s ease-in-out; width: 100%;">
-                    @foreach($slides as $index => $slide)
-                        <div class="hero-slide" style="min-width: 100%; flex-shrink: 0; padding: 1rem 0;">
-                            <div class="container hero-grid">
-                                <div class="hero-content">
-                                    <h1>{{ $slide->title }}</h1>
-                                    @if($slide->subtitle)
-                                        <p class="subtitle">{{ $slide->subtitle }}</p>
-                                    @endif
-                                    <div class="hero-buttons">
-                                        @if($slide->button_text)
-                                            <a href="{{ $slide->button_link ?? '#' }}" class="btn btn-primary">{{ $slide->button_text }} <i data-lucide="arrow-right"></i></a>
-                                        @endif
-                                        <a href="tel:{{ $site['phone'] ?? '+919876543210' }}" class="btn btn-secondary"><i data-lucide="phone"></i> Call Now</a>
-                                    </div>
-                                </div>
-                                
-                                <div class="hero-visual">
-                                    @if($slide->image_path)
-                                        <img src="{{ asset('storage/' . $slide->image_path) }}" alt="{{ $slide->title }}" style="width: 100%; max-height: 420px; object-fit: cover; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg);">
-                                    @else
-                                        <!-- Default Fallback Graphics Card if no slide image uploaded -->
-                                        <div class="hero-card-container">
-                                            <div class="main-graphic-card">
-                                                <h3 class="color-accent text-center" style="margin-bottom: 1.5rem; font-size: 1.5rem;">Why Wait for Funds?</h3>
-                                                <p class="text-center text-muted" style="margin-bottom: 2rem;">Compare rates from 15+ banks and NBFCs instantly. Get custom options tailored for you.</p>
-                                                
-                                                <div style="background-color: var(--bg-light); padding: 1.5rem; border-radius: var(--radius-md); border-left: 4px solid var(--mint-green); margin-bottom: 1.5rem;">
-                                                    <span class="font-semibold" style="font-size: 0.9rem; color: var(--primary-teal-dark);">Government Employees Special Scheme</span>
-                                                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 5px;">Maturity up to 63 years & higher eligibility on 55% FOIR constraints.</p>
-                                                </div>
-                                                
-                                                <button onclick="triggerCallbackModal()" class="btn btn-primary" style="width: 100%;">Apply Online Now</button>
-                                            </div>
-                                            
-                                            <!-- Floating Graphics cards -->
-                                            <div class="floating-card floating-card-1">
-                                                <div class="floating-icon"><i data-lucide="check-circle-2"></i></div>
-                                                <div class="floating-info">
-                                                    <span class="floating-title">Home Loan rates</span>
-                                                    <span class="floating-val">Starting @ {{ $site['home_loan_rate'] ?? '8.4%' }}*</span>
-                                                </div>
-                                            </div>
-                                            <div class="floating-card floating-card-2">
-                                                <div class="floating-icon"><i data-lucide="clock"></i></div>
-                                                <div class="floating-info">
-                                                    <span class="floating-title">Fast Approval Support</span>
-                                                    <span class="floating-val">Within 48 Hours</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-                
-                @if($slides->count() > 1)
-                    <!-- Navigation Controls -->
-                    <button class="hero-slider-btn prev" onclick="moveHeroSlide(-1)" aria-label="Previous Slide" style="position: absolute; top: 50%; left: 20px; transform: translateY(-50%); background: rgba(255,255,255,0.7); border: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index:10; color: var(--primary-teal-dark);"><i data-lucide="chevron-left"></i></button>
-                    <button class="hero-slider-btn next" onclick="moveHeroSlide(1)" aria-label="Next Slide" style="position: absolute; top: 50%; right: 20px; transform: translateY(-50%); background: rgba(255,255,255,0.7); border: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index:10; color: var(--primary-teal-dark);"><i data-lucide="chevron-right"></i></button>
-                    
-                    <div class="hero-slider-dots" style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index:10;">
-                        @foreach($slides as $index => $slide)
-                            <span class="hero-slider-dot {{ $index === 0 ? 'active' : '' }}" onclick="setHeroSlide({{ $index }})" style="width: 10px; height: 10px; border-radius: 50%; background: rgba(12, 83, 84, 0.3); cursor: pointer; display: inline-block; transition: all 0.3s;"></span>
-                        @endforeach
-                    </div>
-                @endif
-            </div>
-        @else
-            <!-- Static Fallback Slide if database is empty -->
-            <div class="container hero-grid">
-                <div class="hero-content animate-on-scroll">
-                    <h1>{{ $pageContents['home']['hero']['title'] ?? 'Trusted Loan Provider in Mansarovar Jaipur' }}</h1>
-                    <p class="subtitle">{{ $pageContents['home']['hero']['subtitle'] ?? 'Your Trusted Partner for Smart Loan Solutions, Quick Assistance, and Reliable Financial Guidance.' }}</p>
-                    <div class="hero-buttons">
-                        <button onclick="triggerCallbackModal()" class="btn btn-primary">Get Free Consultation <i data-lucide="arrow-right"></i></button>
-                        <a href="tel:{{ $site['phone'] ?? '+919876543210' }}" class="btn btn-secondary"><i data-lucide="phone"></i> Call Now</a>
-                    </div>
-                </div>
-                
-                <div class="hero-visual animate-on-scroll">
-                    <div class="hero-card-container">
-                        <div class="main-graphic-card">
-                            <h3 class="color-accent text-center" style="margin-bottom: 1.5rem; font-size: 1.5rem;">Why Wait for Funds?</h3>
-                            <p class="text-center text-muted" style="margin-bottom: 2rem;">Compare rates from 15+ banks and NBFCs instantly. Get custom options tailored for you.</p>
-                            
-                            <div style="background-color: var(--bg-light); padding: 1.5rem; border-radius: var(--radius-md); border-left: 4px solid var(--mint-green); margin-bottom: 1.5rem;">
-                                <span class="font-semibold" style="font-size: 0.9rem; color: var(--primary-teal-dark);">Government Employees Special Scheme</span>
-                                <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 5px;">Maturity up to 63 years & higher eligibility on 55% FOIR constraints.</p>
-                            </div>
-                            
-                            <button onclick="triggerCallbackModal()" class="btn btn-primary" style="width: 100%;">Apply Online Now</button>
-                        </div>
-                        
-                        <div class="floating-card floating-card-1">
-                            <div class="floating-icon"><i data-lucide="check-circle-2"></i></div>
-                            <div class="floating-info">
-                                <span class="floating-title">Home Loan rates</span>
-                                <span class="floating-val">Starting @ {{ $site['home_loan_rate'] ?? '8.4%' }}*</span>
-                            </div>
-                        </div>
-                        <div class="floating-card floating-card-2">
-                            <div class="floating-icon"><i data-lucide="clock"></i></div>
-                            <div class="floating-info">
-                                <span class="floating-title">Fast Approval Support</span>
-                                <span class="floating-val">Within 48 Hours</span>
-                            </div>
-                        </div>
-                    </div>
+    <!-- Static Hero Section (Replaced Slider) -->
+    <section class="hero" style="background: {!! $site['index_hero_bg'] ?? 'linear-gradient(135deg, #eef7f7 0%, #ffffff 100%)' !!}; padding: 10rem 0 6rem 0; text-align: center;">
+        <div class="container" style="max-width: 800px; margin: 0 auto; padding: 0 1.5rem;">
+            <div class="hero-content" style="text-align: center; width: 100%;">
+                <span class="color-mint font-semibold" style="text-transform: uppercase; letter-spacing: 1.5px; font-size: 0.95rem; display: block; margin-bottom: 1rem;">Welcome to MLG Finedge</span>
+                <h1 style="font-size: 3rem; line-height: 1.2; margin-bottom: 1.5rem; color: var(--primary-teal-dark); font-weight: 800; letter-spacing: -0.5px;">
+                    {{ $pageContents['home']['hero']['title'] ?? 'Trusted Loan Provider in Mansarovar Jaipur' }}
+                </h1>
+                <p class="subtitle" style="font-size: 1.2rem; color: var(--text-muted); margin-bottom: 2.5rem; line-height: 1.6; max-width: 700px; margin-left: auto; margin-right: auto;">
+                    {{ $pageContents['home']['hero']['subtitle'] ?? 'Your Trusted Partner for Smart Loan Solutions, Quick Assistance, and Reliable Financial Guidance.' }}
+                </p>
+                <div class="hero-buttons" style="display: flex; gap: 1.25rem; justify-content: center;">
+                    <button onclick="triggerCallbackModal()" class="btn btn-primary">Get Free Consultation <i data-lucide="arrow-right"></i></button>
+                    <a href="tel:{{ $site['phone'] ?? '+919876543210' }}" class="btn btn-secondary"><i data-lucide="phone"></i> Call Now</a>
                 </div>
             </div>
-        @endif
+        </div>
 
-        <!-- Global Static Trust Badges below the Slider -->
-        <div class="container hero-global-trust" style="margin-top: 2rem; position: relative; z-index: 5;">
+        <!-- Global Static Trust Badges -->
+        <div class="container hero-global-trust" style="margin-top: 4rem; position: relative; z-index: 5;">
             <div class="hero-trust">
                 <div class="trust-item">
                     <span class="trust-num">₹1,200 Cr+</span>
@@ -654,50 +552,4 @@
 
 @section('scripts')
     <script src="{{ asset('assets/js/calculator.js') }}"></script>
-    <script>
-        // Custom Homepage slider implementation
-        let currentHeroIndex = 0;
-        const track = document.getElementById('hero-slides-track');
-        const slides = document.querySelectorAll('.hero-slide');
-        const dots = document.querySelectorAll('.hero-slider-dot');
-        
-        function moveHeroSlide(direction) {
-            currentHeroIndex += direction;
-            if (currentHeroIndex >= slides.length) currentHeroIndex = 0;
-            if (currentHeroIndex < 0) currentHeroIndex = slides.length - 1;
-            updateHeroSlider();
-        }
-
-        function setHeroSlide(index) {
-            currentHeroIndex = index;
-            updateHeroSlider();
-        }
-
-        function updateHeroSlider() {
-            if (!track) return;
-            track.style.transform = `translateX(-${currentHeroIndex * 100}%)`;
-            
-            // Update dots
-            dots.forEach((dot, idx) => {
-                if (idx === currentHeroIndex) {
-                    dot.classList.add('active');
-                    dot.style.backgroundColor = 'var(--primary-teal)';
-                    dot.style.width = '24px';
-                    dot.style.borderRadius = '5px';
-                } else {
-                    dot.classList.remove('active');
-                    dot.style.backgroundColor = 'rgba(12, 83, 84, 0.3)';
-                    dot.style.width = '10px';
-                    dot.style.borderRadius = '50%';
-                }
-            });
-        }
-
-        // Auto rotate hero slider (every 7 seconds)
-        if (slides.length > 1) {
-            setInterval(() => {
-                moveHeroSlide(1);
-            }, 7000);
-        }
-    </script>
 @endsection
