@@ -1,0 +1,168 @@
+@extends('layouts.app')
+
+@section('title', ($service->seo_title ?? ($service->service_name . ' - MLG Finedge')))
+@section('meta_description', ($service->seo_meta_description ?? $service->summary))
+
+@section('schema')
+<script type="application/ld+json">
+{
+  "{{ '@' }}context": "https://schema.org",
+  "{{ '@graph' }}": [
+    {
+      "{{ '@type' }}": "Service",
+      "{{ '@id' }}": "{{ route('services.show', $service->slug) }}/#service",
+      "name": "{{ $service->service_name }}",
+      "description": "{{ $service->summary }}",
+      "provider": {
+        "{{ '@type' }}": "Organization",
+        "{{ '@id' }}": "{{ route('home') }}/#organization",
+        "name": "{{ $site['site_name'] ?? 'MLG Finedge' }}",
+        "url": "{{ route('home') }}"
+      },
+      "areaServed": {
+        "{{ '@type' }}": "State",
+        "name": "Rajasthan"
+      },
+      "serviceType": "FinancialService",
+      "offers": {
+        "{{ '@type' }}": "Offer",
+        "priceCurrency": "INR",
+        "description": "Interest rates starting from {{ $service->rate_value ?? 'Lowest Rates' }}"
+      }
+    }
+    @if(!empty($service->faqs) && is_array($service->faqs))
+    ,
+    {
+      "{{ '@type' }}": "FAQPage",
+      "{{ '@id' }}": "{{ route('services.show', $service->slug) }}/#faq",
+      "mainEntity": [
+        @foreach($service->faqs as $index => $faq)
+        {
+          "{{ '@type' }}": "Question",
+          "name": "{{ $faq['question'] ?? '' }}",
+          "acceptedAnswer": {
+            "{{ '@type' }}": "Answer",
+            "text": "{{ $faq['answer'] ?? '' }}"
+          }
+        }{{ $index < count($service->faqs) - 1 ? ',' : '' }}
+        @endforeach
+      ]
+    }
+    @endif
+  ]
+}
+</script>
+@endsection
+
+@section('content')
+
+    <!-- Section 1: Hero Section -->
+    <section class="details-hero">
+        <div class="container">
+            <span class="color-mint font-semibold" style="text-transform: uppercase; letter-spacing: 1.5px; font-size: 0.9rem;">{{ $service->hero_category }}</span>
+            <h1>{{ $service->hero_title }}</h1>
+            <p style="color: var(--text-light-muted); max-width: 600px; margin-top: 10px;">{{ $service->hero_subtitle }}</p>
+            <div class="details-hero-meta" style="margin-top: 20px;">
+                @if($service->rate_value)
+                    <div class="meta-item"><i data-lucide="percent"></i> Rate: {{ $service->rate_value }}</div>
+                @endif
+                @if($service->max_loan)
+                    <div class="meta-item"><i data-lucide="wallet"></i> {{ $service->max_loan }}</div>
+                @endif
+                @if($service->tenure)
+                    <div class="meta-item"><i data-lucide="calendar"></i> {{ $service->tenure }}</div>
+                @endif
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 2: Detailed Overview & Introduction -->
+    <section class="section">
+        <div class="container details-layout">
+            <div class="details-content">
+                <h2>{{ $service->intro_title }}</h2>
+                {!! $service->intro_content !!}
+                
+                <!-- Section 3: Feature Blocks (Eligibility & Docs) -->
+                <div class="details-grid-cards" style="margin-top: 2.5rem; margin-bottom: 2.5rem;">
+                    <!-- Eligibility Card -->
+                    <div class="details-list-card">
+                        <h3><i data-lucide="shield-alert" style="color: var(--accent-orange);"></i> Eligibility Criteria</h3>
+                        <ul class="sol-features-list" style="list-style: none; padding: 0;">
+                            @foreach(explode("\n", str_replace("\r", "", $service->eligibility_criteria)) as $item)
+                                @if(trim($item))
+                                    <li style="margin-bottom: 0.75rem;"><i data-lucide="check" style="color: var(--accent-teal); margin-right: 8px; vertical-align: middle;"></i> {{ trim($item) }}</li>
+                                @endif
+                            @endforeach
+                        </ul>
+                    </div>
+
+                    <!-- Documents Card -->
+                    <div class="details-list-card">
+                        <h3><i data-lucide="file-text" style="color: var(--accent-teal);"></i> Documents Required</h3>
+                        <ul class="sol-features-list" style="list-style: none; padding: 0;">
+                            @foreach(explode("\n", str_replace("\r", "", $service->documents_required)) as $item)
+                                @if(trim($item))
+                                    <li style="margin-bottom: 0.75rem;"><i data-lucide="check" style="color: var(--accent-teal); margin-right: 8px; vertical-align: middle;"></i> {{ trim($item) }}</li>
+                                @endif
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Section 4: Optimization Tips -->
+                @if($service->tips_title)
+                    <h2>{{ $service->tips_title }}</h2>
+                    {!! $service->tips_content !!}
+                @endif
+
+                <!-- Section 5: FAQs -->
+                @if(!empty($service->faqs) && is_array($service->faqs))
+                    <h2 style="margin-top: 3rem;">Frequently Asked Questions</h2>
+                    <div class="faq-accordion" style="margin-top: 1.5rem;">
+                        @foreach($service->faqs as $faq)
+                            <div class="faq-item">
+                                <div class="faq-header">
+                                    <span class="faq-title">{{ $faq['question'] ?? '' }}</span>
+                                    <div class="faq-toggle"></div>
+                                </div>
+                                <div class="faq-body">
+                                    <div class="faq-content">
+                                        <p>{{ $faq['answer'] ?? '' }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+            
+            <!-- Sticky Sidebar Form -->
+            <div class="sidebar-sticky">
+                <div class="sidebar-box form-card">
+                    <h3>Request Consultation</h3>
+                    <form action="{{ route('contact.submit') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="service" value="{{ $service->slug }}">
+                        <div class="form-group">
+                            <label for="sb-name">Full Name</label>
+                            <input type="text" id="sb-name" name="name" class="form-control" placeholder="Enter your name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="sb-phone">Phone Number</label>
+                            <input type="tel" id="sb-phone" name="phone" class="form-control" placeholder="10-digit number" pattern="[0-9]{10}" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Apply Now</button>
+                    </form>
+                </div>
+                
+                <div class="sidebar-box sidebar-contact-card">
+                    <h3 style="border:none; padding:0; margin-bottom:0.75rem;">Need Quick Help?</h3>
+                    <p style="font-size:0.875rem; color:var(--text-muted); margin-bottom:1.5rem;">Speak directly to our senior retail credit advisor.</p>
+                    <a href="tel:{{ $site['phone'] ?? '+919876543210' }}" class="btn btn-secondary" style="width: 100%;"><i data-lucide="phone"></i> {{ $site['phone'] ?? '+91 98765 43210' }}</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+@endsection

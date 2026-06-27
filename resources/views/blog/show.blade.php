@@ -1,0 +1,71 @@
+@extends('layouts.app')
+
+@section('title', $blog->title . ' | MLG Finedge')
+@section('meta_description', $blog->summary)
+
+@section('schema')
+<script type="application/ld+json">
+{
+  "{{ '@' }}context": "https://schema.org",
+  "{{ '@graph' }}": [
+    {
+      "{{ '@type' }}": "BlogPosting",
+      "{{ '@id' }}": "{{ route('blog.show', $blog->slug) }}/#post",
+      "headline": "{{ $blog->title }}",
+      "description": "{{ $blog->summary }}",
+      "datePublished": "{{ $blog->published_at->toIso8601String() }}",
+      "dateModified": "{{ $blog->updated_at->toIso8601String() }}",
+      "mainEntityOfPage": "{{ route('blog.show', $blog->slug) }}",
+      "image": "{{ $blog->image_path ? asset('storage/' . $blog->image_path) : asset('assets/images/blog-default.jpg') }}",
+      "author": {
+        "{{ '@type' }}": "Organization",
+        "name": "MLG Finedge Advisory Team",
+        "url": "{{ route('home') }}"
+      },
+      "publisher": {
+        "{{ '@type' }}": "Organization",
+        "{{ '@id' }}": "{{ route('home') }}/#organization",
+        "name": "{{ $site['site_name'] ?? 'MLG Finedge' }}",
+        "url": "{{ route('home') }}"
+      }
+    }
+  ]
+}
+</script>
+@endsection
+
+@section('content')
+
+    <!-- Blog Header -->
+    <header class="blog-article-header" style="padding: 100px 0 40px; background-color: var(--bg-light); text-align: center;">
+        <div class="container">
+            <span class="color-accent font-semibold" style="text-transform: uppercase; letter-spacing: 1.5px; font-size: 0.9rem;">{{ $blog->category }}</span>
+            <h1 style="margin-top: 10px; font-size: 2.5rem; color: var(--primary-teal-dark);">{{ $blog->title }}</h1>
+            <div class="blog-article-meta" style="margin-top: 15px; color: var(--text-light-muted); font-size: 0.9rem;">
+                <span>Published on</span>
+                <span>•</span>
+                <span>{{ $blog->published_at ? $blog->published_at->format('F d, Y') : $blog->created_at->format('F d, Y') }}</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Article Body -->
+    <article class="blog-article-body" style="max-width: 800px; margin: 40px auto; padding: 0 20px; line-height: 1.8; color: var(--text-dark);">
+        @if($blog->image_path)
+            <div style="margin-bottom: 30px; border-radius: var(--radius-md); overflow: hidden;">
+                <img src="{{ asset('storage/' . $blog->image_path) }}" alt="{{ $blog->title }}" style="width: 100%; height: auto; max-height: 400px; object-fit: cover;">
+            </div>
+        @endif
+        
+        <div class="blog-content">
+            {!! $blog->content !!}
+        </div>
+
+        <div style="background-color: var(--bg-light); padding: 2rem; border-radius: var(--radius-md); border-left: 4px solid var(--accent-orange); margin: 3rem 0;">
+            <h3 style="margin-bottom:0.5rem; color:var(--primary-teal-dark);">Unlock Your Loan Eligibility</h3>
+            <p style="font-size:0.95rem; color:var(--text-muted); margin-bottom:1.5rem;">Speak to our senior mortgage specialists today. Get a side-by-side comparison of top rates.</p>
+            <button onclick="triggerCallbackModal()" class="btn btn-primary">Request Call Back</button>
+        </div>
+    </article>
+
+@endsection
