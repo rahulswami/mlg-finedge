@@ -103,20 +103,6 @@
                                         @endif
                                         <a href="tel:{{ $site['phone'] ?? '+919876543210' }}" class="btn btn-secondary"><i data-lucide="phone"></i> Call Now</a>
                                     </div>
-                                    <div class="hero-trust">
-                                        <div class="trust-item">
-                                            <span class="trust-num">₹1,200 Cr+</span>
-                                            <span class="trust-label">Loans Assisted</span>
-                                        </div>
-                                        <div class="trust-item">
-                                            <span class="trust-num">5,000+</span>
-                                            <span class="trust-label">Happy Clients</span>
-                                        </div>
-                                        <div class="trust-item">
-                                            <span class="trust-num">15+</span>
-                                            <span class="trust-label">Lending Partners</span>
-                                        </div>
-                                    </div>
                                 </div>
                                 
                                 <div class="hero-visual">
@@ -182,20 +168,6 @@
                         <button onclick="triggerCallbackModal()" class="btn btn-primary">Get Free Consultation <i data-lucide="arrow-right"></i></button>
                         <a href="tel:{{ $site['phone'] ?? '+919876543210' }}" class="btn btn-secondary"><i data-lucide="phone"></i> Call Now</a>
                     </div>
-                    <div class="hero-trust">
-                        <div class="trust-item">
-                            <span class="trust-num">₹1,200 Cr+</span>
-                            <span class="trust-label">Loans Assisted</span>
-                        </div>
-                        <div class="trust-item">
-                            <span class="trust-num">5,000+</span>
-                            <span class="trust-label">Happy Clients</span>
-                        </div>
-                        <div class="trust-item">
-                            <span class="trust-num">15+</span>
-                            <span class="trust-label">Lending Partners</span>
-                        </div>
-                    </div>
                 </div>
                 
                 <div class="hero-visual animate-on-scroll">
@@ -230,6 +202,24 @@
                 </div>
             </div>
         @endif
+
+        <!-- Global Static Trust Badges below the Slider -->
+        <div class="container hero-global-trust" style="margin-top: 2rem; position: relative; z-index: 5;">
+            <div class="hero-trust">
+                <div class="trust-item">
+                    <span class="trust-num">₹1,200 Cr+</span>
+                    <span class="trust-label">Loans Assisted</span>
+                </div>
+                <div class="trust-item">
+                    <span class="trust-num">5,000+</span>
+                    <span class="trust-label">Happy Clients</span>
+                </div>
+                <div class="trust-item">
+                    <span class="trust-num">15+</span>
+                    <span class="trust-label">Lending Partners</span>
+                </div>
+            </div>
+        </div>
     </section>
 
     <!-- Services Overview Section -->
