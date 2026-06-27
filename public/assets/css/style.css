@@ -2291,6 +2291,10 @@ img {
         gap: 3rem;
     }
     
+    .hero {
+        padding: 6.5rem 0 3rem 0;
+    }
+    
     .hero-content {
         text-align: center;
     }
@@ -2299,7 +2303,16 @@ img {
         font-size: 2rem;
     }
     
+    .hero-content .subtitle {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
     .hero-slider-btn {
+        display: none !important;
+    }
+    
+    .hero-card-container {
         display: none !important;
     }
     
