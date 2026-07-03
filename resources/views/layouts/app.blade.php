@@ -79,7 +79,7 @@
             </nav>
             
             <div class="nav-actions">
-                <a href="tel:{{ $site['phone'] ?? '+919876543210' }}" class="btn btn-primary btn-sm"><i data-lucide="phone"></i> Call Now</a>
+                <a href="tel:{{ $site['phone'] ?? '+919672777749' }}" class="btn btn-primary btn-sm"><i data-lucide="phone"></i> Call Now</a>
             </div>
             
             <button class="mobile-toggle" aria-label="Toggle Menu">
@@ -151,7 +151,7 @@
                     </li>
                     <li>
                         <i data-lucide="phone"></i>
-                        <a href="tel:{{ $site['phone'] ?? '+919876543210' }}">{{ $site['phone'] ?? '+91 98765 43210' }}</a>
+                        <a href="tel:{{ $site['phone'] ?? '+919672777749' }}">{{ $site['phone'] ?? '+91 96727 77749' }}</a>
                     </li>
                     <li>
                         <i data-lucide="mail"></i>
@@ -172,10 +172,10 @@
 
     <!-- Floating Conversion Action Buttons -->
     <div class="floating-widgets">
-        <a href="https://wa.me/{{ $site['whatsapp_number'] ?? '919876543210' }}?text=Hi%20MLG%20Finedge,%20I'm%20interested%20in%20a%20loan%20consultation." target="_blank" class="widget-btn widget-whatsapp" aria-label="WhatsApp Us">
+        <a href="https://wa.me/{{ $site['whatsapp_number'] ?? '919672777749' }}?text=Hi%20MLG%20Finedge,%20I'm%20interested%20in%20a%20loan%20consultation." target="_blank" class="widget-btn widget-whatsapp" aria-label="WhatsApp Us">
             <i data-lucide="message-circle"></i>
         </a>
-        <a href="tel:{{ $site['phone'] ?? '+919876543210' }}" class="widget-btn widget-call" aria-label="Call Us Now">
+        <a href="tel:{{ $site['phone'] ?? '+919672777749' }}" class="widget-btn widget-call" aria-label="Call Us Now">
             <i data-lucide="phone"></i>
         </a>
         <button class="widget-btn widget-top" aria-label="Back to Top">
@@ -185,10 +185,10 @@
 
     <!-- Mobile Sticky Action Bar -->
     <div class="mobile-action-bar">
-        <a href="tel:{{ $site['phone'] ?? '+919876543210' }}" class="mobile-action-btn call">
+        <a href="tel:{{ $site['phone'] ?? '+919672777749' }}" class="mobile-action-btn call">
             <i data-lucide="phone"></i> Call Now
         </a>
-        <a href="https://wa.me/{{ $site['whatsapp_number'] ?? '919876543210' }}?text=Hi%20MLG%20Finedge,%20I'm%20interested%20in%20a%20loan%20consultation." target="_blank" class="mobile-action-btn whatsapp">
+        <a href="https://wa.me/{{ $site['whatsapp_number'] ?? '919672777749' }}?text=Hi%20MLG%20Finedge,%20I'm%20interested%20in%20a%20loan%20consultation." target="_blank" class="mobile-action-btn whatsapp">
             <i data-lucide="message-circle"></i> WhatsApp
         </a>
     </div>

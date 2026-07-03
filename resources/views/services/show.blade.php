@@ -159,7 +159,7 @@
                 <div class="sidebar-box sidebar-contact-card">
                     <h3 style="border:none; padding:0; margin-bottom:0.75rem;">Need Quick Help?</h3>
                     <p style="font-size:0.875rem; color:var(--text-muted); margin-bottom:1.5rem;">Speak directly to our senior retail credit advisor.</p>
-                    <a href="tel:{{ $site['phone'] ?? '+919876543210' }}" class="btn btn-secondary" style="width: 100%;"><i data-lucide="phone"></i> {{ $site['phone'] ?? '+91 98765 43210' }}</a>
+                    <a href="tel:{{ $site['phone'] ?? '+919672777749' }}" class="btn btn-secondary" style="width: 100%;"><i data-lucide="phone"></i> {{ $site['phone'] ?? '+91 96727 77749' }}</a>
                 </div>
             </div>
         </div>

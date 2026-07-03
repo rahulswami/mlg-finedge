@@ -60,7 +60,7 @@
                     <div class="contact-info-icon"><i data-lucide="phone"></i></div>
                     <div class="contact-info-content">
                         <h3>Phone Support</h3>
-                        <p><a href="tel:{{ $site['phone'] ?? '+919876543210' }}">{{ $site['phone'] ?? '+91 98765 43210' }}</a> (Direct Support)</p>
+                        <p><a href="tel:{{ $site['phone'] ?? '+919672777749' }}">{{ $site['phone'] ?? '+91 96727 77749' }}</a> (Direct Support)</p>
                     </div>
                 </div>
                 
@@ -76,7 +76,7 @@
                     <div class="contact-info-icon" style="background-color:#25d366; color:white;"><i data-lucide="message-circle"></i></div>
                     <div class="contact-info-content">
                         <h3>WhatsApp Assistance</h3>
-                        <p><a href="https://wa.me/{{ $site['whatsapp_number'] ?? '919876543210' }}?text=Hi%20MLG%20Finedge,%20I'd%20like%20to%20consult%20on%20a%20loan." target="_blank">Chat with Advisor Now</a> (Instant response)</p>
+                        <p><a href="https://wa.me/{{ $site['whatsapp_number'] ?? '919672777749' }}?text=Hi%20MLG%20Finedge,%20I'd%20like%20to%20consult%20on%20a%20loan." target="_blank">Chat with Advisor Now</a> (Instant response)</p>
                     </div>
                 </div>
             </div>

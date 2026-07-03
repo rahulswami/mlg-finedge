@@ -21,7 +21,7 @@
       },
       "contactPoint": {
         "{{ '@type' }}": "ContactPoint",
-        "telephone": "{{ $site['phone'] ?? '+919876543210' }}",
+        "telephone": "{{ $site['phone'] ?? '+919672777749' }}",
         "contactType": "customer service",
         "areaServed": "IN",
         "availableLanguage": ["en", "hi"]
@@ -38,7 +38,7 @@
       "name": "{{ $site['site_name'] ?? 'MLG Finedge' }}",
       "description": "Jaipur's premier credit advisory firm. We help individuals & small companies secure appropriate loan products with minimum interest cost.",
       "url": "{{ route('home') }}",
-      "telephone": "{{ $site['phone'] ?? '+919876543210' }}",
+      "telephone": "{{ $site['phone'] ?? '+919672777749' }}",
       "address": {
         "{{ '@type' }}": "PostalAddress",
         "streetAddress": "{{ $site['address'] ?? 'Gopalpura Sector 5, Near Metro Station' }}",
@@ -173,7 +173,7 @@
                                     @if($slide->button_text)
                                         <button onclick="triggerCallbackModal()" class="btn btn-primary">{{ $slide->button_text }} <i data-lucide="arrow-right"></i></button>
                                     @endif
-                                    <a href="tel:{{ $site['phone'] ?? '+919876543210' }}" class="btn btn-secondary"><i data-lucide="phone"></i> Call Now</a>
+                                    <a href="tel:{{ $site['phone'] ?? '+919672777749' }}" class="btn btn-secondary"><i data-lucide="phone"></i> Call Now</a>
                                 </div>
                             </div>
                         </div>
@@ -224,7 +224,7 @@
                     </p>
                     <div class="hero-buttons" style="display: flex; gap: 1.25rem; justify-content: center;">
                         <button onclick="triggerCallbackModal()" class="btn btn-primary">Get Free Consultation <i data-lucide="arrow-right"></i></button>
-                        <a href="tel:{{ $site['phone'] ?? '+919876543210' }}" class="btn btn-secondary"><i data-lucide="phone"></i> Call Now</a>
+                        <a href="tel:{{ $site['phone'] ?? '+919672777749' }}" class="btn btn-secondary"><i data-lucide="phone"></i> Call Now</a>
                     </div>
                 </div>
             </div>

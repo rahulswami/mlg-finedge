@@ -33,10 +33,10 @@ class SiteSeeder extends Seeder
             ['id' => 'header_scripts', 'value' => null, 'label' => 'Custom Header Scripts', 'category' => 'general'],
             ['id' => 'logo_path', 'value' => null, 'label' => 'Custom Logo Image (WebP)', 'category' => 'branding'],
             ['id' => 'favicon_path', 'value' => null, 'label' => 'Custom Favicon Image (WebP)', 'category' => 'branding'],
-            ['id' => 'phone', 'value' => '+919876543210', 'label' => 'Contact Phone Number', 'category' => 'contact'],
+            ['id' => 'phone', 'value' => '+91 96727 77749', 'label' => 'Contact Phone Number', 'category' => 'contact'],
             ['id' => 'email', 'value' => 'info@mlgfinedge.com', 'label' => 'Contact Email Address', 'category' => 'contact'],
             ['id' => 'address', 'value' => 'Gopalpura Sector 5, Near Metro Station, Jaipur, Rajasthan 302020', 'label' => 'Physical Address', 'category' => 'contact'],
-            ['id' => 'whatsapp_number', 'value' => '919876543210', 'label' => 'WhatsApp Number (with country code)', 'category' => 'contact'],
+            ['id' => 'whatsapp_number', 'value' => '919672777749', 'label' => 'WhatsApp Number (with country code)', 'category' => 'contact'],
             
             // Starting Interest Rates
             ['id' => 'home_loan_rate', 'value' => '8.4%', 'label' => 'Home Loan Starting Rate', 'category' => 'rates'],
