@@ -61,7 +61,7 @@ class AdminController extends Controller
                 if (!str_starts_with(basename($file), '.')) {
                     $mediaFiles[] = [
                         'path' => $file,
-                        'url' => asset('storage/' . $file),
+                        'url' => 'https://images.mlgfinedge.com/' . basename($file),
                         'name' => basename($file),
                         'size' => Storage::disk('public')->size($file),
                         'time' => Storage::disk('public')->lastModified($file)
@@ -410,7 +410,7 @@ class AdminController extends Controller
         if ($request->hasFile('file')) {
             $path = $this->uploadAndConvertToWebP($request->file('file'), 'uploads');
             if ($path) {
-                $url = asset('storage/' . $path);
+                $url = site_image($path);
                 if ($request->ajax() || $request->wantsJson()) {
                     return response()->json([
                         'success' => true,
@@ -429,6 +429,35 @@ class AdminController extends Controller
     }
 
     /* Helper function for uploading and optimizing images to WebP format */
+    private function uploadToFtp($fileData, $filename)
+    {
+        $host = 'ftp.mlgfinedge.com';
+        $user = 'u709314437.mlgimages';
+        $pass = '26June2026#';
+
+        $conn = @ftp_connect($host);
+        if (!$conn) {
+            return false;
+        }
+
+        if (!@ftp_login($conn, $user, $pass)) {
+            @ftp_close($conn);
+            return false;
+        }
+
+        @ftp_pasv($conn, true);
+
+        $tempFile = tempnam(sys_get_temp_dir(), 'ftp_');
+        file_put_contents($tempFile, $fileData);
+
+        $success = @ftp_put($conn, $filename, $tempFile, FTP_BINARY);
+        @unlink($tempFile);
+        @ftp_close($conn);
+
+        return $success;
+    }
+
+    /* Helper function for uploading and optimizing images to WebP format */
     private function uploadAndConvertToWebP($file, $folder)
     {
         if (!$file) return null;
@@ -437,6 +466,12 @@ class AdminController extends Controller
         
         // If SVG, save directly to preserve vector paths
         if (strtolower($extension) === 'svg') {
+            $filename = uniqid() . '.svg';
+            $fileData = file_get_contents($file->getRealPath());
+            if ($this->uploadToFtp($fileData, $filename)) {
+                @Storage::disk('public')->put($folder . '/' . $filename, $fileData);
+                return 'https://images.mlgfinedge.com/' . $filename;
+            }
             return $file->store($folder, 'public');
         }
         
@@ -464,16 +499,27 @@ class AdminController extends Controller
                 $image = imagecreatefromwebp($filePath);
                 break;
             default:
+                $filename = uniqid() . '.' . $extension;
+                $fileData = file_get_contents($filePath);
+                if ($this->uploadToFtp($fileData, $filename)) {
+                    @Storage::disk('public')->put($folder . '/' . $filename, $fileData);
+                    return 'https://images.mlgfinedge.com/' . $filename;
+                }
                 return $file->store($folder, 'public');
         }
         
         if (!$image) {
+            $filename = uniqid() . '.' . $extension;
+            $fileData = file_get_contents($filePath);
+            if ($this->uploadToFtp($fileData, $filename)) {
+                @Storage::disk('public')->put($folder . '/' . $filename, $fileData);
+                return 'https://images.mlgfinedge.com/' . $filename;
+            }
             return $file->store($folder, 'public');
         }
         
         // Generate WebP filename
         $filename = uniqid() . '.webp';
-        $fullPath = $folder . '/' . $filename;
         
         // Save using Laravel Storage with webp compression quality (80%)
         ob_start();
@@ -481,9 +527,13 @@ class AdminController extends Controller
         $webpData = ob_get_clean();
         imagedestroy($image);
         
-        Storage::disk('public')->put($fullPath, $webpData);
+        if ($this->uploadToFtp($webpData, $filename)) {
+            @Storage::disk('public')->put($folder . '/' . $filename, $webpData);
+            return 'https://images.mlgfinedge.com/' . $filename;
+        }
         
-        return $fullPath;
+        Storage::disk('public')->put($folder . '/' . $filename, $webpData);
+        return $folder . '/' . $filename;
     }
 
     /* Services CRUD */
