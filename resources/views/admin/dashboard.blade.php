@@ -415,9 +415,17 @@
     <div class="main-panel">
         <div class="admin-header">
             <h1>CMS Control Panel</h1>
-            <div class="admin-user">
-                <span>{{ Auth::user()->name }}</span>
-                <div class="admin-user-avatar">{{ substr(Auth::user()->name, 0, 1) }}</div>
+            <div style="display: flex; gap: 1.5rem; align-items: center;">
+                <form action="{{ route('admin.sync-database') }}" method="POST" style="margin: 0;">
+                    @csrf
+                    <button type="submit" class="btn-submit" style="background-color: var(--accent-orange) !important; font-size: 0.85rem; padding: 0.5rem 1rem; border-radius: 4px; display: flex; align-items: center; gap: 6px; border: none; color: #ffffff; cursor: pointer; margin: 0; line-height: 1; height: auto; width: auto;">
+                        <i data-lucide="refresh-cw" style="width: 14px; height: 14px;"></i> Sync Content from DB
+                    </button>
+                </form>
+                <div class="admin-user">
+                    <span>{{ Auth::user()->name }}</span>
+                    <div class="admin-user-avatar">{{ substr(Auth::user()->name, 0, 1) }}</div>
+                </div>
             </div>
         </div>
 

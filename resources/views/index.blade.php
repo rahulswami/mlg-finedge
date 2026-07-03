@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Trusted Loan Provider in Mansarovar Jaipur | ' . ($site['site_name'] ?? 'MLG Finedge'))
-@section('meta_description', 'MLG Finedge is the leading loan provider in Mansarovar Jaipur. We offer expert loan advisory & consultation for Personal Loans, Home Loans, Business Loans, and LAP. Get free advice now!')
+@section('title', 'Trusted Loan Provider in Gopalpura Jaipur | ' . ($site['site_name'] ?? 'MLG FINEDGE'))
+@section('meta_description', 'MLG Finedge is the leading loan provider in Gopalpura Jaipur. We offer expert loan advisory & consultation for Personal Loans, Home Loans, Business Loans, and LAP. Get free advice now!')
 
 @section('schema')
 <script type="application/ld+json">
@@ -41,7 +41,7 @@
       "telephone": "{{ $site['phone'] ?? '+919876543210' }}",
       "address": {
         "{{ '@type' }}": "PostalAddress",
-        "streetAddress": "{{ $site['address'] ?? 'Mansarovar Sector 5, Near Metro Station' }}",
+        "streetAddress": "{{ $site['address'] ?? 'Gopalpura Sector 5, Near Metro Station' }}",
         "addressLocality": "Jaipur",
         "addressRegion": "Rajasthan",
         "postalCode": "302020",
@@ -83,42 +83,171 @@
 
 @section('content')
 
-    <!-- Static Hero Section (Replaced Slider) -->
-    <section class="hero" style="background: {!! $site['index_hero_bg'] ?? 'linear-gradient(135deg, #eef7f7 0%, #ffffff 100%)' !!}; padding: 10rem 0 6rem 0; text-align: center;">
-        <div class="container" style="max-width: 800px; margin: 0 auto; padding: 0 1.5rem;">
-            <div class="hero-content" style="text-align: center; width: 100%;">
-                <span class="color-mint font-semibold" style="text-transform: uppercase; letter-spacing: 1.5px; font-size: 0.95rem; display: block; margin-bottom: 1rem;">Welcome to MLG Finedge</span>
-                <h1 style="font-size: 3rem; line-height: 1.2; margin-bottom: 1.5rem; color: var(--primary-teal-dark); font-weight: 800; letter-spacing: -0.5px;">
-                    {{ $pageContents['home']['hero']['title'] ?? 'Trusted Loan Provider in Mansarovar Jaipur' }}
-                </h1>
-                <p class="subtitle" style="font-size: 1.2rem; color: var(--text-muted); margin-bottom: 2.5rem; line-height: 1.6; max-width: 700px; margin-left: auto; margin-right: auto;">
-                    {{ $pageContents['home']['hero']['subtitle'] ?? 'Your Trusted Partner for Smart Loan Solutions, Quick Assistance, and Reliable Financial Guidance.' }}
-                </p>
-                <div class="hero-buttons" style="display: flex; gap: 1.25rem; justify-content: center;">
-                    <button onclick="triggerCallbackModal()" class="btn btn-primary">Get Free Consultation <i data-lucide="arrow-right"></i></button>
-                    <a href="tel:{{ $site['phone'] ?? '+919876543210' }}" class="btn btn-secondary"><i data-lucide="phone"></i> Call Now</a>
-                </div>
-            </div>
-        </div>
+<style>
+.hero-slider-container {
+    position: relative;
+    overflow: hidden;
+}
+.hero-slider-track {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+}
+.hero-slide-item {
+    flex-shrink: 0;
+    width: 100%;
+}
+.hero-slider-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(12, 83, 84, 0.1);
+    color: var(--primary-teal-dark);
+    border: none;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: background 0.3s, color 0.3s;
+}
+.hero-slider-btn:hover {
+    background: var(--primary-teal);
+    color: #ffffff;
+}
+.hero-slider-btn.prev {
+    left: 20px;
+}
+.hero-slider-btn.next {
+    right: 20px;
+}
+.hero-slider-dots {
+    position: absolute;
+    bottom: 240px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 10;
+}
+.hero-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: background 0.3s;
+}
+.hero-dot.active {
+    background: var(--primary-teal) !important;
+}
+@media (max-width: 768px) {
+    .hero-slider-btn {
+        display: none !important;
+    }
+    .hero-slider-dots {
+        bottom: 200px;
+    }
+}
+</style>
 
-        <!-- Global Static Trust Badges -->
-        <div class="container hero-global-trust" style="margin-top: 4rem; position: relative; z-index: 5;">
-            <div class="hero-trust">
-                <div class="trust-item">
-                    <span class="trust-num">₹1,200 Cr+</span>
-                    <span class="trust-label">Loans Assisted</span>
+    <!-- Dynamic Hero Slider or Fallback Static Section -->
+    @if(isset($slides) && $slides->count() > 0)
+        <!-- Hero Slider Section -->
+        <section class="hero hero-slider-container" style="background: {!! $site['index_hero_bg'] ?? 'linear-gradient(135deg, #eef7f7 0%, #ffffff 100%)' !!}; padding: 10rem 0 6rem 0; position: relative; overflow: hidden;">
+            <div class="hero-slider-track" style="display: flex; transition: transform 0.5s ease-in-out; width: {{ $slides->count() * 100 }}%;">
+                @foreach($slides as $index => $slide)
+                    <div class="hero-slide-item" style="width: calc(100% / {{ $slides->count() }}); flex-shrink: 0;">
+                        <div class="container" style="max-width: 800px; margin: 0 auto; padding: 0 1.5rem;">
+                            <div class="hero-content" style="text-align: center; width: 100%;">
+                                <span class="color-mint font-semibold" style="text-transform: uppercase; letter-spacing: 1.5px; font-size: 0.95rem; display: block; margin-bottom: 1rem;">Welcome to MLG Finedge</span>
+                                <h1 style="font-size: 3rem; line-height: 1.2; margin-bottom: 1.5rem; color: var(--primary-teal-dark); font-weight: 800; letter-spacing: -0.5px;">
+                                    {{ $slide->title }}
+                                </h1>
+                                <p class="subtitle" style="font-size: 1.2rem; color: var(--text-muted); margin-bottom: 2.5rem; line-height: 1.6; max-width: 700px; margin-left: auto; margin-right: auto;">
+                                    {{ $slide->subtitle }}
+                                </p>
+                                <div class="hero-buttons" style="display: flex; gap: 1.25rem; justify-content: center;">
+                                    @if($slide->button_text)
+                                        <button onclick="triggerCallbackModal()" class="btn btn-primary">{{ $slide->button_text }} <i data-lucide="arrow-right"></i></button>
+                                    @endif
+                                    <a href="tel:{{ $site['phone'] ?? '+919876543210' }}" class="btn btn-secondary"><i data-lucide="phone"></i> Call Now</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
+            <!-- Slider controls -->
+            @if($slides->count() > 1)
+                <button class="hero-slider-btn prev" onclick="moveHeroSlide(-1)"><i data-lucide="chevron-left"></i></button>
+                <button class="hero-slider-btn next" onclick="moveHeroSlide(1)"><i data-lucide="chevron-right"></i></button>
+                <div class="hero-slider-dots">
+                    @foreach($slides as $index => $slide)
+                        <span class="hero-dot @if($index === 0) active @endif" onclick="setHeroSlide({{ $index }})"></span>
+                    @endforeach
                 </div>
-                <div class="trust-item">
-                    <span class="trust-num">5,000+</span>
-                    <span class="trust-label">Happy Clients</span>
-                </div>
-                <div class="trust-item">
-                    <span class="trust-num">15+</span>
-                    <span class="trust-label">Lending Partners</span>
+            @endif
+
+            <!-- Global Static Trust Badges -->
+            <div class="container hero-global-trust" style="margin-top: 4rem; position: relative; z-index: 5;">
+                <div class="hero-trust">
+                    <div class="trust-item">
+                        <span class="trust-num">₹1,200 Cr+</span>
+                        <span class="trust-label">Loans Assisted</span>
+                    </div>
+                    <div class="trust-item">
+                        <span class="trust-num">5,000+</span>
+                        <span class="trust-label">Happy Clients</span>
+                    </div>
+                    <div class="trust-item">
+                        <span class="trust-num">150+</span>
+                        <span class="trust-label">Lending Partners</span>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+    @else
+        <!-- Static Hero Section (Fallback) -->
+        <section class="hero" style="background: {!! $site['index_hero_bg'] ?? 'linear-gradient(135deg, #eef7f7 0%, #ffffff 100%)' !!}; padding: 10rem 0 6rem 0; text-align: center;">
+            <div class="container" style="max-width: 800px; margin: 0 auto; padding: 0 1.5rem;">
+                <div class="hero-content" style="text-align: center; width: 100%;">
+                    <span class="color-mint font-semibold" style="text-transform: uppercase; letter-spacing: 1.5px; font-size: 0.95rem; display: block; margin-bottom: 1rem;">Welcome to MLG Finedge</span>
+                    <h1 style="font-size: 3rem; line-height: 1.2; margin-bottom: 1.5rem; color: var(--primary-teal-dark); font-weight: 800; letter-spacing: -0.5px;">
+                        {{ $pageContents['home']['hero']['title'] ?? 'Trusted Loan Provider in Gopalpura Jaipur' }}
+                    </h1>
+                    <p class="subtitle" style="font-size: 1.2rem; color: var(--text-muted); margin-bottom: 2.5rem; line-height: 1.6; max-width: 700px; margin-left: auto; margin-right: auto;">
+                        {{ $pageContents['home']['hero']['subtitle'] ?? 'Your Trusted Partner for Smart Loan Solutions, Quick Assistance, and Reliable Financial Guidance.' }}
+                    </p>
+                    <div class="hero-buttons" style="display: flex; gap: 1.25rem; justify-content: center;">
+                        <button onclick="triggerCallbackModal()" class="btn btn-primary">Get Free Consultation <i data-lucide="arrow-right"></i></button>
+                        <a href="tel:{{ $site['phone'] ?? '+919876543210' }}" class="btn btn-secondary"><i data-lucide="phone"></i> Call Now</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Global Static Trust Badges -->
+            <div class="container hero-global-trust" style="margin-top: 4rem; position: relative; z-index: 5;">
+                <div class="hero-trust">
+                    <div class="trust-item">
+                        <span class="trust-num">₹1,200 Cr+</span>
+                        <span class="trust-label">Loans Assisted</span>
+                    </div>
+                    <div class="trust-item">
+                        <span class="trust-num">5,000+</span>
+                        <span class="trust-label">Happy Clients</span>
+                    </div>
+                    <div class="trust-item">
+                        <span class="trust-num">150+</span>
+                        <span class="trust-label">Lending Partners</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    @endif
 
     <!-- Services Overview Section -->
     <section class="section" id="services" style="background: {!! $site['index_services_bg'] ?? '#ffffff' !!};">
@@ -165,7 +294,7 @@
                     </div>
                 </div>
                 <div class="about-badge">
-                    <span class="about-badge-num">12+</span>
+                    <span class="about-badge-num">16+</span>
                     <span class="about-badge-label"><br>Years of Advisory<br>Excellence</span>
                 </div>
             </div>
@@ -552,4 +681,40 @@
 
 @section('scripts')
     <script src="{{ asset('assets/js/calculator.js') }}"></script>
+    @if(isset($slides) && $slides->count() > 1)
+        <script>
+            let currentHeroSlide = 0;
+            const heroSlidesCount = {{ $slides->count() }};
+            function updateHeroSlider() {
+                const track = document.querySelector('.hero-slider-track');
+                if (!track) return;
+                track.style.transform = `translateX(-${currentHeroSlide * (100 / heroSlidesCount)}%)`;
+                
+                // Update dots
+                const dots = document.querySelectorAll('.hero-dot');
+                dots.forEach((dot, idx) => {
+                    if (idx === currentHeroSlide) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
+                });
+            }
+            function moveHeroSlide(direction) {
+                currentHeroSlide = (currentHeroSlide + direction + heroSlidesCount) % heroSlidesCount;
+                updateHeroSlider();
+            }
+            function setHeroSlide(index) {
+                currentHeroSlide = index;
+                updateHeroSlider();
+            }
+            document.addEventListener('DOMContentLoaded', () => {
+                updateHeroSlider();
+                // Auto-play every 6 seconds
+                setInterval(() => {
+                    moveHeroSlide(1);
+                }, 6000);
+            });
+        </script>
+    @endif
 @endsection

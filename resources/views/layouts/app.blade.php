@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Trusted Loan Provider in Mansarovar Jaipur | MLG Finedge')</title>
-    <meta name="description" content="@yield('meta_description', 'MLG Finedge is the leading loan provider in Mansarovar Jaipur. We offer expert loan advisory & consultation for Personal Loans, Home Loans, Business Loans, and LAP. Get free advice now!')">
+    <title>@yield('title', 'Trusted Loan Provider in Gopalpura Jaipur | MLG Finedge')</title>
+    <meta name="description" content="@yield('meta_description', 'MLG Finedge is the leading loan provider in Gopalpura Jaipur. We offer expert loan advisory & consultation for Personal Loans, Home Loans, Business Loans, and LAP. Get free advice now!')">
     
     <!-- Dynamic Favicon -->
     @if(!empty($site['favicon_path']))
@@ -147,7 +147,7 @@
                 <ul class="footer-contact-info">
                     <li>
                         <i data-lucide="map-pin"></i>
-                        <span>{{ $site['address'] ?? 'Mansarovar Sector 5, Near Metro Station, Jaipur, Rajasthan 302020' }}</span>
+                        <span>{{ $site['address'] ?? 'Gopalpura Sector 5, Near Metro Station, Jaipur, Rajasthan 302020' }}</span>
                     </li>
                     <li>
                         <i data-lucide="phone"></i>

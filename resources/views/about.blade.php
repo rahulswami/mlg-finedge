@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'About Us | Loan Advisory Specialists in Jaipur | ' . ($site['site_name'] ?? 'MLG Finedge'))
-@section('meta_description', 'Read about MLG Finedge, a premium loan advisory and consultation firm based in Mansarovar Jaipur. Learn about our vision, mission, and banking partnerships.')
+@section('meta_description', 'Read about MLG Finedge, a premium loan advisory and consultation firm based in Gopalpura Jaipur. Learn about our vision, mission, and banking partnerships.')
 
 @section('schema')
 <script type="application/ld+json">
@@ -13,7 +13,7 @@
       "{{ '@id' }}": "{{ route('about') }}/#webpage",
       "url": "{{ route('about') }}",
       "name": "About Us | Loan Advisory Specialists in Jaipur | {{ $site['site_name'] ?? 'MLG Finedge' }}",
-      "description": "Read about MLG Finedge, a premium loan advisory and consultation firm based in Mansarovar Jaipur. Learn about our vision, mission, and banking partnerships.",
+      "description": "Read about MLG Finedge, a premium loan advisory and consultation firm based in Gopalpura Jaipur. Learn about our vision, mission, and banking partnerships.",
       "isPartOf": {
         "{{ '@type' }}": "WebSite",
         "{{ '@id' }}": "{{ route('home') }}/#website"
@@ -129,7 +129,7 @@
     <section class="final-cta-section">
         <div class="final-cta-wrapper animate-on-scroll">
             <h2>Ready to Find the Best Loan Offer?</h2>
-            <p>Skip the branch visits. Let our credit specialists check your eligibility across 15+ banks today.</p>
+            <p>Skip the branch visits. Let our credit specialists check your eligibility across 150+ banks today.</p>
             <div class="final-cta-buttons">
                 <button onclick="triggerCallbackModal()" class="btn btn-white">Request Free Advisory</button>
                 <a href="{{ route('contact') }}" class="btn btn-outline-white"><i data-lucide="phone"></i> Contact Us</a>

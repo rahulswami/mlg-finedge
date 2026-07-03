@@ -605,6 +605,22 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'Comparison bank deleted successfully!');
     }
 
+    public function syncDatabase(Request $request)
+    {
+        try {
+            // Run database seeder
+            \Illuminate\Support\Facades\Artisan::call('db:seed', ['--force' => true]);
+            
+            // Clear application cache to ensure new values are loaded instantly
+            \Illuminate\Support\Facades\Artisan::call('cache:clear');
+            \Illuminate\Support\Facades\Artisan::call('view:clear');
+            
+            return redirect()->back()->with('success', 'Website content synced successfully from the database seeder/default structures!');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Sync failed: ' . $e->getMessage());
+        }
+    }
+
     private function getParameterCategory($key)
     {
         if (str_contains($key, 'rate')) return 'rates';

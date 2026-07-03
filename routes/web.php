@@ -56,4 +56,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Media Manager Upload
     Route::post('/admin/media-upload', [AdminController::class, 'uploadMedia'])->name('admin.media.upload');
+
+    // Sync database content
+    Route::post('/admin/sync-database', [AdminController::class, 'syncDatabase'])->name('admin.sync-database');
 });

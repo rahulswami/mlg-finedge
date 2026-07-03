@@ -35,7 +35,7 @@ class SiteSeeder extends Seeder
             ['id' => 'favicon_path', 'value' => null, 'label' => 'Custom Favicon Image (WebP)', 'category' => 'branding'],
             ['id' => 'phone', 'value' => '+919876543210', 'label' => 'Contact Phone Number', 'category' => 'contact'],
             ['id' => 'email', 'value' => 'info@mlgfinedge.com', 'label' => 'Contact Email Address', 'category' => 'contact'],
-            ['id' => 'address', 'value' => 'Mansarovar Sector 5, Near Metro Station, Jaipur, Rajasthan 302020', 'label' => 'Physical Address', 'category' => 'contact'],
+            ['id' => 'address', 'value' => 'Gopalpura Sector 5, Near Metro Station, Jaipur, Rajasthan 302020', 'label' => 'Physical Address', 'category' => 'contact'],
             ['id' => 'whatsapp_number', 'value' => '919876543210', 'label' => 'WhatsApp Number (with country code)', 'category' => 'contact'],
             
             // Starting Interest Rates
@@ -71,7 +71,7 @@ class SiteSeeder extends Seeder
         // 3. Seed Page Contents
         $contents = [
             // Homepage Hero
-            ['page' => 'home', 'section' => 'hero', 'key' => 'title', 'value' => 'Trusted Loan Provider in Mansarovar Jaipur'],
+            ['page' => 'home', 'section' => 'hero', 'key' => 'title', 'value' => 'Trusted Loan Provider in Gopalpura Jaipur'],
             ['page' => 'home', 'section' => 'hero', 'key' => 'subtitle', 'value' => 'Your Trusted Partner for Smart Loan Solutions, Quick Assistance, and Reliable Financial Guidance.'],
             
             // Homepage Services
@@ -105,7 +105,7 @@ class SiteSeeder extends Seeder
         DB::table('home_slides')->truncate();
         DB::table('home_slides')->insert([
             [
-                'title' => 'Trusted Loan Provider in Mansarovar Jaipur',
+                'title' => 'Trusted Loan Provider in Gopalpura Jaipur',
                 'subtitle' => 'Your Trusted Partner for Smart Loan Solutions, Quick Assistance, and Reliable Financial Guidance.',
                 'image_path' => null,
                 'button_text' => 'Get Free Consultation',
@@ -132,7 +132,7 @@ class SiteSeeder extends Seeder
             [
                 'name' => 'Vikram Sharma',
                 'role' => 'Government Teacher, Jaipur',
-                'content' => 'As a government teacher in Mansarovar, I had unique eligibility challenges. MLG Finedge got me a home loan with 63-year extended maturity options and high FOIR margins. Excellent work!',
+                'content' => 'As a government teacher in Gopalpura, I had unique eligibility challenges. MLG Finedge got me a home loan with 63-year extended maturity options and high FOIR margins. Excellent work!',
                 'rating' => 5,
                 'avatar_path' => null,
                 'sort_order' => 1,
@@ -161,7 +161,7 @@ class SiteSeeder extends Seeder
             ],
             [
                 'name' => 'Dr. Sunita Gupta',
-                'role' => 'Clinic Director, Mansarovar',
+                'role' => 'Clinic Director, Gopalpura',
                 'content' => 'MLG Finedge helped me secure an unsecured Business Loan of ₹30 Lakhs for expanding my healthcare diagnostics clinic. They managed the document collection and bank interactions smoothly. Professional service.',
                 'rating' => 5,
                 'avatar_path' => null,
@@ -188,8 +188,8 @@ class SiteSeeder extends Seeder
                 'slug' => 'personal-loans-guide',
                 'title' => 'The Ultimate Guide to Securing a Personal Loan in Jaipur',
                 'category' => 'Personal Loans',
-                'summary' => 'Learn how to improve your net eligibility, check required documents, and get lower rates from banks in Mansarovar, Jaipur.',
-                'content' => '<h3>Key Criteria Lenders Check in Jaipur</h3>\n<p>Unsecured personal loans have seen a massive surge in demand in urban centers. When searching for a <strong>personal loan lender near me</strong> or checking out options for <strong>private finance near me</strong> in Jaipur, borrowers often get overwhelmed by options and complex terms.</p>\n<p>A personal loan is unsecured, meaning you do not have to pledge residential property, land titles, or vehicles to raise capital. However, this means banks evaluate your financial dossier strictly. A minor error in salary declarations or a mismatch in credit scores can lead to immediate rejection.</p>\n<p>Before any loan agency submits your file to underwriting, they evaluate three primary parameters:</p>\n<ul>\n    <li><strong>CIBIL Score:</strong> A CIBIL rating of 750+ ensures you get processed at the lowest interest rate margins. Scores below 650 are rarely approved by nationalized banks, requiring NBFC channels instead.</li>\n    <li><strong>Income Stability:</strong> For salaried employees in Mansarovar Jaipur, banks expect a minimum net salary of ₹20k to ₹25k, deposited directly into your bank account. Cash salaries are typically not accepted.</li>\n    <li><strong>Employer Categorization:</strong> Lenders categorize employers into Category A, B, or C. Government teachers and employees of public undertakings get prioritized with fast approvals.</li>\n</ul>\n<h3>Why Consulting a Reputed Loan Agency is Better</h3>\n<p>Many borrowers visit bank branches individually. However, this raises multiple hard inquiries on your credit history, lowering your CIBIL score. Consulting an independent <strong>loan agency</strong> like MLG Finedge helps you compare rates across HDFC, ICICI, SBI, and Axis simultaneously, ensuring you select the finest offer with a single file compilation.</p>',
+                'summary' => 'Learn how to improve your net eligibility, check required documents, and get lower rates from banks in Gopalpura, Jaipur.',
+                'content' => '<h3>Key Criteria Lenders Check in Jaipur</h3>\n<p>Unsecured personal loans have seen a massive surge in demand in urban centers. When searching for a <strong>personal loan lender near me</strong> or checking out options for <strong>private finance near me</strong> in Jaipur, borrowers often get overwhelmed by options and complex terms.</p>\n<p>A personal loan is unsecured, meaning you do not have to pledge residential property, land titles, or vehicles to raise capital. However, this means banks evaluate your financial dossier strictly. A minor error in salary declarations or a mismatch in credit scores can lead to immediate rejection.</p>\n<p>Before any loan agency submits your file to underwriting, they evaluate three primary parameters:</p>\n<ul>\n    <li><strong>CIBIL Score:</strong> A CIBIL rating of 750+ ensures you get processed at the lowest interest rate margins. Scores below 650 are rarely approved by nationalized banks, requiring NBFC channels instead.</li>\n    <li><strong>Income Stability:</strong> For salaried employees in Gopalpura Jaipur, banks expect a minimum net salary of ₹20k to ₹25k, deposited directly into your bank account. Cash salaries are typically not accepted.</li>\n    <li><strong>Employer Categorization:</strong> Lenders categorize employers into Category A, B, or C. Government teachers and employees of public undertakings get prioritized with fast approvals.</li>\n</ul>\n<h3>Why Consulting a Reputed Loan Agency is Better</h3>\n<p>Many borrowers visit bank branches individually. However, this raises multiple hard inquiries on your credit history, lowering your CIBIL score. Consulting an independent <strong>loan agency</strong> like MLG Finedge helps you compare rates across HDFC, ICICI, SBI, and Axis simultaneously, ensuring you select the finest offer with a single file compilation.</p>',
                 'image_path' => null,
                 'published_at' => now(),
                 'created_at' => now(),
@@ -200,7 +200,7 @@ class SiteSeeder extends Seeder
                 'title' => 'Home Loans: 5 Crucial Tips for First-Time Buyers in Jaipur',
                 'category' => 'Home Loans',
                 'summary' => 'Avoid critical layout blueprint issues and discover special extended maturity schemes for state government teachers in Rajasthan.',
-                'content' => '<p>Jaipur\'s residential real estate market is expanding rapidly, with Mansarovar, Vaishali Nagar, and Jagatpura emerging as hot destinations. If you are browsing for a <strong>home loan near me</strong> or comparing <strong>mortgage lenders near me</strong>, taking the first step requires careful preparation.</p>\n<p>Securing <strong>house loans near me</strong> is a long-term commitment. Interest rate differences of even 0.25% can translate into savings of lakhs of rupees over a 20-year tenure. Here are five crucial guidelines for home buyers:</p>\n<h3>1. Check Your Credit Parameters First</h3>\n<p>Before any of the <strong>home lenders near me</strong> pull your credit file, download your credit report. Ensure your CIBIL rating is above 720. If there are credit card defaults or late payments, resolve them first to prevent banks from raising your interest margins.</p>\n<h3>2. Plan Your Budget and FOIR</h3>\n<p>Fixed Obligation to Income Ratio (FOIR) measures how much of your salary is used to clear existing EMIs. Lenders typically cap this at 50%. However, if you are a state or central government employee in Rajasthan (such as government school teachers), select banks offer relaxed limits (up to 55% or 60% FOIR) and extended maturity tenures up to 63 years.</p>\n<h3>3. Floating vs. Fixed Rates</h3>\n<p>Floating interest rates (pegged to Repo Linked Lending Rates or RLLR) fluctuate based on RBI policy. They are highly popular because floating loans have zero pre-payment or foreclosure charges under RBI guidelines. Fixed rates remain constant but carry penalties if you attempt foreclosure early.</p>\n<h3>4. Verify Local JDA Map Approvals</h3>\n<p>Jaipur banks check if properties have JDA (Jaipur Development Authority) layout approvals. Purchasing properties on agriculture titles without conversion (90A status) can lead to instant rejection.</p>\n<h3>5. Work with a Trusted Advisory Partner</h3>\n<p>Rather than walking into multiple bank branches, work with an independent consultancy like MLG Finedge. We check rates across 15+ partner lenders simultaneously, ensuring you receive the lowest interest rates without multiple hard inquiries.</p>',
+                'content' => '<p>Jaipur\'s residential real estate market is expanding rapidly, with Gopalpura, Vaishali Nagar, and Jagatpura emerging as hot destinations. If you are browsing for a <strong>home loan near me</strong> or comparing <strong>mortgage lenders near me</strong>, taking the first step requires careful preparation.</p>\n<p>Securing <strong>house loans near me</strong> is a long-term commitment. Interest rate differences of even 0.25% can translate into savings of lakhs of rupees over a 20-year tenure. Here are five crucial guidelines for home buyers:</p>\n<h3>1. Check Your Credit Parameters First</h3>\n<p>Before any of the <strong>home lenders near me</strong> pull your credit file, download your credit report. Ensure your CIBIL rating is above 720. If there are credit card defaults or late payments, resolve them first to prevent banks from raising your interest margins.</p>\n<h3>2. Plan Your Budget and FOIR</h3>\n<p>Fixed Obligation to Income Ratio (FOIR) measures how much of your salary is used to clear existing EMIs. Lenders typically cap this at 50%. However, if you are a state or central government employee in Rajasthan (such as government school teachers), select banks offer relaxed limits (up to 55% or 60% FOIR) and extended maturity tenures up to 63 years.</p>\n<h3>3. Floating vs. Fixed Rates</h3>\n<p>Floating interest rates (pegged to Repo Linked Lending Rates or RLLR) fluctuate based on RBI policy. They are highly popular because floating loans have zero pre-payment or foreclosure charges under RBI guidelines. Fixed rates remain constant but carry penalties if you attempt foreclosure early.</p>\n<h3>4. Verify Local JDA Map Approvals</h3>\n<p>Jaipur banks check if properties have JDA (Jaipur Development Authority) layout approvals. Purchasing properties on agriculture titles without conversion (90A status) can lead to instant rejection.</p>\n<h3>5. Work with a Trusted Advisory Partner</h3>\n<p>Rather than walking into multiple bank branches, work with an independent consultancy like MLG Finedge. We check rates across 150+ partner lenders simultaneously, ensuring you receive the lowest interest rates without multiple hard inquiries.</p>',
                 'image_path' => null,
                 'published_at' => now(),
                 'created_at' => now(),
@@ -217,7 +217,7 @@ class SiteSeeder extends Seeder
                 'service_name' => 'Personal Loan',
                 'hero_category' => 'UNSECURED CREDIT',
                 'hero_title' => 'Personal Loan Advisory in Jaipur',
-                'hero_subtitle' => 'Quick, collateral-free financial solutions designed for government teachers, salaried professionals, and business owners in Mansarovar and across Jaipur.',
+                'hero_subtitle' => 'Quick, collateral-free financial solutions designed for government teachers, salaried professionals, and business owners in Gopalpura and across Jaipur.',
                 'rate_value' => 'Starting @ 10.5% p.a.',
                 'max_loan' => 'Up to ₹40 Lakhs',
                 'tenure' => '1 - 7 Years',
@@ -243,12 +243,12 @@ class SiteSeeder extends Seeder
                 'service_name' => 'Home Loan',
                 'hero_category' => 'MORTGAGE FINANCE',
                 'hero_title' => 'Home Loan Solutions in Jaipur',
-                'hero_subtitle' => 'Purchase or construct your dream house in Mansarovar, Vaishali Nagar, and Jagatpura with lowest interest rates, high eligibility margins, and simple bank approvals.',
+                'hero_subtitle' => 'Purchase or construct your dream house in Gopalpura, Vaishali Nagar, and Jagatpura with lowest interest rates, high eligibility margins, and simple bank approvals.',
                 'rate_value' => 'Starting @ 8.4% p.a.',
                 'max_loan' => 'Up to ₹10 Crore',
                 'tenure' => 'Up to 30 Years',
                 'intro_title' => 'Secure Your Home Loan with Independent Consultation',
-                'intro_content' => '<p>Buying a home is one of the most significant lifetime financial commitments you will make. While minor interest differences like 0.25% may seem negligible at first, they can translate into savings of lakhs of rupees over a 20-year or 30-year repayment tenure. However, navigating the housing finance market individually often leads to frustration, high processing fees, and multiple credit report checks that lower your CIBIL standing.</p><p>At <strong>MLG Finedge</strong>, we serve as your independent consultant. We analyze interest rates (pegged to Repo Linked Lending Rates or RLLR), processing parameters, and hidden charges across 15+ leading nationalized banks, private sector institutions, and housing finance companies (HFCs). We also specialize in structuring profiles with unique criteria, such as extended maturity tenures up to 63 years for Rajasthan state government employees and school teachers.</p>',
+                'intro_content' => '<p>Buying a home is one of the most significant lifetime financial commitments you will make. While minor interest differences like 0.25% may seem negligible at first, they can translate into savings of lakhs of rupees over a 20-year or 30-year repayment tenure. However, navigating the housing finance market individually often leads to frustration, high processing fees, and multiple credit report checks that lower your CIBIL standing.</p><p>At <strong>MLG Finedge</strong>, we serve as your independent consultant. We analyze interest rates (pegged to Repo Linked Lending Rates or RLLR), processing parameters, and hidden charges across 150+ leading nationalized banks, private sector institutions, and housing finance companies (HFCs). We also specialize in structuring profiles with unique criteria, such as extended maturity tenures up to 63 years for Rajasthan state government employees and school teachers.</p>',
                 'eligibility_criteria' => "Salaried Minimum Income: ₹20,000 net/month\nSelf-Employed: Minimum 3 Years business stability\nCredit standing: CIBIL score 700+ preferred\nFOIR constraints: Flexible limits up to 55-60%",
                 'documents_required' => "PAN Card, Aadhaar Card, & Photos\nLast 6 Months salary bank statements\nSalary slips & Form 16 / ITR documents\nProperty chain documents & layout map",
                 'tips_title' => 'Crucial Tips for Home Buyers in Jaipur',
@@ -352,7 +352,7 @@ class SiteSeeder extends Seeder
                 'max_loan' => 'Up to 75% Market Value',
                 'tenure' => 'Up to 15 Years',
                 'intro_title' => 'Unlock Financial Value with Loan Against Property Advisory',
-                'intro_content' => '<p>When your enterprise or personal needs require substantial, long-term capital, unsecured options may carry high interest rates or short repayment tenures that place a heavy monthly burden on your finances. A Loan Against Property (LAP) allows you to mortgage your residential property, commercial showroom, or industrial land to raise funds, keeping interest outlays light.</p><p>At <strong>MLG Finedge</strong>, we guide you through the property mortgage process. Because banks evaluate property chains, local registry approvals, and valuation metrics strictly, compiling a clean application packet is crucial. We compare valuation standards and credit parameters across 15+ partner lenders to ensure you secure the maximum loan eligibility at the lowest possible rates.</p>',
+                'intro_content' => '<p>When your enterprise or personal needs require substantial, long-term capital, unsecured options may carry high interest rates or short repayment tenures that place a heavy monthly burden on your finances. A Loan Against Property (LAP) allows you to mortgage your residential property, commercial showroom, or industrial land to raise funds, keeping interest outlays light.</p><p>At <strong>MLG Finedge</strong>, we guide you through the property mortgage process. Because banks evaluate property chains, local registry approvals, and valuation metrics strictly, compiling a clean application packet is crucial. We compare valuation standards and credit parameters across 150+ partner lenders to ensure you secure the maximum loan eligibility at the lowest possible rates.</p>',
                 'eligibility_criteria' => "Property Ownership: Valid, clear property chain titles\nIncome Stability: Salaried or self-employed with tax records\nAge Range: 21 to 65 Years\nCredit standing: CIBIL score 700+ preferred",
                 'documents_required' => "Identity/Address Proof (PAN, Aadhaar)\nOriginal property title chain records & registry copy\nJDA approved layout map / construction blueprint\nLast 6 Months bank statements & 2 Years ITR / Form 16",
                 'tips_title' => 'Crucial Guidelines for LAP Approvals',

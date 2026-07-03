@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Contact Us | Get Free Loan Advisory | ' . ($site['site_name'] ?? 'MLG Finedge'))
-@section('meta_description', 'Contact MLG Finedge Jaipur. Get expert loan consultations, submit an inquiry form, or visit our office in Mansarovar Jaipur. Free callback within 2 hours.')
+@section('meta_description', 'Contact MLG Finedge Jaipur. Get expert loan consultations, submit an inquiry form, or visit our office in Gopalpura Jaipur. Free callback within 2 hours.')
 
 @section('schema')
 <script type="application/ld+json">
@@ -13,7 +13,7 @@
       "{{ '@id' }}": "{{ route('contact') }}/#webpage",
       "url": "{{ route('contact') }}",
       "name": "Contact Us | Get Free Loan Advisory | {{ $site['site_name'] ?? 'MLG Finedge' }}",
-      "description": "Contact MLG Finedge Jaipur. Get expert loan consultations, submit an inquiry form, or visit our office in Mansarovar Jaipur.",
+      "description": "Contact MLG Finedge Jaipur. Get expert loan consultations, submit an inquiry form, or visit our office in Gopalpura Jaipur.",
       "isPartOf": {
         "{{ '@type' }}": "WebSite",
         "{{ '@id' }}": "{{ route('home') }}/#website"
@@ -46,13 +46,13 @@
         <div class="container contact-grid animate-on-scroll">
             <div class="contact-info-list">
                 <h2>Office Location & Details</h2>
-                <p class="text-muted" style="margin-bottom: 2rem;">We are based in Mansarovar, Jaipur. Drop by for a cup of coffee and a detailed assessment of your financial documents.</p>
+                <p class="text-muted" style="margin-bottom: 2rem;">We are based in Gopalpura, Jaipur. Drop by for a cup of coffee and a detailed assessment of your financial documents.</p>
                 
                 <div class="contact-info-item">
                     <div class="contact-info-icon"><i data-lucide="map-pin"></i></div>
                     <div class="contact-info-content">
                         <h3>Our Office</h3>
-                        <p>{{ $site['address'] ?? 'Plot No 42, Mansarovar Sector 5, Near Mansarovar Metro Station, Jaipur, Rajasthan 302020' }}</p>
+                        <p>{{ $site['address'] ?? 'Plot No 42, Gopalpura Sector 5, Near Gopalpura Metro Station, Jaipur, Rajasthan 302020' }}</p>
                     </div>
                 </div>
                 
@@ -135,8 +135,8 @@
     <section class="section" style="padding-top:0;">
         <div class="container animate-on-scroll">
             <div class="contact-map-box">
-                <!-- Google Maps centered on Mansarovar Jaipur -->
-                <iframe src="https://www.google.com/maps/embed?pb=!11m18!1m12!1m3!1d14234.618698125866!2d75.75330335!3d26.8500207!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x396db444a7ec5ccb%3A0xe108e8b15d05e26b!2sMansarovar%2C%20Jaipur%2C%20Rajasthan!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin" 
+                <!-- Google Maps centered on Gopalpura Jaipur -->
+                <iframe src="https://www.google.com/maps/embed?pb=!11m18!1m12!1m3!1d14233.916960010996!2d75.77660232537989!3d26.856037042531333!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x396db67eb9fdfc4d%3A0x4468f70044b7d598!2sGopalpura%2C%20Jaipur%2C%20Rajasthan!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin" 
                     width="100%" height="450" style="border:0; border-radius: var(--radius-lg);" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
             </div>
         </div>

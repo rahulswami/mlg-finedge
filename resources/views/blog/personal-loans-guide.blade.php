@@ -32,7 +32,7 @@
         <p>Before any loan agency submits your file to underwriting, they evaluate three primary parameters:</p>
         <ul>
             <li><strong>CIBIL Score:</strong> A CIBIL rating of 750+ ensures you get processed at the lowest interest rate margins. Scores below 650 are rarely approved by nationalized banks, requiring NBFC channels instead.</li>
-            <li><strong>Income Stability:</strong> For salaried employees in Mansarovar Jaipur, banks expect a minimum net salary of ₹20k to ₹25k, deposited directly into your bank account. Cash salaries are typically not accepted.</li>
+            <li><strong>Income Stability:</strong> For salaried employees in Gopalpura Jaipur, banks expect a minimum net salary of ₹20k to ₹25k, deposited directly into your bank account. Cash salaries are typically not accepted.</li>
             <li><strong>Employer Categorization:</strong> Lenders categorize employers into Category A, B, or C. Government teachers and employees of public undertakings get prioritized with fast approvals.</li>
         </ul>
 
