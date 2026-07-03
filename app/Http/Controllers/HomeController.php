@@ -123,14 +123,18 @@ class HomeController extends Controller
         }
 
         // 3. Save Lead
-        \App\Models\Lead::create([
-            'name' => $request->name,
-            'phone' => $request->phone,
-            'email' => $request->email,
-            'message' => $compiledMessage ?: 'Requesting a quick callback/consultation.',
-            'source' => $request->input('source', 'Contact Form'),
-            'status' => 'New',
-        ]);
+        try {
+            \App\Models\Lead::create([
+                'name' => $request->name,
+                'phone' => $request->phone,
+                'email' => $request->email,
+                'message' => $compiledMessage ?: 'Requesting a quick callback/consultation.',
+                'source' => $request->input('source', 'Contact Form'),
+                'status' => 'New',
+            ]);
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Lead save failed: ' . $e->getMessage());
+        }
 
         return redirect()->back()->with('success', 'Thank you for contacting MLG Finedge. One of our senior loan advisors will review your request and get in touch with you shortly.');
     }
