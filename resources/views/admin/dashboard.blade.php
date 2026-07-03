@@ -544,17 +544,21 @@
                         <div class="form-grid">
                             <!-- Logo file -->
                             <div class="form-group">
-                                <label>Header & Footer Logo</label>
+                                <label>Header & Footer Logo (Upload File)</label>
                                 <input type="file" name="logo" class="form-control" accept="image/*">
+                                <div style="margin-top: 10px;">
+                                    <label>Or Paste Logo URL</label>
+                                    <input type="text" name="logo_url" class="form-control" value="{{ !empty($site['logo_path']) && (str_starts_with($site['logo_path'], 'http') || str_starts_with($site['logo_path'], '//')) ? $site['logo_path'] : '' }}" placeholder="https://example.com/logo.webp">
+                                </div>
                                 <div class="image-preview-container">
                                     <div class="image-preview">
                                         @if(!empty($site['logo_path']))
-                                            <img src="{{ asset('storage/' . $site['logo_path']) }}" alt="Logo">
+                                            <img src="{{ site_image($site['logo_path']) }}" alt="Logo">
                                         @else
                                             <span style="font-size:0.7rem; color: var(--admin-text-muted);">Default SVG</span>
                                         @endif
                                     </div>
-                                    @if(!empty($site['logo_path']))
+                                    @if(!empty($site['logo_path']) && !str_starts_with($site['logo_path'], 'http') && !str_starts_with($site['logo_path'], '//'))
                                         <span class="badge-webp">WebP Optimized</span>
                                     @endif
                                 </div>
@@ -562,17 +566,21 @@
                             
                             <!-- Favicon file -->
                             <div class="form-group">
-                                <label>Browser Favicon</label>
+                                <label>Browser Favicon (Upload File)</label>
                                 <input type="file" name="favicon" class="form-control" accept="image/*">
+                                <div style="margin-top: 10px;">
+                                    <label>Or Paste Favicon URL</label>
+                                    <input type="text" name="favicon_url" class="form-control" value="{{ !empty($site['favicon_path']) && (str_starts_with($site['favicon_path'], 'http') || str_starts_with($site['favicon_path'], '//')) ? $site['favicon_path'] : '' }}" placeholder="https://example.com/favicon.ico">
+                                </div>
                                 <div class="image-preview-container">
                                     <div class="image-preview">
                                         @if(!empty($site['favicon_path']))
-                                            <img src="{{ asset('storage/' . $site['favicon_path']) }}" alt="Favicon">
+                                            <img src="{{ site_image($site['favicon_path']) }}" alt="Favicon">
                                         @else
                                             <span style="font-size:0.7rem; color: var(--admin-text-muted);">Default ICO</span>
                                         @endif
                                     </div>
-                                    @if(!empty($site['favicon_path']))
+                                    @if(!empty($site['favicon_path']) && !str_starts_with($site['favicon_path'], 'http') && !str_starts_with($site['favicon_path'], '//'))
                                         <span class="badge-webp">WebP Optimized</span>
                                     @endif
                                 </div>
@@ -609,8 +617,12 @@
                                 <input type="text" id="slide_btn_link" name="button_link" class="form-control" placeholder="#consultation">
                             </div>
                             <div class="form-group">
-                                <label for="slide_image">Slide Image (converted to WebP)</label>
+                                <label for="slide_image">Slide Image (Upload File)</label>
                                 <input type="file" id="slide_image" name="image" class="form-control" accept="image/*">
+                                <div style="margin-top: 10px;">
+                                    <label for="slide_image_url">Or Paste Image URL</label>
+                                    <input type="text" id="slide_image_url" name="image_url" class="form-control" placeholder="https://images.mlgfinedge.com/your-image.webp">
+                                </div>
                             </div>
                             <div class="form-group">
                                 <label for="slide_sort">Sort Order</label>
@@ -642,7 +654,7 @@
                                         <td>
                                             <div class="image-preview">
                                                 @if($slide->image_path)
-                                                    <img src="{{ asset('storage/' . $slide->image_path) }}" alt="Slide Preview">
+                                                    <img src="{{ site_image($slide->image_path) }}" alt="Slide Preview">
                                                 @else
                                                     <span style="font-size:0.75rem; color:var(--admin-text-muted);">Generic Card</span>
                                                 @endif
@@ -705,8 +717,12 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="test_avatar">Client Avatar (WebP Auto-optimized)</label>
+                                <label for="test_avatar">Client Avatar (Upload File)</label>
                                 <input type="file" id="test_avatar" name="avatar" class="form-control" accept="image/*">
+                                <div style="margin-top: 10px;">
+                                    <label for="test_avatar_url">Or Paste Avatar URL</label>
+                                    <input type="text" id="test_avatar_url" name="avatar_url" class="form-control" placeholder="https://images.mlgfinedge.com/avatar.webp">
+                                </div>
                             </div>
                             <div class="form-group">
                                 <label for="test_sort">Sort Order</label>
@@ -743,7 +759,7 @@
                                         <td>
                                             <div class="image-preview" style="border-radius: 50%;">
                                                 @if($test->avatar_path)
-                                                    <img src="{{ asset('storage/' . $test->avatar_path) }}" alt="Avatar">
+                                                    <img src="{{ site_image($test->avatar_path) }}" alt="Avatar">
                                                 @else
                                                     <!-- Initials -->
                                                     <div style="background-color:var(--primary-teal); color:white; width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-weight:bold;">
@@ -1187,9 +1203,13 @@
                                 <label for="blog_published_at">Publish Date</label>
                                 <input type="datetime-local" id="blog_published_at" name="published_at" class="form-control" value="{{ date('Y-m-d\TH:i') }}">
                             </div>
-                            <div class="form-group" style="grid-column: span 2;">
-                                <label for="blog_image">Cover Image (JPEG/PNG/WebP, will be compressed to WebP)</label>
+                            <div class="form-group">
+                                <label for="blog_image">Cover Image (Upload File)</label>
                                 <input type="file" id="blog_image" name="image" class="form-control" accept="image/*">
+                            </div>
+                            <div class="form-group">
+                                <label for="blog_image_url">Or Paste Cover Image URL</label>
+                                <input type="text" id="blog_image_url" name="image_url" class="form-control" placeholder="https://images.mlgfinedge.com/cover.webp">
                             </div>
                         </div>
                         <div class="form-group" style="margin-top: 1.25rem;">
@@ -1228,7 +1248,7 @@
                                         <td>
                                             <div class="image-preview">
                                                 @if($b->image_path)
-                                                    <img src="{{ asset('storage/' . $b->image_path) }}" alt="Cover">
+                                                    <img src="{{ site_image($b->image_path) }}" alt="Cover">
                                                 @else
                                                     <span style="font-size:0.75rem; color:var(--admin-text-muted);">No Image</span>
                                                 @endif
@@ -1397,6 +1417,7 @@
                 document.getElementById('blog_content').value = data.content;
             }
             document.getElementById('blog-submit-btn').innerText = 'Update Blog Article';
+            document.getElementById('blog_image_url').value = (data.image_path && (data.image_path.startsWith('http') || data.image_path.startsWith('//'))) ? data.image_path : '';
             document.getElementById('blog-cancel-btn').style.display = 'inline-block';
             
             document.getElementById('blog-form-container').scrollIntoView({ behavior: 'smooth' });
@@ -1411,6 +1432,7 @@
             document.getElementById('blog_category').selectedIndex = 0;
             document.getElementById('blog_published_at').value = "{{ date('Y-m-d\TH:i') }}";
             document.getElementById('blog_summary').value = '';
+            document.getElementById('blog_image_url').value = '';
             if (blogEditor) {
                 blogEditor.setData('');
             } else {

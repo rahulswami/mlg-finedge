@@ -16,7 +16,7 @@
       "datePublished": "{{ $blog->published_at->toIso8601String() }}",
       "dateModified": "{{ $blog->updated_at->toIso8601String() }}",
       "mainEntityOfPage": "{{ route('blog.show', $blog->slug) }}",
-      "image": "{{ $blog->image_path ? asset('storage/' . $blog->image_path) : asset('assets/images/blog-default.jpg') }}",
+      "image": "{{ $blog->image_path ? site_image($blog->image_path) : asset('assets/images/blog-default.jpg') }}",
       "author": {
         "{{ '@type' }}": "Organization",
         "name": "MLG Finedge Advisory Team",
@@ -53,7 +53,7 @@
     <article class="blog-article-body" style="max-width: 800px; margin: 40px auto; padding: 0 20px; line-height: 1.8; color: var(--text-dark);">
         @if($blog->image_path)
             <div style="margin-bottom: 30px; border-radius: var(--radius-md); overflow: hidden;">
-                <img src="{{ asset('storage/' . $blog->image_path) }}" alt="{{ $blog->title }}" style="width: 100%; height: auto; max-height: 400px; object-fit: cover;">
+                <img src="{{ site_image($blog->image_path) }}" alt="{{ $blog->title }}" style="width: 100%; height: auto; max-height: 400px; object-fit: cover;">
             </div>
         @endif
         

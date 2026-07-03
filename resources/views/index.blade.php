@@ -16,7 +16,7 @@
       "logo": {
         "{{ '@type' }}": "ImageObject",
         "{{ '@id' }}": "{{ route('home') }}/#logo",
-        "url": "{{ !empty($site['logo_path']) ? asset('storage/' . $site['logo_path']) : asset('assets/images/logo.png') }}",
+        "url": "{{ !empty($site['logo_path']) ? site_image($site['logo_path']) : asset('assets/images/logo.png') }}",
         "caption": "{{ $site['site_name'] ?? 'MLG Finedge' }}"
       },
       "contactPoint": {
@@ -589,7 +589,7 @@
                                     <div class="testimonial-author">
                                         <div class="author-img" style="background-color: var(--primary-teal-light); display: flex; align-items: center; justify-content: center; color: var(--text-light); font-weight: 700; overflow: hidden; border-radius: 50%; width: 44px; height: 44px;">
                                             @if($test->avatar_path)
-                                                <img src="{{ asset('storage/' . $test->avatar_path) }}" alt="{{ $test->name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                                <img src="{{ site_image($test->avatar_path) }}" alt="{{ $test->name }}" style="width: 100%; height: 100%; object-fit: cover;">
                                             @else
                                                 {{ substr($test->name, 0, 2) }}
                                             @endif

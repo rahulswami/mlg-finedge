@@ -87,7 +87,7 @@
                         <div class="testimonial-author">
                             <div style="width:40px; height:40px; border-radius:50%; background-color:var(--primary-teal-light); display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; overflow:hidden;">
                                 @if($test->avatar_path)
-                                    <img src="{{ asset('storage/' . $test->avatar_path) }}" alt="{{ $test->name }}" style="width:100%; height:100%; object-fit:cover;">
+                                    <img src="{{ site_image($test->avatar_path) }}" alt="{{ $test->name }}" style="width:100%; height:100%; object-fit:cover;">
                                 @else
                                     {{ substr($test->name, 0, 2) }}
                                 @endif

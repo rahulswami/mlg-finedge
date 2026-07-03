@@ -8,7 +8,7 @@
     
     <!-- Dynamic Favicon -->
     @if(!empty($site['favicon_path']))
-        <link rel="icon" type="image/webp" href="{{ asset('storage/' . $site['favicon_path']) }}">
+        <link rel="icon" type="image/webp" href="{{ site_image($site['favicon_path']) }}">
     @else
         <link rel="icon" type="image/x-icon" href="/favicon.ico">
     @endif
@@ -42,7 +42,7 @@
         <div class="container nav-container">
             <a href="{{ route('home') }}" class="logo">
                 @if(!empty($site['logo_path']))
-                    <img src="{{ asset('storage/' . $site['logo_path']) }}" alt="{{ $site['site_name'] ?? 'MLG FINEDGE' }}" style="height: 55px; width: auto; object-fit: contain;">
+                    <img src="{{ site_image($site['logo_path']) }}" alt="{{ $site['site_name'] ?? 'MLG FINEDGE' }}" style="height: 55px; width: auto; object-fit: contain;">
                 @else
                     <svg class="logo-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <rect x="25" y="45" width="12" height="30" rx="3" fill="#0c5354" />
@@ -98,7 +98,7 @@
             <div class="footer-col footer-col-about">
                 <div class="logo" style="margin-bottom:1rem;">
                     @if(!empty($site['logo_path']))
-                        <img src="{{ asset('storage/' . $site['logo_path']) }}" alt="{{ $site['site_name'] ?? 'MLG FINEDGE' }}" style="height: 55px; width: auto; object-fit: contain;">
+                        <img src="{{ site_image($site['logo_path']) }}" alt="{{ $site['site_name'] ?? 'MLG FINEDGE' }}" style="height: 55px; width: auto; object-fit: contain;">
                     @else
                         <svg class="logo-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <rect x="25" y="45" width="12" height="30" rx="3" fill="#ffffff" />

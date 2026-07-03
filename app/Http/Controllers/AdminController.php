@@ -86,7 +86,7 @@ class AdminController extends Controller
 
     public function updateParameters(Request $request)
     {
-        $data = $request->except(['_token', 'logo', 'favicon']);
+        $data = $request->except(['_token', 'logo', 'favicon', 'logo_url', 'favicon_url']);
         
         foreach ($data as $key => $value) {
             $param = SiteParameter::find($key);
@@ -108,7 +108,7 @@ class AdminController extends Controller
             if ($logoPath) {
                 // Delete old logo file if exists
                 $oldLogo = SiteParameter::find('logo_path');
-                if ($oldLogo && $oldLogo->value) {
+                if ($oldLogo && $oldLogo->value && !str_starts_with($oldLogo->value, 'http') && !str_starts_with($oldLogo->value, '//')) {
                     Storage::disk('public')->delete($oldLogo->value);
                 }
                 
@@ -117,6 +117,11 @@ class AdminController extends Controller
                     ['value' => $logoPath, 'label' => 'Custom Logo Image (WebP)', 'category' => 'branding']
                 );
             }
+        } elseif ($request->has('logo_url')) {
+            SiteParameter::updateOrCreate(
+                ['id' => 'logo_path'],
+                ['value' => $request->input('logo_url'), 'label' => 'Custom Logo Image (WebP)', 'category' => 'branding']
+            );
         }
 
         // Handle custom favicon upload
@@ -124,7 +129,7 @@ class AdminController extends Controller
             $faviconPath = $this->uploadAndConvertToWebP($request->file('favicon'), 'branding');
             if ($faviconPath) {
                 $oldFav = SiteParameter::find('favicon_path');
-                if ($oldFav && $oldFav->value) {
+                if ($oldFav && $oldFav->value && !str_starts_with($oldFav->value, 'http') && !str_starts_with($oldFav->value, '//')) {
                     Storage::disk('public')->delete($oldFav->value);
                 }
                 
@@ -133,6 +138,11 @@ class AdminController extends Controller
                     ['value' => $faviconPath, 'label' => 'Custom Favicon Image (WebP)', 'category' => 'branding']
                 );
             }
+        } elseif ($request->has('favicon_url')) {
+            SiteParameter::updateOrCreate(
+                ['id' => 'favicon_path'],
+                ['value' => $request->input('favicon_url'), 'label' => 'Custom Favicon Image (WebP)', 'category' => 'branding']
+            );
         }
 
         return redirect()->back()->with('success', 'Parameters and branding updated successfully!');
@@ -144,11 +154,14 @@ class AdminController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'image' => 'nullable|image|max:5000',
+            'image_url' => 'nullable|string',
         ]);
 
         $imagePath = null;
         if ($request->hasFile('image')) {
             $imagePath = $this->uploadAndConvertToWebP($request->file('image'), 'slider');
+        } elseif ($request->filled('image_url')) {
+            $imagePath = $request->input('image_url');
         }
 
         HomeSlide::create([
@@ -168,15 +181,18 @@ class AdminController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'image' => 'nullable|image|max:5000',
+            'image_url' => 'nullable|string',
         ]);
 
         $slide = HomeSlide::findOrFail($id);
 
         if ($request->hasFile('image')) {
-            if ($slide->image_path) {
+            if ($slide->image_path && !str_starts_with($slide->image_path, 'http') && !str_starts_with($slide->image_path, '//')) {
                 Storage::disk('public')->delete($slide->image_path);
             }
             $slide->image_path = $this->uploadAndConvertToWebP($request->file('image'), 'slider');
+        } elseif ($request->has('image_url')) {
+            $slide->image_path = $request->input('image_url');
         }
 
         $slide->update([
@@ -209,11 +225,14 @@ class AdminController extends Controller
             'content' => 'required|string',
             'rating' => 'required|integer|min:1|max:5',
             'avatar' => 'nullable|image|max:2000',
+            'avatar_url' => 'nullable|string',
         ]);
 
         $avatarPath = null;
         if ($request->hasFile('avatar')) {
             $avatarPath = $this->uploadAndConvertToWebP($request->file('avatar'), 'testimonials');
+        } elseif ($request->filled('avatar_url')) {
+            $avatarPath = $request->input('avatar_url');
         }
 
         Testimonial::create([
@@ -235,15 +254,18 @@ class AdminController extends Controller
             'content' => 'required|string',
             'rating' => 'required|integer|min:1|max:5',
             'avatar' => 'nullable|image|max:2000',
+            'avatar_url' => 'nullable|string',
         ]);
 
         $testimonial = Testimonial::findOrFail($id);
 
         if ($request->hasFile('avatar')) {
-            if ($testimonial->avatar_path) {
+            if ($testimonial->avatar_path && !str_starts_with($testimonial->avatar_path, 'http') && !str_starts_with($testimonial->avatar_path, '//')) {
                 Storage::disk('public')->delete($testimonial->avatar_path);
             }
             $testimonial->avatar_path = $this->uploadAndConvertToWebP($request->file('avatar'), 'testimonials');
+        } elseif ($request->has('avatar_url')) {
+            $testimonial->avatar_path = $request->input('avatar_url');
         }
 
         $testimonial->update([
@@ -277,6 +299,7 @@ class AdminController extends Controller
             'summary' => 'required|string',
             'content' => 'required|string',
             'image' => 'nullable|image|max:5000',
+            'image_url' => 'nullable|string',
             'slug' => 'nullable|string|max:255|unique:blogs,slug',
         ]);
 
@@ -289,6 +312,8 @@ class AdminController extends Controller
         $imagePath = null;
         if ($request->hasFile('image')) {
             $imagePath = $this->uploadAndConvertToWebP($request->file('image'), 'blog');
+        } elseif ($request->filled('image_url')) {
+            $imagePath = $request->input('image_url');
         }
 
         \App\Models\Blog::create([
@@ -312,6 +337,7 @@ class AdminController extends Controller
             'summary' => 'required|string',
             'content' => 'required|string',
             'image' => 'nullable|image|max:5000',
+            'image_url' => 'nullable|string',
             'slug' => 'required|string|max:255|unique:blogs,slug,' . $id,
         ]);
 
@@ -319,10 +345,12 @@ class AdminController extends Controller
 
         $imagePath = $blog->image_path;
         if ($request->hasFile('image')) {
-            if ($blog->image_path) {
+            if ($blog->image_path && !str_starts_with($blog->image_path, 'http') && !str_starts_with($blog->image_path, '//')) {
                 Storage::disk('public')->delete($blog->image_path);
             }
             $imagePath = $this->uploadAndConvertToWebP($request->file('image'), 'blog');
+        } elseif ($request->has('image_url')) {
+            $imagePath = $request->input('image_url');
         }
 
         $blog->update([

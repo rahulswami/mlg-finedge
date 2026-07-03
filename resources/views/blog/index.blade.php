@@ -42,7 +42,7 @@
             <article class="blog-card">
                 <div class="blog-img" style="{{ $blog->image_path ? '' : 'background-color: ' . ($blog->category === 'Home Loans' ? 'var(--accent-orange)' : 'var(--accent-teal)') }}">
                     @if($blog->image_path)
-                        <img src="{{ asset('storage/' . $blog->image_path) }}" alt="{{ $blog->title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                        <img src="{{ site_image($blog->image_path) }}" alt="{{ $blog->title }}" style="width: 100%; height: 100%; object-fit: cover;">
                     @else
                         <i data-lucide="{{ $blog->category === 'Home Loans' ? 'home' : 'book-open' }}"></i>
                     @endif
