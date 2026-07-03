@@ -82,6 +82,54 @@ class HomeController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'phone' => 'required|string',
+            'email' => 'nullable|email|max:255',
+        ]);
+
+        $siteSettings = \App\Models\SiteParameter::all()->pluck('value', 'id')->toArray();
+        
+        // 1. Google reCAPTCHA Verification (if enabled)
+        if (!empty($siteSettings['recaptcha_enabled']) && $siteSettings['recaptcha_enabled'] == '1') {
+            $recaptchaResponse = $request->input('g-recaptcha-response');
+            $secretKey = $siteSettings['recaptcha_secret_key'] ?? '';
+            
+            if (empty($recaptchaResponse)) {
+                return redirect()->back()->withInput()->with('error', 'Please complete the Google reCAPTCHA verification to submit the form.');
+            }
+            
+            $verifyResponse = \Illuminate\Support\Facades\Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+                'secret' => $secretKey,
+                'response' => $recaptchaResponse,
+                'remoteip' => $request->ip()
+            ]);
+            
+            if (!$verifyResponse->successful() || !$verifyResponse->json('success')) {
+                return redirect()->back()->withInput()->with('error', 'Google reCAPTCHA verification failed. Please try again.');
+            }
+        }
+
+        // 2. Build detailed compilation message
+        $compiledMessage = '';
+        if ($request->filled('loan_type')) {
+            $compiledMessage .= 'Loan Type: ' . ucwords($request->loan_type) . "\n";
+        }
+        if ($request->filled('amount')) {
+            $compiledMessage .= 'Expected Amount: ₹' . number_format($request->amount) . "\n";
+        }
+        if ($request->filled('service')) {
+            $compiledMessage .= 'Service: ' . str_replace('-', ' ', ucwords($request->service)) . "\n";
+        }
+        if ($request->filled('message')) {
+            $compiledMessage .= 'Details: ' . $request->message . "\n";
+        }
+
+        // 3. Save Lead
+        \App\Models\Lead::create([
+            'name' => $request->name,
+            'phone' => $request->phone,
+            'email' => $request->email,
+            'message' => $compiledMessage ?: 'Requesting a quick callback/consultation.',
+            'source' => $request->input('source', 'Contact Form'),
+            'status' => 'New',
         ]);
 
         return redirect()->back()->with('success', 'Thank you for contacting MLG Finedge. One of our senior loan advisors will review your request and get in touch with you shortly.');

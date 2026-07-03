@@ -371,6 +371,13 @@
             border-radius: 4px;
             font-weight: 600;
         }
+        .badge {
+            font-size: 0.8rem;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            display: inline-block;
+        }
     </style>
 </head>
 <body>
@@ -390,6 +397,7 @@
         
         <ul class="sidebar-menu">
             <li class="menu-item"><button onclick="switchTab('general')" class="tab-btn active" id="btn-general"><i data-lucide="settings"></i> General Settings</button></li>
+            <li class="menu-item"><button onclick="switchTab('leads')" class="tab-btn" id="btn-leads"><i data-lucide="inbox"></i> Leads Manager</button></li>
             <li class="menu-item"><button onclick="switchTab('branding')" class="tab-btn" id="btn-branding"><i data-lucide="image"></i> Branding & Logos</button></li>
             <li class="menu-item"><button onclick="switchTab('slider')" class="tab-btn" id="btn-slider"><i data-lucide="sliders"></i> Homepage Slider</button></li>
             <li class="menu-item"><button onclick="switchTab('testimonials')" class="tab-btn" id="btn-testimonials"><i data-lucide="users"></i> Testimonials</button></li>
@@ -512,8 +520,203 @@
                         </div>
                     </div>
 
+                    <div class="admin-card">
+                        <h2>Google reCAPTCHA v2 Settings</h2>
+                        <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem; margin-top: -1rem;">
+                            Protects all contact and inquiry forms on the website from automated spam. 
+                            <a href="https://www.google.com/recaptcha/admin" target="_blank" style="color: var(--accent-orange); text-decoration: underline; font-weight: 500;">
+                                Learn how to generate Google reCAPTCHA v2 checkbox keys &rarr;
+                            </a>
+                        </p>
+                        
+                        <div class="form-grid">
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label for="recaptcha_enabled" style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                                    <input type="checkbox" id="recaptcha_enabled" name="recaptcha_enabled" value="1" @checked(($site['recaptcha_enabled'] ?? '0') == '1') style="width: 18px; height: 18px; cursor: pointer;">
+                                    <strong>Enable Google reCAPTCHA Checkbox on Forms</strong>
+                                </label>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="recaptcha_site_key">reCAPTCHA Site Key</label>
+                                <input type="text" id="recaptcha_site_key" name="recaptcha_site_key" class="form-control" value="{{ $site['recaptcha_site_key'] ?? '' }}" placeholder="Paste Google Site Key (e.g. 6Ld...)">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="recaptcha_secret_key">reCAPTCHA Secret Key</label>
+                                <input type="text" id="recaptcha_secret_key" name="recaptcha_secret_key" class="form-control" value="{{ $site['recaptcha_secret_key'] ?? '' }}" placeholder="Paste Google Secret Key">
+                            </div>
+                        </div>
+                    </div>
+
                     <button type="submit" class="btn-submit">Save Parameters</button>
                 </form>
+            </div>
+
+            <!-- LEADS MANAGER TAB -->
+            <div class="tab-panel" id="tab-leads">
+                <!-- Stats Overview Grid -->
+                <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 2rem;">
+                    <div class="admin-card text-center" style="padding: 1.25rem; margin-bottom: 0;">
+                        <h4 style="margin: 0; font-size: 0.85rem; color: var(--admin-text-muted); text-transform: uppercase;">Total Leads</h4>
+                        <p style="font-size: 2.25rem; font-weight: 800; color: var(--primary-teal-dark); margin: 0.5rem 0 0 0;">{{ $leads->count() }}</p>
+                    </div>
+                    <div class="admin-card text-center" style="padding: 1.25rem; margin-bottom: 0; border-left: 4px solid #3b82f6;">
+                        <h4 style="margin: 0; font-size: 0.85rem; color: var(--admin-text-muted); text-transform: uppercase;">New</h4>
+                        <p style="font-size: 2.25rem; font-weight: 800; color: #3b82f6; margin: 0.5rem 0 0 0;">{{ $leads->where('status', 'New')->count() }}</p>
+                    </div>
+                    <div class="admin-card text-center" style="padding: 1.25rem; margin-bottom: 0; border-left: 4px solid #eab308;">
+                        <h4 style="margin: 0; font-size: 0.85rem; color: var(--admin-text-muted); text-transform: uppercase;">Contacted</h4>
+                        <p style="font-size: 2.25rem; font-weight: 800; color: #eab308; margin: 0.5rem 0 0 0;">{{ $leads->where('status', 'Contacted')->count() }}</p>
+                    </div>
+                    <div class="admin-card text-center" style="padding: 1.25rem; margin-bottom: 0; border-left: 4px solid #f97316;">
+                        <h4 style="margin: 0; font-size: 0.85rem; color: var(--admin-text-muted); text-transform: uppercase;">In Progress</h4>
+                        <p style="font-size: 2.25rem; font-weight: 800; color: #f97316; margin: 0.5rem 0 0 0;">{{ $leads->where('status', 'In Progress')->count() }}</p>
+                    </div>
+                    <div class="admin-card text-center" style="padding: 1.25rem; margin-bottom: 0; border-left: 4px solid #22c55e;">
+                        <h4 style="margin: 0; font-size: 0.85rem; color: var(--admin-text-muted); text-transform: uppercase;">Closed</h4>
+                        <p style="font-size: 2.25rem; font-weight: 800; color: #22c55e; margin: 0.5rem 0 0 0;">{{ $leads->where('status', 'Closed')->count() }}</p>
+                    </div>
+                </div>
+
+                <!-- Leads Table Card -->
+                <div class="admin-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h2>Lead Records</h2>
+                        <span style="font-size: 0.85rem; color: var(--admin-text-muted);">Showing all lead submissions</span>
+                    </div>
+
+                    @if($leads->isEmpty())
+                        <div style="text-align: center; padding: 3rem 1.5rem; color: var(--admin-text-muted);">
+                            <i data-lucide="inbox" style="width: 48px; height: 48px; stroke-width: 1.5; margin-bottom: 1rem; color: #cbd5e1;"></i>
+                            <p style="font-size: 1.1rem; margin-bottom: 0.25rem;">No leads found</p>
+                            <p style="font-size: 0.85rem;">When clients submit a form on the website, they will appear here.</p>
+                        </div>
+                    @else
+                        <div style="overflow-x: auto;">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date & Time</th>
+                                        <th>Client Information</th>
+                                        <th>Source</th>
+                                        <th>Status</th>
+                                        <th style="text-align: right;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($leads as $lead)
+                                        <!-- Main Info Row -->
+                                        <tr id="lead-row-{{ $lead->id }}">
+                                            <td style="font-size: 0.85rem; color: var(--admin-text-muted); white-space: nowrap;">
+                                                {{ $lead->created_at->format('d M Y, h:i A') }}<br>
+                                                <small style="color: #94a3b8;">{{ $lead->created_at->diffForHumans() }}</small>
+                                            </td>
+                                            <td>
+                                                <strong style="font-size: 1.05rem; color: var(--primary-teal-dark); display: block;">{{ $lead->name }}</strong>
+                                                <div style="display: flex; gap: 10px; margin-top: 0.25rem; font-size: 0.85rem;">
+                                                    <a href="tel:{{ $lead->phone }}" style="color: var(--accent-orange); display: flex; align-items: center; gap: 4px; font-weight: 500;">
+                                                        <i data-lucide="phone" style="width: 12px; height: 12px;"></i> {{ $lead->phone }}
+                                                    </a>
+                                                    @if($lead->email)
+                                                        <a href="mailto:{{ $lead->email }}" style="color: var(--admin-text-muted); display: flex; align-items: center; gap: 4px;">
+                                                            <i data-lucide="mail" style="width: 12px; height: 12px;"></i> {{ $lead->email }}
+                                                        </a>
+                                                    @endif
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span class="badge" style="background-color: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; font-size: 0.75rem;">
+                                                    {{ $lead->source }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                @if($lead->status === 'New')
+                                                    <span class="badge" style="background-color: #dbeafe; color: #1e40af;">New</span>
+                                                @elseif($lead->status === 'Contacted')
+                                                    <span class="badge" style="background-color: #fef9c3; color: #854d0e;">Contacted</span>
+                                                @elseif($lead->status === 'In Progress')
+                                                    <span class="badge" style="background-color: #ffedd5; color: #9a3412;">In Progress</span>
+                                                @elseif($lead->status === 'Closed')
+                                                    <span class="badge" style="background-color: #dcfce7; color: #166534;">Closed</span>
+                                                @endif
+                                            </td>
+                                            <td style="text-align: right; white-space: nowrap;">
+                                                <button type="button" onclick="toggleLeadDetails({{ $lead->id }})" class="btn-action edit" title="View Details / Edit" style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 4px; font-weight: 500; font-size: 0.85rem; border: 1px solid var(--primary-teal); background-color: transparent; color: var(--primary-teal);">
+                                                    <i data-lucide="edit-3" style="width: 14px; height: 14px;"></i> Details
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        
+                                        <!-- Inline Expandable Detail/Edit Form Row -->
+                                        <tr id="lead-details-{{ $lead->id }}" class="lead-detail-row" style="display: none; background-color: #f8fafc;">
+                                            <td colspan="5" style="padding: 1.5rem; border-top: 1px dashed #e2e8f0; border-bottom: 1px dashed #e2e8f0;">
+                                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                                                    
+                                                    <!-- Details Section -->
+                                                    <div>
+                                                        <h4 style="margin: 0 0 0.75rem 0; color: var(--primary-teal-dark); font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px; border: none; padding: 0;">Lead Information Details</h4>
+                                                        <div style="background-color: white; border: 1px solid #e2e8f0; border-radius: var(--radius-md); padding: 1rem; font-size: 0.9rem; line-height: 1.5; color: #334155;">
+                                                            {!! nl2br(e($lead->message)) !!}
+                                                        </div>
+                                                        @if($lead->notes)
+                                                            <div style="margin-top: 1rem;">
+                                                                <h5 style="margin: 0 0 0.5rem 0; color: #475569;">Admin Notes History</h5>
+                                                                <p style="font-size: 0.85rem; color: #64748b; font-style: italic; background-color: #f1f5f9; padding: 0.50rem 0.75rem; border-radius: 4px; border-left: 3px solid #cbd5e1; margin: 0;">
+                                                                    {{ $lead->notes }}
+                                                                </p>
+                                                            </div>
+                                                        @endif
+                                                    </div>
+                                                    
+                                                    <!-- Actions & Notes Form Section -->
+                                                    <div>
+                                                        <h4 style="margin: 0 0 0.75rem 0; color: var(--primary-teal-dark); font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px; border: none; padding: 0;">Update Status & Actions</h4>
+                                                        <form action="{{ route('admin.leads.update', $lead->id) }}" method="POST" style="margin-bottom: 0;">
+                                                            @csrf
+                                                            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                                                <div class="form-group">
+                                                                    <label style="font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 4px;">Lead Status</label>
+                                                                    <select name="status" class="form-control" required style="padding: 0.5rem; height: auto;">
+                                                                        <option value="New" @selected($lead->status === 'New')>New</option>
+                                                                        <option value="Contacted" @selected($lead->status === 'Contacted')>Contacted</option>
+                                                                        <option value="In Progress" @selected($lead->status === 'In Progress')>In Progress</option>
+                                                                        <option value="Closed" @selected($lead->status === 'Closed')>Closed</option>
+                                                                    </select>
+                                                                </div>
+                                                                
+                                                                <div class="form-group">
+                                                                    <label style="font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 4px;">Internal Follow-up Notes</label>
+                                                                    <textarea name="notes" class="form-control" rows="3" placeholder="Write internal notes about client conversation..." style="font-size: 0.85rem; padding: 0.5rem;">{{ $lead->notes }}</textarea>
+                                                                </div>
+                                                            </div>
+                                                            <button type="submit" class="btn-submit" style="padding: 0.5rem 1rem; width: auto; margin-top: 0.75rem; font-size: 0.85rem;">
+                                                                Update Status & Notes
+                                                            </button>
+                                                        </form>
+                                                        
+                                                        <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 1.25rem 0;">
+                                                        
+                                                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                                                            <span style="font-size: 0.8rem; color: #94a3b8;">Dangerous operation:</span>
+                                                            <form action="{{ route('admin.leads.delete', $lead->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to permanently delete this lead record?');" style="margin: 0;">
+                                                                @csrf
+                                                                <button type="submit" class="btn-action delete" style="padding: 0.4rem 0.8rem; font-size: 0.8rem; display: flex; align-items: center; gap: 4px; height: auto; background-color: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; border-radius: 4px; cursor: pointer;">
+                                                                    <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i> Delete Lead Record
+                                                                </button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @endif
+                </div>
             </div>
 
             <!-- 2. BRANDING & LOGOS TAB -->
@@ -1368,6 +1571,17 @@
             });
             document.getElementById('tab-' + tabId).classList.add('active');
             document.getElementById('btn-' + tabId).classList.add('active');
+        }
+
+        // Toggle Lead Details
+        function toggleLeadDetails(id) {
+            const row = document.getElementById('lead-details-' + id);
+            if (row.style.display === 'none') {
+                row.style.display = 'table-row';
+                setTimeout(() => lucide.createIcons(), 10);
+            } else {
+                row.style.display = 'none';
+            }
         }
 
         // Initialize CKEditor

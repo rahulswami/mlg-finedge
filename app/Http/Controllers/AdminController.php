@@ -75,17 +75,26 @@ class AdminController extends Controller
             // Silently fail
         }
 
+        // Fetch all leads
+        $leads = \App\Models\Lead::orderBy('created_at', 'desc')->get();
+
         // Fetch all page contents to let user edit them
         $pageContents = \App\Models\PageContent::all();
 
+        // Load services and banks for management
         $services = \App\Models\Service::orderBy('sort_order')->orderBy('id')->get();
         $banks = \App\Models\ComparisonBank::orderBy('sort_order')->orderBy('id')->get();
         
-        return view('admin.dashboard', compact('parameters', 'slides', 'testimonials', 'blogs', 'mediaFiles', 'pageContents', 'services', 'banks'));
+        return view('admin.dashboard', compact('parameters', 'slides', 'testimonials', 'blogs', 'mediaFiles', 'pageContents', 'services', 'banks', 'leads'));
     }
 
     public function updateParameters(Request $request)
     {
+        // Handle unchecked checkbox for recaptcha_enabled
+        if (!$request->has('recaptcha_enabled')) {
+            $request->merge(['recaptcha_enabled' => '0']);
+        }
+
         $data = $request->except(['_token', 'logo', 'favicon', 'logo_url', 'favicon_url']);
         
         foreach ($data as $key => $value) {
@@ -697,6 +706,30 @@ class AdminController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Sync failed: ' . $e->getMessage());
         }
+    }
+
+    public function updateLead(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|string|in:New,Contacted,In Progress,Closed',
+            'notes' => 'nullable|string',
+        ]);
+
+        $lead = \App\Models\Lead::findOrFail($id);
+        $lead->update([
+            'status' => $request->status,
+            'notes' => $request->notes,
+        ]);
+
+        return redirect()->back()->with('success', 'Lead updated successfully!');
+    }
+
+    public function deleteLead($id)
+    {
+        $lead = \App\Models\Lead::findOrFail($id);
+        $lead->delete();
+
+        return redirect()->back()->with('success', 'Lead deleted successfully!');
     }
 
     private function getParameterCategory($key)

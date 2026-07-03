@@ -34,6 +34,10 @@
 
     <!-- Structured SEO Schemas -->
     @yield('schema')
+
+    @if(!empty($site['recaptcha_enabled']) && $site['recaptcha_enabled'] == '1' && !empty($site['recaptcha_site_key']))
+        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    @endif
 </head>
 <body>
 
@@ -203,6 +207,7 @@
             </div>
             <form action="{{ route('contact.submit') }}" method="POST">
                 @csrf
+                <input type="hidden" name="source" value="Callback Request Modal">
                 <div class="form-group">
                     <label for="cb-name">Your Full Name</label>
                     <input type="text" id="cb-name" name="name" class="form-control" placeholder="Enter your name" required>
@@ -222,6 +227,11 @@
                         <option value="other">Other Loans</option>
                     </select>
                 </div>
+                @if(!empty($site['recaptcha_enabled']) && $site['recaptcha_enabled'] == '1' && !empty($site['recaptcha_site_key']))
+                    <div class="form-group" style="margin-bottom: 1rem; display: flex; justify-content: center;">
+                        <div class="g-recaptcha" data-sitekey="{{ $site['recaptcha_site_key'] }}"></div>
+                    </div>
+                @endif
                 <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Submit Callback Request</button>
             </form>
         </div>
@@ -237,6 +247,7 @@
             </div>
             <form action="{{ route('contact.submit') }}" method="POST">
                 @csrf
+                <input type="hidden" name="source" value="Exit Intent Modal">
                 <div class="form-group">
                     <label for="exit-name">Your Full Name</label>
                     <input type="text" id="exit-name" name="name" class="form-control" placeholder="Enter your name" required>
@@ -245,6 +256,11 @@
                     <label for="exit-phone">Phone Number</label>
                     <input type="tel" id="exit-phone" name="phone" class="form-control" placeholder="Enter 10-digit number" pattern="[0-9]{10}" required>
                 </div>
+                @if(!empty($site['recaptcha_enabled']) && $site['recaptcha_enabled'] == '1' && !empty($site['recaptcha_site_key']))
+                    <div class="form-group" style="margin-bottom: 1rem; display: flex; justify-content: center;">
+                        <div class="g-recaptcha" data-sitekey="{{ $site['recaptcha_site_key'] }}"></div>
+                    </div>
+                @endif
                 <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Get My Free Report</button>
             </form>
         </div>

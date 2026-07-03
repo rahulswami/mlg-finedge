@@ -143,6 +143,7 @@
                     <h3>Request Consultation</h3>
                     <form action="{{ route('contact.submit') }}" method="POST">
                         @csrf
+                        <input type="hidden" name="source" value="Service Page Form: {{ $service->service_name }}">
                         <input type="hidden" name="service" value="{{ $service->slug }}">
                         <div class="form-group">
                             <label for="sb-name">Full Name</label>
@@ -152,6 +153,11 @@
                             <label for="sb-phone">Phone Number</label>
                             <input type="tel" id="sb-phone" name="phone" class="form-control" placeholder="10-digit number" pattern="[0-9]{10}" required>
                         </div>
+                        @if(!empty($site['recaptcha_enabled']) && $site['recaptcha_enabled'] == '1' && !empty($site['recaptcha_site_key']))
+                            <div class="form-group" style="margin-bottom: 1rem; display: flex; justify-content: center;">
+                                <div class="g-recaptcha" data-sitekey="{{ $site['recaptcha_site_key'] }}"></div>
+                            </div>
+                        @endif
                         <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Apply Now</button>
                     </form>
                 </div>

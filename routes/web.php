@@ -59,4 +59,8 @@ Route::middleware(['auth'])->group(function () {
 
     // Sync database content
     Route::post('/admin/sync-database', [AdminController::class, 'syncDatabase'])->name('admin.sync-database');
+
+    // Leads Management
+    Route::post('/admin/leads/{id}/update', [AdminController::class, 'updateLead'])->name('admin.leads.update');
+    Route::post('/admin/leads/{id}/delete', [AdminController::class, 'deleteLead'])->name('admin.leads.delete');
 });

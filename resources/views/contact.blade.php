@@ -85,6 +85,7 @@
                 <h2 style="margin-bottom: 1.5rem;">Send an Inquiry</h2>
                 <form action="{{ route('contact.submit') }}" method="POST">
                     @csrf
+                    <input type="hidden" name="source" value="Contact Page Form">
                     <div class="form-group">
                         <label for="c-name">Full Name</label>
                         <input type="text" id="c-name" name="name" class="form-control" placeholder="Enter your name" required>
@@ -125,6 +126,11 @@
                         <textarea id="c-message" name="message" class="form-control" rows="4" placeholder="Briefly specify if salaried/business and your requirements..."></textarea>
                     </div>
                     
+                    @if(!empty($site['recaptcha_enabled']) && $site['recaptcha_enabled'] == '1' && !empty($site['recaptcha_site_key']))
+                        <div class="form-group" style="margin-bottom: 1.5rem; display: flex; justify-content: center;">
+                            <div class="g-recaptcha" data-sitekey="{{ $site['recaptcha_site_key'] }}"></div>
+                        </div>
+                    @endif
                     <button type="submit" class="btn btn-primary" style="width: 100%;">Submit Loan Inquiry</button>
                 </form>
             </div>
