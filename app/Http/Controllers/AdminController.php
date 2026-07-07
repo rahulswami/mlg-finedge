@@ -56,8 +56,8 @@ class AdminController extends Controller
         // Scan public storage for media files
         $mediaFiles = [];
         try {
-            $r2PublicUrl = SiteParameter::where('id', 'cloudflare_r2_public_url')->value('value');
-            $hasR2 = !empty($r2PublicUrl) && !empty(SiteParameter::where('id', 'cloudflare_r2_account_id')->value('value'));
+            $r2PublicUrl = trim(SiteParameter::where('id', 'cloudflare_r2_public_url')->value('value') ?? '');
+            $hasR2 = !empty($r2PublicUrl) && !empty(trim(SiteParameter::where('id', 'cloudflare_r2_account_id')->value('value') ?? ''));
             if (empty($r2PublicUrl)) {
                 $r2PublicUrl = 'https://images.mlgfinedge.com';
             }
@@ -451,10 +451,10 @@ class AdminController extends Controller
     /* Helper function for uploading to Cloudflare R2 Storage using pure S3 REST API & Signature V4 */
     private function uploadToR2($fileData, $filename, $mimeType = 'image/webp')
     {
-        $accountId = SiteParameter::where('id', 'cloudflare_r2_account_id')->value('value');
-        $accessKey = SiteParameter::where('id', 'cloudflare_r2_access_key_id')->value('value');
-        $secretKey = SiteParameter::where('id', 'cloudflare_r2_secret_access_key')->value('value');
-        $bucket = SiteParameter::where('id', 'cloudflare_r2_bucket_name')->value('value');
+        $accountId = trim(SiteParameter::where('id', 'cloudflare_r2_account_id')->value('value') ?? '');
+        $accessKey = trim(SiteParameter::where('id', 'cloudflare_r2_access_key_id')->value('value') ?? '');
+        $secretKey = trim(SiteParameter::where('id', 'cloudflare_r2_secret_access_key')->value('value') ?? '');
+        $bucket = trim(SiteParameter::where('id', 'cloudflare_r2_bucket_name')->value('value') ?? '');
 
         if (empty($accountId) || empty($accessKey) || empty($secretKey) || empty($bucket)) {
             return false;
@@ -528,7 +528,7 @@ class AdminController extends Controller
         if (!$file) return null;
         
         $extension = $file->getClientOriginalExtension();
-        $r2PublicUrl = SiteParameter::where('id', 'cloudflare_r2_public_url')->value('value');
+        $r2PublicUrl = trim(SiteParameter::where('id', 'cloudflare_r2_public_url')->value('value') ?? '');
         if (empty($r2PublicUrl)) {
             $r2PublicUrl = 'https://images.mlgfinedge.com';
         }
@@ -1273,11 +1273,11 @@ User prompt: {$prompt}";
 
     public function syncLocalImagesToR2(Request $request)
     {
-        $r2PublicUrl = SiteParameter::where('id', 'cloudflare_r2_public_url')->value('value');
-        $accountId = SiteParameter::where('id', 'cloudflare_r2_account_id')->value('value');
-        $accessKey = SiteParameter::where('id', 'cloudflare_r2_access_key_id')->value('value');
-        $secretKey = SiteParameter::where('id', 'cloudflare_r2_secret_access_key')->value('value');
-        $bucket = SiteParameter::where('id', 'cloudflare_r2_bucket_name')->value('value');
+        $r2PublicUrl = trim(SiteParameter::where('id', 'cloudflare_r2_public_url')->value('value') ?? '');
+        $accountId = trim(SiteParameter::where('id', 'cloudflare_r2_account_id')->value('value') ?? '');
+        $accessKey = trim(SiteParameter::where('id', 'cloudflare_r2_access_key_id')->value('value') ?? '');
+        $secretKey = trim(SiteParameter::where('id', 'cloudflare_r2_secret_access_key')->value('value') ?? '');
+        $bucket = trim(SiteParameter::where('id', 'cloudflare_r2_bucket_name')->value('value') ?? '');
 
         if (empty($accountId) || empty($accessKey) || empty($secretKey) || empty($bucket)) {
             return response()->json([
