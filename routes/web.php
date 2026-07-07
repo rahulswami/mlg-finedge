@@ -17,6 +17,7 @@ Route::get('/blog', [HomeController::class, 'blog'])->name('blog');
 Route::get('/blog/{slug}', [HomeController::class, 'blogShow'])->name('blog.show');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
 Route::post('/contact/submit', [HomeController::class, 'contactSubmit'])->name('contact.submit');
+Route::get('/thank-you', [HomeController::class, 'thankYou'])->name('thank-you');
 
 // Admin CMS Auth
 Route::get('/admin/login', [AdminController::class, 'loginForm'])->name('login');

@@ -136,6 +136,11 @@ class HomeController extends Controller
             \Illuminate\Support\Facades\Log::error('Lead save failed: ' . $e->getMessage());
         }
 
-        return redirect()->back()->with('success', 'Thank you for contacting MLG Finedge. One of our senior loan advisors will review your request and get in touch with you shortly.');
+        return redirect()->route('thank-you');
+    }
+
+    public function thankYou()
+    {
+        return view('thank-you');
     }
 }
