@@ -454,7 +454,7 @@ class AdminController extends Controller
         }
 
         try {
-            $host = "{$bucket}.r2.cloudflarestorage.com";
+            $host = "{$accountId}.r2.cloudflarestorage.com";
             $endpoint = "https://{$accountId}.r2.cloudflarestorage.com/{$bucket}/{$filename}";
             
             $region = 'auto';
