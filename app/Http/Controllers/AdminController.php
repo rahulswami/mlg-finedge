@@ -441,33 +441,78 @@ class AdminController extends Controller
         return redirect()->back()->with('error', 'Upload failed.');
     }
 
-    /* Helper function for uploading and optimizing images to WebP format */
-    private function uploadToFtp($fileData, $filename)
+    /* Helper function for uploading to Cloudflare R2 Storage using pure S3 REST API & Signature V4 */
+    private function uploadToR2($fileData, $filename, $mimeType = 'image/webp')
     {
-        $host = 'ftp.mlgfinedge.com';
-        $user = 'u709314437.mlgimages';
-        $pass = '26June2026#';
+        $accountId = SiteParameter::where('id', 'cloudflare_r2_account_id')->value('value');
+        $accessKey = SiteParameter::where('id', 'cloudflare_r2_access_key_id')->value('value');
+        $secretKey = SiteParameter::where('id', 'cloudflare_r2_secret_access_key')->value('value');
+        $bucket = SiteParameter::where('id', 'cloudflare_r2_bucket_name')->value('value');
 
-        $conn = @ftp_connect($host);
-        if (!$conn) {
+        if (empty($accountId) || empty($accessKey) || empty($secretKey) || empty($bucket)) {
             return false;
         }
 
-        if (!@ftp_login($conn, $user, $pass)) {
-            @ftp_close($conn);
+        try {
+            $host = "{$bucket}.r2.cloudflarestorage.com";
+            $endpoint = "https://{$accountId}.r2.cloudflarestorage.com/{$bucket}/{$filename}";
+            
+            $region = 'auto';
+            $service = 's3';
+            $method = 'PUT';
+            
+            $dateTime = gmdate('Ymd\THis\Z');
+            $date = gmdate('Ymd');
+            
+            $headers = [
+                'host' => $host,
+                'x-amz-content-sha256' => hash('sha256', $fileData),
+                'x-amz-date' => $dateTime,
+                'content-type' => $mimeType,
+            ];
+            
+            ksort($headers);
+            
+            $canonicalHeaders = '';
+            $signedHeaders = '';
+            foreach ($headers as $k => $v) {
+                $canonicalHeaders .= $k . ':' . trim($v) . "\n";
+                $signedHeaders .= $k . ';';
+            }
+            $signedHeaders = rtrim($signedHeaders, ';');
+            
+            $canonicalRequest = "{$method}\n/{$bucket}/{$filename}\n\n{$canonicalHeaders}\n{$signedHeaders}\n" . hash('sha256', $fileData);
+            
+            $credentialScope = "{$date}/{$region}/{$service}/aws4_request";
+            
+            $stringToSign = "AWS4-HMAC-SHA256\n{$dateTime}\n{$credentialScope}\n" . hash('sha256', $canonicalRequest);
+            
+            $kDate = hash_hmac('sha256', $date, 'AWS4' . $secretKey, true);
+            $kRegion = hash_hmac('sha256', $region, $kDate, true);
+            $kService = hash_hmac('sha256', $service, $kRegion, true);
+            $kSigning = hash_hmac('sha256', 'aws4_request', $kService, true);
+            
+            $signature = hash_hmac('sha256', $stringToSign, $kSigning);
+            
+            $authorizationHeader = "AWS4-HMAC-SHA256 Credential={$accessKey}/{$credentialScope}, SignedHeaders={$signedHeaders}, Signature={$signature}";
+            
+            $response = \Illuminate\Support\Facades\Http::withHeaders([
+                'Authorization' => $authorizationHeader,
+                'x-amz-content-sha256' => $headers['x-amz-content-sha256'],
+                'x-amz-date' => $dateTime,
+                'Content-Type' => $mimeType,
+            ])->withBody($fileData, $mimeType)->put($endpoint);
+            
+            if ($response->successful()) {
+                return true;
+            }
+            
+            \Illuminate\Support\Facades\Log::error('Cloudflare R2 Upload Failed: ' . $response->body());
+            return false;
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Cloudflare R2 Exception: ' . $e->getMessage());
             return false;
         }
-
-        @ftp_pasv($conn, true);
-
-        $tempFile = tempnam(sys_get_temp_dir(), 'ftp_');
-        file_put_contents($tempFile, $fileData);
-
-        $success = @ftp_put($conn, $filename, $tempFile, FTP_BINARY);
-        @unlink($tempFile);
-        @ftp_close($conn);
-
-        return $success;
     }
 
     /* Helper function for uploading and optimizing images to WebP format */
@@ -476,28 +521,36 @@ class AdminController extends Controller
         if (!$file) return null;
         
         $extension = $file->getClientOriginalExtension();
+        $r2PublicUrl = SiteParameter::where('id', 'cloudflare_r2_public_url')->value('value');
+        if (empty($r2PublicUrl)) {
+            $r2PublicUrl = 'https://images.mlgfinedge.com';
+        }
+        $r2PublicUrl = rtrim($r2PublicUrl, '/');
         
         // If SVG, save directly to preserve vector paths
         if (strtolower($extension) === 'svg') {
             $filename = uniqid() . '.svg';
             $fileData = file_get_contents($file->getRealPath());
-            if ($this->uploadToFtp($fileData, $filename)) {
+            if ($this->uploadToR2($fileData, $filename, 'image/svg+xml')) {
                 @Storage::disk('public')->put($folder . '/' . $filename, $fileData);
-                return 'https://images.mlgfinedge.com/' . $filename;
+                return $r2PublicUrl . '/' . $filename;
             }
             return $file->store($folder, 'public');
         }
         
         $filePath = $file->getRealPath();
         $image = null;
+        $mime = 'image/webp';
         
         switch (strtolower($extension)) {
             case 'jpeg':
             case 'jpg':
                 $image = imagecreatefromjpeg($filePath);
+                $mime = 'image/jpeg';
                 break;
             case 'png':
                 $image = imagecreatefrompng($filePath);
+                $mime = 'image/png';
                 if ($image) {
                     imagepalettetotruecolor($image);
                     imagealphablending($image, true);
@@ -506,17 +559,19 @@ class AdminController extends Controller
                 break;
             case 'gif':
                 $image = imagecreatefromgif($filePath);
+                $mime = 'image/gif';
                 if ($image) imagepalettetotruecolor($image);
                 break;
             case 'webp':
                 $image = imagecreatefromwebp($filePath);
+                $mime = 'image/webp';
                 break;
             default:
                 $filename = uniqid() . '.' . $extension;
                 $fileData = file_get_contents($filePath);
-                if ($this->uploadToFtp($fileData, $filename)) {
+                if ($this->uploadToR2($fileData, $filename, 'application/octet-stream')) {
                     @Storage::disk('public')->put($folder . '/' . $filename, $fileData);
-                    return 'https://images.mlgfinedge.com/' . $filename;
+                    return $r2PublicUrl . '/' . $filename;
                 }
                 return $file->store($folder, 'public');
         }
@@ -524,9 +579,9 @@ class AdminController extends Controller
         if (!$image) {
             $filename = uniqid() . '.' . $extension;
             $fileData = file_get_contents($filePath);
-            if ($this->uploadToFtp($fileData, $filename)) {
+            if ($this->uploadToR2($fileData, $filename, $mime)) {
                 @Storage::disk('public')->put($folder . '/' . $filename, $fileData);
-                return 'https://images.mlgfinedge.com/' . $filename;
+                return $r2PublicUrl . '/' . $filename;
             }
             return $file->store($folder, 'public');
         }
@@ -540,9 +595,9 @@ class AdminController extends Controller
         $webpData = ob_get_clean();
         imagedestroy($image);
         
-        if ($this->uploadToFtp($webpData, $filename)) {
+        if ($this->uploadToR2($webpData, $filename, 'image/webp')) {
             @Storage::disk('public')->put($folder . '/' . $filename, $webpData);
-            return 'https://images.mlgfinedge.com/' . $filename;
+            return $r2PublicUrl . '/' . $filename;
         }
         
         Storage::disk('public')->put($folder . '/' . $filename, $webpData);
@@ -1112,10 +1167,16 @@ User prompt: {$prompt}";
             $webpData = ob_get_clean();
             imagedestroy($image);
 
-            // Upload via FTP if possible
-            if ($this->uploadToFtp($webpData, $filename)) {
+            $r2PublicUrl = SiteParameter::where('id', 'cloudflare_r2_public_url')->value('value');
+            if (empty($r2PublicUrl)) {
+                $r2PublicUrl = 'https://images.mlgfinedge.com';
+            }
+            $r2PublicUrl = rtrim($r2PublicUrl, '/');
+
+            // Upload via Cloudflare R2 if possible
+            if ($this->uploadToR2($webpData, $filename, 'image/webp')) {
                 @Storage::disk('public')->put($folder . '/' . $filename, $webpData);
-                return 'https://images.mlgfinedge.com/' . $filename;
+                return $r2PublicUrl . '/' . $filename;
             }
 
             Storage::disk('public')->put($folder . '/' . $filename, $webpData);
@@ -1123,6 +1184,76 @@ User prompt: {$prompt}";
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error('GD library conversion exception: ' . $e->getMessage());
             return null;
+        }
+    }
+
+    public function getCloudflareAnalytics(Request $request)
+    {
+        $apiToken = SiteParameter::where('id', 'cloudflare_api_token')->value('value');
+        $zoneId = SiteParameter::where('id', 'cloudflare_zone_id')->value('value');
+
+        if (empty($apiToken) || empty($zoneId)) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Cloudflare API Token or Zone ID is missing. Please configure them in General Settings.'
+            ]);
+        }
+
+        $startDate = date('Y-m-d', strtotime('-7 days'));
+        
+        $query = [
+            'query' => 'query {
+                viewer {
+                    zones(filter: { zoneTag: "' . $zoneId . '" }) {
+                        httpRequests1dGroups(limit: 7, filter: { date_geq: "' . $startDate . '" }, orderBy: [date_ASC]) {
+                            sum {
+                                pageViews
+                                requests
+                                bytes
+                                cachedBytes
+                                cachedRequests
+                            }
+                            dimensions {
+                                date
+                            }
+                        }
+                    }
+                }
+            }'
+        ];
+
+        try {
+            $response = \Illuminate\Support\Facades\Http::withHeaders([
+                'Authorization' => 'Bearer ' . $apiToken,
+                'Content-Type' => 'application/json',
+            ])->post('https://api.cloudflare.com/client/v4/graphql', $query);
+
+            if ($response->failed()) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Cloudflare API request failed: ' . $response->body()
+                ]);
+            }
+
+            $resData = $response->json();
+            $groups = $resData['data']['viewer']['zones'][0]['httpRequests1dGroups'] ?? [];
+
+            if (empty($groups)) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'No analytics data returned by Cloudflare. Check your Zone ID and domain DNS settings.'
+                ]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => $groups
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Analytics Exception: ' . $e->getMessage()
+            ]);
         }
     }
 }

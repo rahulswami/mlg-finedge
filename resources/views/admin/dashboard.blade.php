@@ -702,6 +702,7 @@
             <li class="menu-item"><button onclick="switchTab('banks')" class="tab-btn" id="btn-banks"><i data-lucide="landmark"></i> Bank Comparison</button></li>
             <li class="menu-item"><button onclick="switchTab('blogs')" class="tab-btn" id="btn-blogs"><i data-lucide="book-open"></i> Blog Manager</button></li>
             <li class="menu-item"><button onclick="switchTab('media')" class="tab-btn" id="btn-media"><i data-lucide="hard-drive"></i> Media Manager</button></li>
+            <li class="menu-item"><button onclick="switchTab('analytics')" class="tab-btn" id="btn-analytics"><i data-lucide="bar-chart-2"></i> Web Analytics</button></li>
         </ul>
         
         <div class="sidebar-footer">
@@ -855,6 +856,65 @@
                                 <input type="password" id="gemini_api_key" name="gemini_api_key" class="form-control" value="{{ $site['gemini_api_key'] ?? '' }}" placeholder="Paste your Gemini API Key here...">
                                 <span style="font-size: 0.75rem; color: var(--admin-text-muted); display: block; margin-top: 5px;">
                                     Get an API Key from the <a href="https://aistudio.google.com/" target="_blank" style="color: var(--mint-green); text-decoration: underline;">Google AI Studio Console</a>.
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="admin-card">
+                        <h2>Cloudflare Web Analytics Settings</h2>
+                        <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem; margin-top: -1rem;">
+                            Enable Cloudflare Web Analytics to monitor pageviews, requests, and bandwidth inside this dashboard.
+                        </p>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="cloudflare_analytics_token">Cloudflare Web Analytics Token</label>
+                                <input type="text" id="cloudflare_analytics_token" name="cloudflare_analytics_token" class="form-control" value="{{ $site['cloudflare_analytics_token'] ?? '' }}" placeholder="e.g. 66a2e4fb8...">
+                                <span style="font-size: 0.75rem; color: var(--admin-text-muted); display: block; margin-top: 5px;">
+                                    Get the JS beacon token from the <a href="https://developers.cloudflare.com/analytics/web-analytics/" target="_blank" style="color: var(--mint-green); text-decoration: underline;">Cloudflare Web Analytics Guide</a>.
+                                </span>
+                            </div>
+                            <div class="form-group">
+                                <label for="cloudflare_zone_id">Cloudflare Zone ID</label>
+                                <input type="text" id="cloudflare_zone_id" name="cloudflare_zone_id" class="form-control" value="{{ $site['cloudflare_zone_id'] ?? '' }}" placeholder="e.g., d3b07384...">
+                            </div>
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label for="cloudflare_api_token">Cloudflare API Token (Analytics Read)</label>
+                                <input type="password" id="cloudflare_api_token" name="cloudflare_api_token" class="form-control" value="{{ $site['cloudflare_api_token'] ?? '' }}" placeholder="Paste API Token here...">
+                                <span style="font-size: 0.75rem; color: var(--admin-text-muted); display: block; margin-top: 5px;">
+                                    Generate a token with <strong>Zone.Analytics Read</strong> permission from your <a href="https://dash.cloudflare.com/profile/api-tokens" target="_blank" style="color: var(--mint-green); text-decoration: underline;">Cloudflare API Tokens settings</a>.
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="admin-card">
+                        <h2>Cloudflare R2 Object Storage</h2>
+                        <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem; margin-top: -1rem;">
+                            Replace FTP with Cloudflare R2 S3-compatible storage. Use Cloudflare's 10 GB free tier for media files.
+                        </p>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="cloudflare_r2_account_id">Cloudflare Account ID</label>
+                                <input type="text" id="cloudflare_r2_account_id" name="cloudflare_r2_account_id" class="form-control" value="{{ $site['cloudflare_r2_account_id'] ?? '' }}" placeholder="Account ID from Cloudflare dashboard">
+                            </div>
+                            <div class="form-group">
+                                <label for="cloudflare_r2_bucket_name">Cloudflare R2 Bucket Name</label>
+                                <input type="text" id="cloudflare_r2_bucket_name" name="cloudflare_r2_bucket_name" class="form-control" value="{{ $site['cloudflare_r2_bucket_name'] ?? '' }}" placeholder="e.g., mlg-finedge-assets">
+                            </div>
+                            <div class="form-group">
+                                <label for="cloudflare_r2_access_key_id">R2 Access Key ID</label>
+                                <input type="text" id="cloudflare_r2_access_key_id" name="cloudflare_r2_access_key_id" class="form-control" value="{{ $site['cloudflare_r2_access_key_id'] ?? '' }}" placeholder="Access Key ID">
+                            </div>
+                            <div class="form-group">
+                                <label for="cloudflare_r2_secret_access_key">R2 Secret Access Key</label>
+                                <input type="password" id="cloudflare_r2_secret_access_key" name="cloudflare_r2_secret_access_key" class="form-control" value="{{ $site['cloudflare_r2_secret_access_key'] ?? '' }}" placeholder="Secret Access Key">
+                            </div>
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label for="cloudflare_r2_public_url">R2 Public Custom Domain URL</label>
+                                <input type="text" id="cloudflare_r2_public_url" name="cloudflare_r2_public_url" class="form-control" value="{{ $site['cloudflare_r2_public_url'] ?? '' }}" placeholder="e.g., https://assets.mlgfinedge.com">
+                                <span style="font-size: 0.75rem; color: var(--admin-text-muted); display: block; margin-top: 5px;">
+                                    Create R2 credentials & connect a custom domain by following the <a href="https://developers.cloudflare.com/r2/" target="_blank" style="color: var(--mint-green); text-decoration: underline;">Cloudflare R2 Storage Guide</a>.
                                 </span>
                             </div>
                         </div>
@@ -1870,6 +1930,64 @@
                     </div>
                 </div>
             </div>
+
+            <!-- WEB ANALYTICS TAB -->
+            <div class="tab-panel" id="tab-analytics">
+                <div class="admin-card">
+                    <h2><i data-lucide="bar-chart-2" style="display: inline-block; vertical-align: middle; margin-right: 5px;"></i> Cloudflare Web Analytics</h2>
+                    
+                    @if(empty($site['cloudflare_api_token']) || empty($site['cloudflare_zone_id']))
+                        <div style="padding: 2rem; text-align: center; background: rgba(255,255,255,0.01); border: 1px dashed var(--admin-border); border-radius: var(--radius-md);">
+                            <i data-lucide="info" style="width: 48px; height: 48px; color: var(--admin-text-muted); margin-bottom: 1rem;"></i>
+                            <h3 style="color: #ffffff; margin-bottom: 0.5rem;">Integration Required</h3>
+                            <p style="color: var(--admin-text-muted); max-width: 500px; margin: 0 auto 1.5rem auto; font-size: 0.9rem;">
+                                Please configure your Cloudflare API Token and Zone ID in the <strong>General Settings</strong> tab to view detailed web traffic metrics here.
+                            </p>
+                            <button onclick="switchTab('general')" class="btn-submit" style="width: auto;">Configure Settings</button>
+                        </div>
+                    @else
+                        <div id="analytics-loader" style="padding: 3rem; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px;">
+                            <div class="ai-toast-spinner" style="width: 40px; height: 40px;"></div>
+                            <span style="color: var(--admin-text-muted); font-size: 0.9rem;">Fetching data from Cloudflare...</span>
+                        </div>
+                        
+                        <div id="analytics-error" style="display: none; padding: 2rem; background: rgba(255,107,107,0.05); border: 1px solid rgba(255,107,107,0.2); border-radius: var(--radius-md); text-align: center; margin-bottom: 1.5rem;">
+                            <i data-lucide="alert-triangle" style="color: #ff6b6b; margin-bottom: 0.5rem;"></i>
+                            <p id="analytics-error-msg" style="color: #ff6b6b; margin: 0; font-size: 0.9rem;"></p>
+                        </div>
+
+                        <div id="analytics-dashboard" style="display: none;">
+                            <!-- Stats Cards Grid -->
+                            <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 2rem;">
+                                <div class="admin-card text-center" style="padding: 1.25rem; margin-bottom: 0;">
+                                    <h4 style="margin: 0; font-size: 0.8rem; color: var(--admin-text-muted); text-transform: uppercase;">Total Pageviews</h4>
+                                    <p id="stat-pageviews" style="font-size: 2rem; font-weight: 800; color: var(--mint-green); margin: 0.5rem 0 0 0;">0</p>
+                                </div>
+                                <div class="admin-card text-center" style="padding: 1.25rem; margin-bottom: 0;">
+                                    <h4 style="margin: 0; font-size: 0.8rem; color: var(--admin-text-muted); text-transform: uppercase;">Total Requests</h4>
+                                    <p id="stat-requests" style="font-size: 2rem; font-weight: 800; color: #3b82f6; margin: 0.5rem 0 0 0;">0</p>
+                                </div>
+                                <div class="admin-card text-center" style="padding: 1.25rem; margin-bottom: 0;">
+                                    <h4 style="margin: 0; font-size: 0.8rem; color: var(--admin-text-muted); text-transform: uppercase;">Cache Hit Rate</h4>
+                                    <p id="stat-cache" style="font-size: 2rem; font-weight: 800; color: #eab308; margin: 0.5rem 0 0 0;">0%</p>
+                                </div>
+                                <div class="admin-card text-center" style="padding: 1.25rem; margin-bottom: 0;">
+                                    <h4 style="margin: 0; font-size: 0.8rem; color: var(--admin-text-muted); text-transform: uppercase;">Data Transferred</h4>
+                                    <p id="stat-bandwidth" style="font-size: 2rem; font-weight: 800; color: #f97316; margin: 0.5rem 0 0 0;">0 MB</p>
+                                </div>
+                            </div>
+
+                            <!-- Line Chart Container -->
+                            <div class="admin-card" style="padding: 1.5rem; margin-bottom: 0; background: rgba(0,0,0,0.15);">
+                                <h3>Traffic Metrics (Last 7 Days)</h3>
+                                <div style="position: relative; height: 300px; width: 100%;">
+                                    <canvas id="cloudflareChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                </div>
+            </div>
         </div>
     </div>
 
@@ -2013,8 +2131,152 @@
     <!-- Lucide CDN & CKEditor CDN -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/classic/ckeditor.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         lucide.createIcons();
+
+        let cloudflareChartInstance = null;
+
+        function fetchCloudflareAnalytics() {
+            const loader = document.getElementById('analytics-loader');
+            const errorDiv = document.getElementById('analytics-error');
+            const errorMsg = document.getElementById('analytics-error-msg');
+            const dashboard = document.getElementById('analytics-dashboard');
+
+            if (!loader) return;
+
+            loader.style.display = 'flex';
+            errorDiv.style.display = 'none';
+            dashboard.style.display = 'none';
+
+            fetch("{{ route('admin.cloudflare.analytics') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                }
+            })
+            .then(res => res.json())
+            .then(res => {
+                if (res.success && res.data) {
+                    const data = res.data;
+                    
+                    let totalPageviews = 0;
+                    let totalRequests = 0;
+                    let totalBytes = 0;
+                    let totalCachedRequests = 0;
+                    
+                    const labels = [];
+                    const pageviewsSeries = [];
+                    const requestsSeries = [];
+
+                    data.forEach(day => {
+                        const sum = day.sum;
+                        totalPageviews += parseInt(sum.pageViews || 0);
+                        totalRequests += parseInt(sum.requests || 0);
+                        totalBytes += parseInt(sum.bytes || 0);
+                        totalCachedRequests += parseInt(sum.cachedRequests || 0);
+
+                        // Format date nicely (YYYY-MM-DD to DD MMM)
+                        const dateObj = new Date(day.dimensions.date);
+                        const formattedDate = dateObj.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
+
+                        labels.push(formattedDate);
+                        pageviewsSeries.push(sum.pageViews || 0);
+                        requestsSeries.push(sum.requests || 0);
+                    });
+
+                    document.getElementById('stat-pageviews').innerText = totalPageviews.toLocaleString();
+                    document.getElementById('stat-requests').innerText = totalRequests.toLocaleString();
+                    
+                    const cacheRate = totalRequests > 0 ? Math.round((totalCachedRequests / totalRequests) * 100) : 0;
+                    document.getElementById('stat-cache').innerText = cacheRate + '%';
+                    
+                    const bandwidthMb = (totalBytes / (1024 * 1024)).toFixed(1);
+                    document.getElementById('stat-bandwidth').innerText = parseFloat(bandwidthMb).toLocaleString() + ' MB';
+
+                    loader.style.display = 'none';
+                    dashboard.style.display = 'block';
+
+                    // Render Chart.js
+                    const ctx = document.getElementById('cloudflareChart').getContext('2d');
+                    if (cloudflareChartInstance) {
+                        cloudflareChartInstance.destroy();
+                    }
+
+                    cloudflareChartInstance = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [
+                                {
+                                    label: 'Pageviews',
+                                    data: pageviewsSeries,
+                                    borderColor: '#5ccbb3',
+                                    backgroundColor: 'rgba(92, 203, 179, 0.15)',
+                                    tension: 0.3,
+                                    fill: true,
+                                    borderWidth: 3,
+                                    pointBackgroundColor: '#5ccbb3',
+                                    pointBorderColor: '#ffffff',
+                                    pointHoverRadius: 6
+                                },
+                                {
+                                    label: 'Requests',
+                                    data: requestsSeries,
+                                    borderColor: '#3b82f6',
+                                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                                    tension: 0.3,
+                                    fill: true,
+                                    borderWidth: 2,
+                                    borderDash: [5, 5],
+                                    pointBackgroundColor: '#3b82f6',
+                                    pointBorderColor: '#ffffff',
+                                    pointHoverRadius: 5
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    labels: {
+                                        color: '#ffffff',
+                                        font: { family: 'Outfit', size: 12 }
+                                    }
+                                },
+                                tooltip: {
+                                    mode: 'index',
+                                    intersect: false,
+                                    bodyFont: { family: 'Outfit' },
+                                    titleFont: { family: 'Outfit', weight: 'bold' }
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                                    ticks: { color: 'rgba(255, 255, 255, 0.6)', font: { family: 'Outfit' } }
+                                },
+                                y: {
+                                    grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                                    ticks: { color: 'rgba(255, 255, 255, 0.6)', font: { family: 'Outfit' } }
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    loader.style.display = 'none';
+                    errorDiv.style.display = 'block';
+                    errorMsg.innerText = res.error || 'Failed to retrieve Cloudflare analytics data.';
+                }
+            })
+            .catch(err => {
+                loader.style.display = 'none';
+                errorDiv.style.display = 'block';
+                errorMsg.innerText = 'Network error fetching Cloudflare analytics: ' + err.message;
+            });
+        }
 
         // Switch Tabs logic
         function switchTab(tabId) {
@@ -2033,6 +2295,10 @@
 
             // Save to localStorage to persist tab across refreshes/saves
             localStorage.setItem('active_tab', tabId);
+
+            if (tabId === 'analytics') {
+                fetchCloudflareAnalytics();
+            }
         }
 
         // Initialize active tab from localStorage, defaulting to 'leads'

@@ -68,4 +68,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/admin/ai/generate-blog', [AdminController::class, 'aiGenerateBlog'])->name('admin.ai.blog');
     Route::post('/admin/ai/generate-service', [AdminController::class, 'aiGenerateService'])->name('admin.ai.service');
     Route::post('/admin/ai/generate-image', [AdminController::class, 'aiGenerateImage'])->name('admin.ai.image');
+
+    // Cloudflare Analytics
+    Route::post('/admin/cloudflare/analytics', [AdminController::class, 'getCloudflareAnalytics'])->name('admin.cloudflare.analytics');
 });

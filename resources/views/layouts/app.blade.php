@@ -290,5 +290,11 @@
     
     <script src="{{ asset('assets/js/main.js') }}"></script>
     @yield('scripts')
+
+    @if(!empty($site['cloudflare_analytics_token']))
+        <!-- Cloudflare Web Analytics -->
+        <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "{{ $site['cloudflare_analytics_token'] }}"}'></script>
+        <!-- End Cloudflare Web Analytics -->
+    @endif
 </body>
 </html>
