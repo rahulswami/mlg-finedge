@@ -20,6 +20,9 @@ Route::post('/contact/submit', [HomeController::class, 'contactSubmit'])->name('
 Route::get('/thank-you', [HomeController::class, 'thankYou'])->name('thank-you');
 Route::post('/api/database/import', [AdminController::class, 'importLiveDatabase']);
 
+// Live server DB setup — creates all missing tables in one request
+Route::get('/setup-database', [AdminController::class, 'setupLiveDatabase']);
+
 // Admin CMS Auth
 Route::get('/admin/login', [AdminController::class, 'loginForm'])->name('login');
 Route::post('/admin/login', [AdminController::class, 'login']);

@@ -122,18 +122,34 @@ class HomeController extends Controller
             $compiledMessage .= 'Details: ' . $request->message . "\n";
         }
 
-        // 3. Save Lead
+        // 3. Save Lead to MySQL
         try {
+            // Auto-create leads table if it doesn't exist (for live server compatibility)
+            if (!\Illuminate\Support\Facades\Schema::hasTable('leads')) {
+                \Illuminate\Support\Facades\Schema::create('leads', function (\Illuminate\Database\Schema\Blueprint $table) {
+                    $table->id();
+                    $table->string('name');
+                    $table->string('phone');
+                    $table->string('email')->nullable();
+                    $table->text('message')->nullable();
+                    $table->string('source')->default('Contact Form');
+                    $table->string('status')->default('New');
+                    $table->text('notes')->nullable();
+                    $table->timestamps();
+                });
+                \Illuminate\Support\Facades\Log::info('Leads table auto-created on live server.');
+            }
+
             \App\Models\Lead::create([
-                'name' => $request->name,
-                'phone' => $request->phone,
-                'email' => $request->email,
+                'name'    => $request->name,
+                'phone'   => $request->phone,
+                'email'   => $request->email,
                 'message' => $compiledMessage ?: 'Requesting a quick callback/consultation.',
-                'source' => $request->input('source', 'Contact Form'),
-                'status' => 'New',
+                'source'  => $request->input('source', 'Contact Form'),
+                'status'  => 'New',
             ]);
         } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error('Lead save failed: ' . $e->getMessage());
+            \Illuminate\Support\Facades\Log::error('Lead save failed: ' . $e->getMessage() . ' | File: ' . $e->getFile() . ':' . $e->getLine());
         }
 
         return redirect()->route('thank-you');

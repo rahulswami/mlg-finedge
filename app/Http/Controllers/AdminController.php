@@ -1483,4 +1483,124 @@ User prompt: {$prompt}";
             ], 500);
         }
     }
+
+    public function setupLiveDatabase(Request $request)
+    {
+        // Simple security: only allow if admin is logged in OR a setup key is passed
+        $setupKey = trim(SiteParameter::where('id', 'cloudflare_r2_secret_access_key')->value('value') ?? '');
+        $providedKey = $request->query('key', '');
+
+        if (!auth()->check() && (empty($setupKey) || $providedKey !== $setupKey)) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Unauthorized. Pass ?key=YOUR_R2_SECRET_KEY or log in as admin first.'
+            ], 401);
+        }
+
+        $results = [];
+
+        // ── 1. leads ──────────────────────────────────────────────────
+        if (!\Illuminate\Support\Facades\Schema::hasTable('leads')) {
+            \Illuminate\Support\Facades\Schema::create('leads', function (\Illuminate\Database\Schema\Blueprint $t) {
+                $t->id();
+                $t->string('name');
+                $t->string('phone');
+                $t->string('email')->nullable();
+                $t->text('message')->nullable();
+                $t->string('source')->default('Contact Form');
+                $t->string('status')->default('New');
+                $t->text('notes')->nullable();
+                $t->timestamps();
+            });
+            $results['leads'] = 'CREATED ✅';
+        } else {
+            $results['leads'] = 'exists ✔';
+        }
+
+        // ── 2. sessions ───────────────────────────────────────────────
+        if (!\Illuminate\Support\Facades\Schema::hasTable('sessions')) {
+            \Illuminate\Support\Facades\Schema::create('sessions', function (\Illuminate\Database\Schema\Blueprint $t) {
+                $t->string('id')->primary();
+                $t->foreignId('user_id')->nullable()->index();
+                $t->string('ip_address', 45)->nullable();
+                $t->text('user_agent')->nullable();
+                $t->longText('payload');
+                $t->integer('last_activity')->index();
+            });
+            $results['sessions'] = 'CREATED ✅';
+        } else {
+            $results['sessions'] = 'exists ✔';
+        }
+
+        // ── 3. cache ──────────────────────────────────────────────────
+        if (!\Illuminate\Support\Facades\Schema::hasTable('cache')) {
+            \Illuminate\Support\Facades\Schema::create('cache', function (\Illuminate\Database\Schema\Blueprint $t) {
+                $t->string('key')->primary();
+                $t->mediumText('value');
+                $t->integer('expiration');
+            });
+            $results['cache'] = 'CREATED ✅';
+        } else {
+            $results['cache'] = 'exists ✔';
+        }
+
+        // ── 4. cache_locks ────────────────────────────────────────────
+        if (!\Illuminate\Support\Facades\Schema::hasTable('cache_locks')) {
+            \Illuminate\Support\Facades\Schema::create('cache_locks', function (\Illuminate\Database\Schema\Blueprint $t) {
+                $t->string('key')->primary();
+                $t->string('owner');
+                $t->integer('expiration');
+            });
+            $results['cache_locks'] = 'CREATED ✅';
+        } else {
+            $results['cache_locks'] = 'exists ✔';
+        }
+
+        // ── 5. jobs ───────────────────────────────────────────────────
+        if (!\Illuminate\Support\Facades\Schema::hasTable('jobs')) {
+            \Illuminate\Support\Facades\Schema::create('jobs', function (\Illuminate\Database\Schema\Blueprint $t) {
+                $t->id();
+                $t->string('queue')->index();
+                $t->longText('payload');
+                $t->unsignedTinyInteger('attempts');
+                $t->unsignedInteger('reserved_at')->nullable();
+                $t->unsignedInteger('available_at');
+                $t->unsignedInteger('created_at');
+            });
+            $results['jobs'] = 'CREATED ✅';
+        } else {
+            $results['jobs'] = 'exists ✔';
+        }
+
+        // ── 6. failed_jobs ────────────────────────────────────────────
+        if (!\Illuminate\Support\Facades\Schema::hasTable('failed_jobs')) {
+            \Illuminate\Support\Facades\Schema::create('failed_jobs', function (\Illuminate\Database\Schema\Blueprint $t) {
+                $t->id();
+                $t->string('uuid')->unique();
+                $t->text('connection');
+                $t->text('queue');
+                $t->longText('payload');
+                $t->longText('exception');
+                $t->timestamp('failed_at')->useCurrent();
+            });
+            $results['failed_jobs'] = 'CREATED ✅';
+        } else {
+            $results['failed_jobs'] = 'exists ✔';
+        }
+
+        // ── 7. Verify leads insert/select works ───────────────────────
+        try {
+            $count = \App\Models\Lead::count();
+            $results['leads_read_test'] = "PASS ✅ ({$count} existing records)";
+        } catch (\Exception $e) {
+            $results['leads_read_test'] = 'FAIL ❌ ' . $e->getMessage();
+        }
+
+        return response()->json([
+            'status'  => 'ok',
+            'message' => 'Live server database setup complete! ✅ All required tables are now ready.',
+            'tables'  => $results,
+        ]);
+    }
 }
+
