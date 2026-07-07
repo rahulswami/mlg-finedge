@@ -56,11 +56,18 @@ class AdminController extends Controller
         // Scan public storage for media files
         $mediaFiles = [];
         try {
+            $r2PublicUrl = SiteParameter::where('id', 'cloudflare_r2_public_url')->value('value');
+            $hasR2 = !empty($r2PublicUrl) && !empty(SiteParameter::where('id', 'cloudflare_r2_account_id')->value('value'));
+            if (empty($r2PublicUrl)) {
+                $r2PublicUrl = 'https://images.mlgfinedge.com';
+            }
+            $r2PublicUrl = rtrim($r2PublicUrl, '/');
+
             $files = Storage::disk('public')->allFiles();
             foreach ($files as $file) {
                 if (!str_starts_with(basename($file), '.')) {
-                    $mediaUrl = 'https://images.mlgfinedge.com/' . basename($file);
-                    if (config('app.env') === 'local') {
+                    $mediaUrl = $r2PublicUrl . '/' . basename($file);
+                    if (!$hasR2 && config('app.env') === 'local') {
                         $mediaUrl = asset('storage/' . $file);
                     }
                     $mediaFiles[] = [
