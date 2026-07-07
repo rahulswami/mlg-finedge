@@ -1902,7 +1902,12 @@
                 </div>
 
                 <div class="admin-card">
-                    <h2>Media Library</h2>
+                    <h2 style="display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap;">
+                        <span>Media Library</span>
+                        <button type="button" class="btn-ai-sparkle" style="background: var(--blue-gradient, linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)); border-color: #2563eb;" onclick="syncLocalImagesToR2(this)">
+                            <i data-lucide="refresh-cw"></i> Sync Local Images to R2
+                        </button>
+                    </h2>
                     <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem; margin-top: -1rem;">
                         Click on any image's <strong>Copy URL</strong> button to use its link in slider images, blog covers, page contents, or background section styles.
                     </p>
@@ -2136,6 +2141,40 @@
         lucide.createIcons();
 
         let cloudflareChartInstance = null;
+
+        function syncLocalImagesToR2(btn) {
+            const originalHtml = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="ai-toast-spinner" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle; margin-right: 5px;"></span> Syncing...';
+
+            showToast('Syncing local backups to your Cloudflare R2 bucket...', 'info');
+
+            fetch("{{ route('admin.media.sync') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                }
+            })
+            .then(res => res.json())
+            .then(res => {
+                btn.disabled = false;
+                btn.innerHTML = originalHtml;
+                if (res.success) {
+                    showToast(res.message, 'success');
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 2000);
+                } else {
+                    showToast(res.message || 'Sync failed.', 'error');
+                }
+            })
+            .catch(err => {
+                btn.disabled = false;
+                btn.innerHTML = originalHtml;
+                showToast('Sync failed: ' + err.message, 'error');
+            });
+        }
 
         function fetchCloudflareAnalytics() {
             const loader = document.getElementById('analytics-loader');

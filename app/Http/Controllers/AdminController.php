@@ -538,11 +538,13 @@ class AdminController extends Controller
         if (strtolower($extension) === 'svg') {
             $filename = uniqid() . '.svg';
             $fileData = file_get_contents($file->getRealPath());
+            // Always save local backup
+            @Storage::disk('public')->put($folder . '/' . $filename, $fileData);
+            
             if ($this->uploadToR2($fileData, $filename, 'image/svg+xml')) {
-                @Storage::disk('public')->put($folder . '/' . $filename, $fileData);
                 return $r2PublicUrl . '/' . $filename;
             }
-            return $file->store($folder, 'public');
+            return $folder . '/' . $filename;
         }
         
         $filePath = $file->getRealPath();
@@ -576,21 +578,25 @@ class AdminController extends Controller
             default:
                 $filename = uniqid() . '.' . $extension;
                 $fileData = file_get_contents($filePath);
+                // Always save local backup
+                @Storage::disk('public')->put($folder . '/' . $filename, $fileData);
+                
                 if ($this->uploadToR2($fileData, $filename, 'application/octet-stream')) {
-                    @Storage::disk('public')->put($folder . '/' . $filename, $fileData);
                     return $r2PublicUrl . '/' . $filename;
                 }
-                return $file->store($folder, 'public');
+                return $folder . '/' . $filename;
         }
         
         if (!$image) {
             $filename = uniqid() . '.' . $extension;
             $fileData = file_get_contents($filePath);
+            // Always save local backup
+            @Storage::disk('public')->put($folder . '/' . $filename, $fileData);
+            
             if ($this->uploadToR2($fileData, $filename, $mime)) {
-                @Storage::disk('public')->put($folder . '/' . $filename, $fileData);
                 return $r2PublicUrl . '/' . $filename;
             }
-            return $file->store($folder, 'public');
+            return $folder . '/' . $filename;
         }
         
         // Generate WebP filename
@@ -602,12 +608,13 @@ class AdminController extends Controller
         $webpData = ob_get_clean();
         imagedestroy($image);
         
+        // Always save local backup
+        Storage::disk('public')->put($folder . '/' . $filename, $webpData);
+        
         if ($this->uploadToR2($webpData, $filename, 'image/webp')) {
-            @Storage::disk('public')->put($folder . '/' . $filename, $webpData);
             return $r2PublicUrl . '/' . $filename;
         }
         
-        Storage::disk('public')->put($folder . '/' . $filename, $webpData);
         return $folder . '/' . $filename;
     }
 
@@ -1261,6 +1268,67 @@ User prompt: {$prompt}";
                 'success' => false,
                 'error' => 'Analytics Exception: ' . $e->getMessage()
             ]);
+        }
+    }
+
+    public function syncLocalImagesToR2(Request $request)
+    {
+        $r2PublicUrl = SiteParameter::where('id', 'cloudflare_r2_public_url')->value('value');
+        $accountId = SiteParameter::where('id', 'cloudflare_r2_account_id')->value('value');
+        $accessKey = SiteParameter::where('id', 'cloudflare_r2_access_key_id')->value('value');
+        $secretKey = SiteParameter::where('id', 'cloudflare_r2_secret_access_key')->value('value');
+        $bucket = SiteParameter::where('id', 'cloudflare_r2_bucket_name')->value('value');
+
+        if (empty($accountId) || empty($accessKey) || empty($secretKey) || empty($bucket)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Cloudflare R2 is not fully configured. Please fill in all settings under General Settings first.'
+            ], 400);
+        }
+
+        try {
+            $files = Storage::disk('public')->allFiles();
+            $successCount = 0;
+            $failedCount = 0;
+
+            foreach ($files as $file) {
+                // Skip hidden files
+                if (str_starts_with(basename($file), '.')) {
+                    continue;
+                }
+
+                $fileData = Storage::disk('public')->get($file);
+                $filename = basename($file);
+                
+                $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+                $mimeType = 'image/webp';
+                if ($extension === 'svg') {
+                    $mimeType = 'image/svg+xml';
+                } elseif ($extension === 'png') {
+                    $mimeType = 'image/png';
+                } elseif ($extension === 'jpg' || $extension === 'jpeg') {
+                    $mimeType = 'image/jpeg';
+                } elseif ($extension === 'gif') {
+                    $mimeType = 'image/gif';
+                }
+
+                // Upload to R2
+                if ($this->uploadToR2($fileData, $filename, $mimeType)) {
+                    $successCount++;
+                } else {
+                    $failedCount++;
+                }
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => "Successfully synced {$successCount} local images to Cloudflare R2! (Failed: {$failedCount})"
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sync failed: ' . $e->getMessage()
+            ], 500);
         }
     }
 }
