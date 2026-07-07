@@ -1,0 +1,52 @@
+@extends('layouts.app')
+
+@section('title', 'Thank You | Lead Submitted | ' . ($site['site_name'] ?? 'MLG Finedge'))
+@section('meta_description', 'Thank you for submitting your lead details. One of our expert loan advisors will reach out to you within 2 hours.')
+
+@section('content')
+    <section class="section" style="min-height: calc(100vh - 400px); display: flex; align-items: center; justify-content: center; padding: 4rem 1rem;">
+        <div class="container text-center" style="max-width: 600px;">
+            <div style="margin-bottom: 2rem; display: inline-flex; align-items: center; justify-content: center; width: 90px; height: 90px; border-radius: 50%; background: rgba(0, 168, 150, 0.1); color: var(--mint-green); animation: scaleUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;">
+                <i data-lucide="check-circle-2" style="width: 52px; height: 52px;"></i>
+            </div>
+            
+            <h1 style="font-size: 2.5rem; margin-bottom: 1rem; background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Thank You!</h1>
+            
+            <p style="font-size: 1.15rem; line-height: 1.6; color: var(--text-light-muted); margin-bottom: 2rem;">
+                Your request has been successfully submitted and saved. One of our senior loan advisors will review your requirements and call you back shortly (typically within 2 hours).
+            </p>
+
+            <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--admin-border); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 2.5rem; text-align: left;">
+                <h4 style="margin: 0 0 10px 0; color: #ffffff; font-size: 0.95rem; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                    <i data-lucide="info" style="width: 16px; height: 16px; color: var(--mint-green);"></i> What happens next?
+                </h4>
+                <ol style="margin: 0; padding-left: 1.25rem; font-size: 0.85rem; color: var(--text-light-muted); line-height: 1.6;">
+                    <li style="margin-bottom: 6px;">We analyze your request against current interest rates from 30+ partner banks.</li>
+                    <li style="margin-bottom: 6px;">An expert contacts you to gather details and explain the eligibility process.</li>
+                    <li>We pick up your documents from your doorstep and handle the processing end-to-end.</li>
+                </ol>
+            </div>
+
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <a href="{{ route('home') }}" class="btn-submit" style="text-decoration: none; padding: 0.75rem 1.75rem; display: inline-flex; align-items: center; gap: 8px; justify-content: center;">
+                    <i data-lucide="home" style="width: 18px; height: 18px;"></i> Go to Home Page
+                </a>
+                <a href="{{ route('blog') }}" class="btn-logout" style="text-decoration: none; padding: 0.75rem 1.75rem; background-color: transparent; border: 1px solid var(--admin-border); color: #ffffff; border-radius: 4px; display: inline-flex; align-items: center; gap: 8px; justify-content: center; transition: all 0.3s ease;">
+                    <i data-lucide="book-open" style="width: 18px; height: 18px;"></i> Read Latest Tips
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <style>
+        @keyframes scaleUp {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .btn-logout:hover {
+            background-color: rgba(255,255,255,0.05) !important;
+            border-color: var(--mint-green) !important;
+            color: var(--mint-green) !important;
+        }
+    </style>
+@endsection
