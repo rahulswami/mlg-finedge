@@ -914,6 +914,29 @@
                         </div>
                     </div>
 
+                    <div class="admin-card" style="border: 1px solid var(--accent-orange); position: relative; background: rgba(232, 92, 36, 0.01);">
+                        <h2 style="color: var(--accent-orange); display: flex; align-items: center; gap: 8px;">
+                            <i data-lucide="database" style="width: 22px; height: 22px;"></i> Database Sync (Local to Live Server)
+                        </h2>
+                        <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem; margin-top: -1rem;">
+                            Push and synchronize all local database content (Settings, Slides, Testimonials, Blogs, Services, and Page Contents) to your live production server database.
+                        </p>
+                        <div class="form-grid">
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label for="live_site_url">Live Site Base URL</label>
+                                <input type="text" id="live_site_url" name="live_site_url" class="form-control" value="{{ $site['live_site_url'] ?? 'https://mlgfinedge.com' }}" placeholder="e.g., https://mlgfinedge.com">
+                                <span style="font-size: 0.75rem; color: var(--admin-text-muted); display: block; margin-top: 5px;">
+                                    This is the target live domain where data will be pushed. The Sync uses your configured <strong>R2 Secret Access Key</strong> as a secure verification token between your local and live servers.
+                                </span>
+                            </div>
+                        </div>
+                        <div style="margin-top: 1.5rem;">
+                            <button type="button" class="btn-submit" style="background: var(--accent-orange) !important; border-color: var(--accent-orange); display: inline-flex; align-items: center; gap: 8px; width: auto; font-size: 0.9rem;" onclick="pushLocalDatabaseToLive(this)">
+                                <i data-lucide="cloud-lightning" style="width: 16px; height: 16px;"></i> Push Local Database to Live Server
+                            </button>
+                        </div>
+                    </div>
+
                     <button type="submit" class="btn-submit">Save Parameters</button>
                 </form>
             </div>
@@ -2167,6 +2190,52 @@
                 btn.disabled = false;
                 btn.innerHTML = originalHtml;
                 showToast('Sync failed: ' + err.message, 'error');
+            });
+        }
+
+        function pushLocalDatabaseToLive(btn) {
+            const liveUrlInput = document.getElementById('live_site_url');
+            const liveUrl = liveUrlInput ? liveUrlInput.value.trim() : 'https://mlgfinedge.com';
+            
+            if (!liveUrl) {
+                showToast('Please enter a valid Live Site Base URL first.', 'error');
+                return;
+            }
+
+            if (!confirm('Are you sure you want to push your local database content to the live server? This will overwrite the live server\'s Settings, Slides, Blogs, Services, and Page Contents with your local ones.')) {
+                return;
+            }
+
+            const originalHtml = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="ai-toast-spinner" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle; margin-right: 5px;"></span> Pushing...';
+
+            showToast('Gathering local records and pushing to live server...', 'info');
+
+            fetch("{{ route('admin.database.push-to-live') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                body: JSON.stringify({
+                    live_site_url: liveUrl
+                })
+            })
+            .then(res => res.json())
+            .then(res => {
+                btn.disabled = false;
+                btn.innerHTML = originalHtml;
+                if (res.success) {
+                    showToast(res.message, 'success');
+                } else {
+                    showToast(res.message || 'Push failed.', 'error');
+                }
+            })
+            .catch(err => {
+                btn.disabled = false;
+                btn.innerHTML = originalHtml;
+                showToast('Push network error: ' + err.message, 'error');
             });
         }
 

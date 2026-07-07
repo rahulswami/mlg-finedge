@@ -18,6 +18,7 @@ Route::get('/blog/{slug}', [HomeController::class, 'blogShow'])->name('blog.show
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
 Route::post('/contact/submit', [HomeController::class, 'contactSubmit'])->name('contact.submit');
 Route::get('/thank-you', [HomeController::class, 'thankYou'])->name('thank-you');
+Route::post('/api/database/import', [AdminController::class, 'importLiveDatabase']);
 
 // Admin CMS Auth
 Route::get('/admin/login', [AdminController::class, 'loginForm'])->name('login');
@@ -58,6 +59,7 @@ Route::middleware(['auth'])->group(function () {
     // Media Manager Upload
     Route::post('/admin/media-upload', [AdminController::class, 'uploadMedia'])->name('admin.media.upload');
     Route::post('/admin/media/sync-r2', [AdminController::class, 'syncLocalImagesToR2'])->name('admin.media.sync');
+    Route::post('/admin/database/push-to-live', [AdminController::class, 'pushLocalDatabaseToLive'])->name('admin.database.push-to-live');
 
     // Sync database content
     Route::post('/admin/sync-database', [AdminController::class, 'syncDatabase'])->name('admin.sync-database');

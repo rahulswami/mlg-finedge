@@ -1331,4 +1331,156 @@ User prompt: {$prompt}";
             ], 500);
         }
     }
+
+    public function pushLocalDatabaseToLive(Request $request)
+    {
+        $request->validate([
+            'live_site_url' => 'required|url',
+        ]);
+
+        $liveSiteUrl = rtrim($request->input('live_site_url'), '/');
+        
+        $secretKey = trim(SiteParameter::where('id', 'cloudflare_r2_secret_access_key')->value('value') ?? '');
+        
+        if (empty($secretKey)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Please configure and save your Cloudflare R2 Secret Access Key first. It acts as the secure verification token.'
+            ], 400);
+        }
+
+        // Gather table data
+        $tables = [
+            'site_parameters'  => \App\Models\SiteParameter::all()->toArray(),
+            'home_slides'      => \App\Models\HomeSlide::all()->toArray(),
+            'testimonials'     => \App\Models\Testimonial::all()->toArray(),
+            'blogs'            => \App\Models\Blog::all()->toArray(),
+            'services'         => \App\Models\Service::all()->toArray(),
+            'comparison_banks' => \App\Models\ComparisonBank::all()->toArray(),
+            'page_contents'    => \App\Models\PageContent::all()->toArray(),
+        ];
+
+        try {
+            $response = \Illuminate\Support\Facades\Http::withHeaders([
+                'X-Sync-Token' => $secretKey,
+                'Content-Type' => 'application/json',
+            ])->post($liveSiteUrl . '/api/database/import', [
+                'tables' => $tables,
+            ]);
+
+            if ($response->successful()) {
+                return response()->json($response->json());
+            }
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Live server rejected database push: ' . ($response->json('message') ?? $response->body())
+            ], $response->status() ?: 500);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Push connection failed: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function importLiveDatabase(Request $request)
+    {
+        $syncToken = $request->header('X-Sync-Token');
+        $localSecret = trim(SiteParameter::where('id', 'cloudflare_r2_secret_access_key')->value('value') ?? '');
+
+        if (empty($localSecret) || $syncToken !== $localSecret) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized: Invalid sync token.'
+            ], 401);
+        }
+
+        $tables = $request->input('tables');
+        if (empty($tables) || !is_array($tables)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Bad Request: Missing or invalid tables payload.'
+            ], 400);
+        }
+
+        try {
+            \Illuminate\Support\Facades\DB::transaction(function () use ($tables) {
+                // 1. site_parameters
+                if (isset($tables['site_parameters'])) {
+                    foreach ($tables['site_parameters'] as $row) {
+                        // Skip updating credentials on import to avoid overwriting database connection details
+                        \App\Models\SiteParameter::updateOrCreate(
+                            ['id' => $row['id']],
+                            [
+                                'value' => $row['value'],
+                                'label' => $row['label'],
+                                'category' => $row['category']
+                            ]
+                        );
+                    }
+                }
+
+                // 2. home_slides
+                if (isset($tables['home_slides'])) {
+                    \App\Models\HomeSlide::truncate();
+                    foreach ($tables['home_slides'] as $row) {
+                        \App\Models\HomeSlide::create($row);
+                    }
+                }
+
+                // 3. testimonials
+                if (isset($tables['testimonials'])) {
+                    \App\Models\Testimonial::truncate();
+                    foreach ($tables['testimonials'] as $row) {
+                        \App\Models\Testimonial::create($row);
+                    }
+                }
+
+                // 4. blogs
+                if (isset($tables['blogs'])) {
+                    \App\Models\Blog::truncate();
+                    foreach ($tables['blogs'] as $row) {
+                        \App\Models\Blog::create($row);
+                    }
+                }
+
+                // 5. services
+                if (isset($tables['services'])) {
+                    \App\Models\Service::truncate();
+                    foreach ($tables['services'] as $row) {
+                        \App\Models\Service::create($row);
+                    }
+                }
+
+                // 6. comparison_banks
+                if (isset($tables['comparison_banks'])) {
+                    \App\Models\ComparisonBank::truncate();
+                    foreach ($tables['comparison_banks'] as $row) {
+                        \App\Models\ComparisonBank::create($row);
+                    }
+                }
+
+                // 7. page_contents
+                if (isset($tables['page_contents'])) {
+                    \App\Models\PageContent::truncate();
+                    foreach ($tables['page_contents'] as $row) {
+                        \App\Models\PageContent::create($row);
+                    }
+                }
+            });
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Local database successfully pushed and synchronized to your live database!'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sync transaction failed: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }
