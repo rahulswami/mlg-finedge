@@ -59,9 +59,13 @@ class AdminController extends Controller
             $files = Storage::disk('public')->allFiles();
             foreach ($files as $file) {
                 if (!str_starts_with(basename($file), '.')) {
+                    $mediaUrl = 'https://images.mlgfinedge.com/' . basename($file);
+                    if (config('app.env') === 'local') {
+                        $mediaUrl = asset('storage/' . $file);
+                    }
                     $mediaFiles[] = [
                         'path' => $file,
-                        'url' => 'https://images.mlgfinedge.com/' . basename($file),
+                        'url' => $mediaUrl,
                         'name' => basename($file),
                         'size' => Storage::disk('public')->size($file),
                         'time' => Storage::disk('public')->lastModified($file)
@@ -739,5 +743,386 @@ class AdminController extends Controller
         if (in_array($key, ['site_name', 'site_tagline', 'google_tag_id', 'header_scripts'])) return 'general';
         if (str_contains($key, 'bg') || str_contains($key, 'color') || str_contains($key, 'styling')) return 'styling';
         return 'other';
+    }
+
+    /* AI Generation Methods */
+    public function aiGenerateBlog(Request $request)
+    {
+        $request->validate([
+            'prompt' => 'required|string',
+            'tone' => 'required|string',
+        ]);
+
+        $apiKey = SiteParameter::where('id', 'gemini_api_key')->value('value');
+        if (empty($apiKey)) {
+            return response()->json(['error' => 'Gemini API Key is not set. Please save it in General Settings first.'], 400);
+        }
+
+        $prompt = $request->input('prompt');
+        $tone = $request->input('tone');
+        $generateImage = $request->boolean('generate_image');
+
+        $systemPrompt = "You are an expert financial blog writer and SEO specialist. Create a complete, high-quality blog article in English based on the user's prompt.
+The writing tone must be: {$tone}.
+
+You MUST return the output ONLY as a raw, single-line valid JSON object matching the schema below. Do not wrap the JSON in Markdown code block quotes (e.g. do not use ```json ... ```). Output must start with { and end with }.
+
+JSON Schema:
+{
+  \"title\": \"A compelling SEO-optimized blog title\",
+  \"category\": \"Choose the most appropriate category from: Personal Loans, Home Loans, Business Loans, Loan Against Property, Financial Tips\",
+  \"summary\": \"A short, engaging 1-2 sentence summary of the article to be shown on listing cards\",
+  \"content\": \"The full blog article content formatted in clean, modern HTML. Use paragraphs <p>, subheadings <h3>/<h4>, lists <ul>/<li>, and emphasized text. Do not include raw CSS or javascript. Make the article comprehensive, informative, and around 400-600 words.\",
+  \"image_prompt\": \"A detailed, descriptive text-to-image prompt to generate a high-quality featured cover image matching this article's topic. Do not include adjectives like 'photorealistic', instead describe lighting, context, objects, and style (e.g. 'A professional photograph of ...')\"
+}
+
+User prompt: {$prompt}";
+
+        try {
+            $response = \Illuminate\Support\Facades\Http::withHeaders([
+                'Content-Type' => 'application/json',
+            ])->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={$apiKey}", [
+                'contents' => [
+                    ['parts' => [['text' => $systemPrompt]]]
+                ],
+                'generationConfig' => [
+                    'responseMimeType' => 'application/json',
+                ]
+            ]);
+
+            if ($response->failed()) {
+                return response()->json(['error' => 'Gemini API call failed: ' . $response->body()], 500);
+            }
+
+            $resData = $response->json();
+            $text = $resData['candidates'][0]['content']['parts'][0]['text'] ?? '';
+            $text = trim($text);
+            
+            // Handle raw markdown wrapping if any
+            if (str_starts_with($text, '```')) {
+                $text = preg_replace('/^```(?:json)?/i', '', $text);
+                $text = preg_replace('/```$/', '', $text);
+                $text = trim($text);
+            }
+
+            $blogData = json_decode($text, true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                return response()->json(['error' => 'Failed to parse generated content as JSON. Raw response: ' . $text], 500);
+            }
+
+            // Generate image if requested
+            if ($generateImage) {
+                $imagePrompt = $blogData['image_prompt'] ?? $prompt;
+                $imageUrl = $this->generateAndSaveAiImage($imagePrompt, '16:9');
+                if ($imageUrl) {
+                    $blogData['image_url'] = $imageUrl;
+                }
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => $blogData
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'AI generation failed: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function aiGenerateService(Request $request)
+    {
+        $request->validate([
+            'prompt' => 'required|string',
+            'tone' => 'required|string',
+        ]);
+
+        $apiKey = SiteParameter::where('id', 'gemini_api_key')->value('value');
+        if (empty($apiKey)) {
+            return response()->json(['error' => 'Gemini API Key is not set. Please save it in General Settings first.'], 400);
+        }
+
+        $prompt = $request->input('prompt');
+        $tone = $request->input('tone');
+
+        $systemPrompt = "You are an expert web designer and copywriter for financial services. Generate a complete service page for a financial product in English based on the user's prompt.
+The writing tone must be: {$tone}.
+
+You MUST return the output ONLY as a raw, single-line valid JSON object matching the schema below. Do not wrap the JSON in Markdown code block quotes (e.g. do not use ```json ... ```). Output must start with { and end with }.
+
+JSON Schema:
+{
+  \"service_name\": \"Name of the service (e.g. Home Renovation Loan)\",
+  \"hero_category\": \"A short category tag (e.g. RETAIL LOAN, PERSONAL FINANCE)\",
+  \"hero_title\": \"A catchy, clear H1 heading for the hero section\",
+  \"hero_subtitle\": \"A brief 1-2 sentence subheading for the hero section describing the main value proposition\",
+  \"rate_value\": \"Starting interest rate value (e.g. 8.9% p.a.)\",
+  \"max_loan\": \"Maximum loan amount available (e.g. Up to 50 Lakhs)\",
+  \"tenure\": \"Repayment tenure limits (e.g. Up to 15 Years)\",
+  \"intro_title\": \"A heading for the introduction section (e.g. Why Choose Our Home Renovation Loan?)\",
+  \"intro_content\": \"An engaging introduction block formatted in HTML paragraphs (<p>) highlighting benefits and features\",
+  \"eligibility_criteria\": \"A list of key eligibility criteria, with each criterion on a new line (use newlines \\n to separate)\",
+  \"documents_required\": \"A list of required documents, with each document on a new line (use newlines \\n to separate)\",
+  \"tips_title\": \"Heading for financial tips/guide section (e.g. How to qualify faster?)\",
+  \"tips_content\": \"A helpful tip guide content formatted in HTML paragraphs (<p>)\",
+  \"badge\": \"A short promo badge tag (e.g. Instant Approval, Low Interest)\",
+  \"summary\": \"A short description of the service (1-2 sentences) shown in footers or small layouts\",
+  \"faqs\": [
+    {
+      \"question\": \"An important, frequently asked question about this service\",
+      \"answer\": \"A detailed answer to the question\"
+    },
+    {
+      \"question\": \"Another logical question about this service\",
+      \"answer\": \"A detailed answer to the question\"
+    },
+    {
+      \"question\": \"A third important question about this service\",
+      \"answer\": \"A detailed answer to the question\"
+    }
+  ]
+}
+
+User prompt: {$prompt}";
+
+        try {
+            $response = \Illuminate\Support\Facades\Http::withHeaders([
+                'Content-Type' => 'application/json',
+            ])->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={$apiKey}", [
+                'contents' => [
+                    ['parts' => [['text' => $systemPrompt]]]
+                ],
+                'generationConfig' => [
+                    'responseMimeType' => 'application/json',
+                ]
+            ]);
+
+            if ($response->failed()) {
+                return response()->json(['error' => 'Gemini API call failed: ' . $response->body()], 500);
+            }
+
+            $resData = $response->json();
+            $text = $resData['candidates'][0]['content']['parts'][0]['text'] ?? '';
+            $text = trim($text);
+            
+            if (str_starts_with($text, '```')) {
+                $text = preg_replace('/^```(?:json)?/i', '', $text);
+                $text = preg_replace('/```$/', '', $text);
+                $text = trim($text);
+            }
+
+            $serviceData = json_decode($text, true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                return response()->json(['error' => 'Failed to parse generated content as JSON. Raw response: ' . $text], 500);
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => $serviceData
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'AI generation failed: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function aiGenerateImage(Request $request)
+    {
+        $request->validate([
+            'prompt' => 'required|string',
+            'aspect_ratio' => 'required|string|in:1:1,16:9,4:3',
+        ]);
+
+        $apiKey = SiteParameter::where('id', 'gemini_api_key')->value('value');
+        if (empty($apiKey)) {
+            return response()->json(['error' => 'Gemini API Key is not set. Please save it in General Settings first.'], 400);
+        }
+
+        $prompt = $request->input('prompt');
+        $aspectRatio = $request->input('aspect_ratio');
+
+        $imageUrl = $this->generateAndSaveAiImage($prompt, $aspectRatio);
+        if (!$imageUrl) {
+            return response()->json(['error' => 'Failed to generate image via Imagen API. Please verify your API Key has billing enabled on Google AI Studio.'], 500);
+        }
+
+        return response()->json([
+            'success' => true,
+            'url' => $imageUrl,
+            'name' => basename($imageUrl)
+        ]);
+    }
+
+    private function generateAndSaveAiImage($prompt, $aspectRatio = '1:1')
+    {
+        $apiKey = SiteParameter::where('id', 'gemini_api_key')->value('value');
+        if (empty($apiKey)) return null;
+
+        $base64 = null;
+
+        // Attempt 1: Try Nano Banana 2 (gemini-3.1-flash-image) using generateContent
+        try {
+            $response = \Illuminate\Support\Facades\Http::withHeaders([
+                'Content-Type' => 'application/json',
+            ])->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-image:generateContent?key={$apiKey}", [
+                'contents' => [
+                    ['parts' => [['text' => $prompt]]]
+                ],
+                'generationConfig' => [
+                    'response_modalities' => ['TEXT', 'IMAGE']
+                ]
+            ]);
+
+            if ($response->successful()) {
+                $resData = $response->json();
+                foreach ($resData['candidates'][0]['content']['parts'] ?? [] as $part) {
+                    if (isset($part['inlineData']['data'])) {
+                        $base64 = $part['inlineData']['data'];
+                        break;
+                    }
+                }
+            } else {
+                \Illuminate\Support\Facades\Log::warning('Nano Banana 2 generateContent attempt failed: ' . $response->body());
+            }
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::warning('Nano Banana 2 generateContent exception: ' . $e->getMessage());
+        }
+
+        // Attempt 2: Try Nano Banana (gemini-2.5-flash-image) using generateContent
+        if (empty($base64)) {
+            try {
+                $response = \Illuminate\Support\Facades\Http::withHeaders([
+                    'Content-Type' => 'application/json',
+                ])->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent?key={$apiKey}", [
+                    'contents' => [
+                        ['parts' => [['text' => $prompt]]]
+                    ],
+                    'generationConfig' => [
+                        'response_modalities' => ['TEXT', 'IMAGE']
+                    ]
+                ]);
+
+                if ($response->successful()) {
+                    $resData = $response->json();
+                    foreach ($resData['candidates'][0]['content']['parts'] ?? [] as $part) {
+                        if (isset($part['inlineData']['data'])) {
+                            $base64 = $part['inlineData']['data'];
+                            break;
+                        }
+                    }
+                } else {
+                    \Illuminate\Support\Facades\Log::warning('Nano Banana generateContent attempt failed: ' . $response->body());
+                }
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::warning('Nano Banana generateContent exception: ' . $e->getMessage());
+            }
+        }
+
+        // Attempt 3: Try Imagen 3 using generateImages (v1beta)
+        if (empty($base64)) {
+            try {
+                $response = \Illuminate\Support\Facades\Http::withHeaders([
+                    'Content-Type' => 'application/json',
+                ])->post("https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:generateImages?key={$apiKey}", [
+                    'prompt' => $prompt,
+                    'numberOfImages' => 1,
+                    'outputMimeType' => 'image/jpeg',
+                    'aspectRatio' => $aspectRatio
+                ]);
+
+                if ($response->successful()) {
+                    $resData = $response->json();
+                    $base64 = $resData['generatedImages'][0]['image']['imageBytes'] ?? null;
+                } else {
+                    \Illuminate\Support\Facades\Log::warning('Imagen 3 generateImages attempt failed: ' . $response->body());
+                }
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::warning('Imagen 3 generateImages exception: ' . $e->getMessage());
+            }
+        }
+
+        // Attempt 4: Try Imagen 4 using generateImages (v1beta)
+        if (empty($base64)) {
+            try {
+                $response = \Illuminate\Support\Facades\Http::withHeaders([
+                    'Content-Type' => 'application/json',
+                ])->post("https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:generateImages?key={$apiKey}", [
+                    'prompt' => $prompt,
+                    'numberOfImages' => 1,
+                    'outputMimeType' => 'image/jpeg',
+                    'aspectRatio' => $aspectRatio
+                ]);
+
+                if ($response->successful()) {
+                    $resData = $response->json();
+                    $base64 = $resData['generatedImages'][0]['image']['imageBytes'] ?? null;
+                } else {
+                    \Illuminate\Support\Facades\Log::warning('Imagen 4 generateImages attempt failed: ' . $response->body());
+                }
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::warning('Imagen 4 generateImages exception: ' . $e->getMessage());
+            }
+        }
+
+        // Attempt 5: Try Imagen 4 via predict (v1beta)
+        if (empty($base64)) {
+            try {
+                $response = \Illuminate\Support\Facades\Http::withHeaders([
+                    'Content-Type' => 'application/json',
+                ])->post("https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key={$apiKey}", [
+                    'instances' => [
+                        ['prompt' => $prompt]
+                    ],
+                    'parameters' => [
+                        'sampleCount' => 1,
+                        'aspectRatio' => $aspectRatio,
+                        'outputMimeType' => 'image/jpeg',
+                    ]
+                ]);
+
+                if ($response->successful()) {
+                    $resData = $response->json();
+                    $base64 = $resData['predictions'][0]['bytesBase64Encoded'] ?? null;
+                } else {
+                    \Illuminate\Support\Facades\Log::warning('Imagen 4 predict attempt failed: ' . $response->body());
+                }
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::warning('Imagen 4 predict exception: ' . $e->getMessage());
+            }
+        }
+
+        // Return failure if all failed
+        if (empty($base64)) {
+            \Illuminate\Support\Facades\Log::error('All image generation models failed.');
+            return null;
+        }
+
+        try {
+            $imageBytes = base64_decode($base64);
+            if (empty($imageBytes)) return null;
+
+            $filename = uniqid() . '.webp';
+            $folder = 'uploads';
+
+            // Convert to WebP using GD library
+            $image = imagecreatefromstring($imageBytes);
+            if (!$image) return null;
+
+            ob_start();
+            imagewebp($image, null, 80);
+            $webpData = ob_get_clean();
+            imagedestroy($image);
+
+            // Upload via FTP if possible
+            if ($this->uploadToFtp($webpData, $filename)) {
+                @Storage::disk('public')->put($folder . '/' . $filename, $webpData);
+                return 'https://images.mlgfinedge.com/' . $filename;
+            }
+
+            Storage::disk('public')->put($folder . '/' . $filename, $webpData);
+            return $folder . '/' . $filename;
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('GD library conversion exception: ' . $e->getMessage());
+            return null;
+        }
     }
 }

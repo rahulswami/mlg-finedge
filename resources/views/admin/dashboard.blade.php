@@ -378,6 +378,301 @@
             font-weight: 600;
             display: inline-block;
         }
+
+        /* Force all headings and instructions in backend to be white/visible */
+        h1, h2, h3, h4, h5, h6,
+        .admin-header h1, .sidebar-brand span, 
+        .admin-card h2, .admin-card h3, .admin-card h4,
+        .admin-content h1, .admin-content h2, .admin-content h3, .admin-content h4, .admin-content h5, .admin-content h6,
+        #service-form-title-text, #blog-form-title-text {
+            color: #ffffff !important;
+        }
+        
+        .admin-content p:not(.ck-editor *):not(.badge):not(.badge *), 
+        .admin-content span:not(.ck-editor *):not(.badge):not(.badge *), 
+        .admin-content label:not(.ck-editor *):not(.badge):not(.badge *), 
+        .admin-content li:not(.ck-editor *):not(.badge):not(.badge *), 
+        .admin-content small:not(.ck-editor *):not(.badge):not(.badge *), 
+        .admin-content legend:not(.ck-editor *):not(.badge):not(.badge *),
+        .admin-card p:not(.ck-editor *):not(.badge):not(.badge *), 
+        .admin-card span:not(.ck-editor *):not(.badge):not(.badge *), 
+        .admin-card label:not(.ck-editor *):not(.badge):not(.badge *), 
+        .admin-card li:not(.ck-editor *):not(.badge):not(.badge *), 
+        .admin-card small:not(.ck-editor *):not(.badge):not(.badge *),
+        .admin-table td:not(.badge):not(.badge *), 
+        .admin-table th,
+        .admin-table strong:not(.badge):not(.badge *) {
+            color: rgba(255, 255, 255, 0.85) !important;
+        }
+
+        .admin-content code, .admin-card code {
+            color: #5ccbb3 !important;
+            background-color: rgba(92, 203, 179, 0.1) !important;
+            padding: 2px 6px !important;
+            border-radius: 4px !important;
+        }
+
+        .admin-table td, .admin-table th {
+            color: #ffffff !important;
+        }
+
+        .admin-table th {
+            color: var(--mint-green) !important;
+        }
+
+        .admin-table small, .admin-table td small {
+            color: rgba(255, 255, 255, 0.6) !important;
+        }
+
+        .admin-card a {
+            color: var(--mint-green) !important;
+        }
+        .admin-card a:hover {
+            color: #4ebfa7 !important;
+        }
+
+        /* Toast Notification Styles */
+        .ai-toast {
+            background-color: #0d1718;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            box-shadow: 0 4px 20px rgba(168, 85, 247, 0.2);
+            border-radius: var(--radius-md);
+            color: #ffffff;
+            padding: 1rem;
+            width: 320px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            animation: toastSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+        @keyframes toastSlideIn {
+            from { transform: translateX(120%) translateY(20px); opacity: 0; }
+            to { transform: translateX(0) translateY(0); opacity: 1; }
+        }
+        .ai-toast-close {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: none;
+            border: none;
+            color: var(--admin-text-muted);
+            cursor: pointer;
+            font-size: 1.1rem;
+            line-height: 1;
+        }
+        .ai-toast-close:hover {
+            color: #ff6b6b;
+        }
+        .ai-toast-spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top-color: #a855f7;
+            border-bottom-color: #6366f1;
+            border-radius: 50%;
+            animation: aiSpin 1s linear infinite;
+            flex-shrink: 0;
+            margin-top: 3px;
+        }
+        .ai-toast-success-icon {
+            color: var(--mint-green);
+            flex-shrink: 0;
+            margin-top: 3px;
+            display: flex;
+            align-items: center;
+        }
+        .ai-toast-error-icon {
+            color: #ff6b6b;
+            flex-shrink: 0;
+            margin-top: 3px;
+            display: flex;
+            align-items: center;
+        }
+        .ai-toast-content {
+            flex-grow: 1;
+            padding-right: 15px;
+        }
+        .ai-toast-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 2px;
+            color: #ffffff !important;
+        }
+        .ai-toast-message {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.7) !important;
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        /* Keep CKEditor text dark so users can see what they type in the editor box! */
+        .ck-editor__editable, .ck-editor__editable * {
+            color: #111111 !important;
+        }
+
+        /* AI Generator styles */
+        .btn-ai-sparkle {
+            background: linear-gradient(135deg, #a855f7, #6366f1) !important;
+            color: #ffffff !important;
+            border: none !important;
+            padding: 0.5rem 1rem !important;
+            border-radius: var(--radius-md) !important;
+            font-weight: 600 !important;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(168, 85, 247, 0.2);
+        }
+        .btn-ai-sparkle:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(168, 85, 247, 0.4);
+            filter: brightness(1.1);
+        }
+        .ai-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .ai-modal-overlay.show {
+            display: flex;
+            opacity: 1;
+        }
+        .ai-modal-card {
+            background-color: #0d1718;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            box-shadow: 0 10px 30px rgba(168, 85, 247, 0.15), 0 0 40px rgba(99, 102, 241, 0.05);
+            border-radius: var(--radius-lg);
+            width: 90%;
+            max-width: 550px;
+            padding: 2rem;
+            animation: aiSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+        }
+        @keyframes aiSlideIn {
+            from { transform: translateY(-30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .ai-modal-card h3 {
+            margin-top: 0;
+            font-size: 1.35rem;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid var(--admin-border);
+            padding-bottom: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+        .ai-modal-card h3 i {
+            color: #a855f7;
+        }
+        .ai-modal-close {
+            position: absolute;
+            right: 1.5rem;
+            top: 1.5rem;
+            background: none;
+            border: none;
+            color: var(--admin-text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .ai-modal-close:hover {
+            color: #ff6b6b;
+        }
+        .ai-loader-container {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2.5rem 1rem;
+            text-align: center;
+        }
+        .ai-sparkle-loader {
+            width: 60px;
+            height: 60px;
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+        .ai-sparkle-loader::before, .ai-sparkle-loader::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            border-top-color: #a855f7;
+            border-bottom-color: #6366f1;
+            animation: aiSpin 1.5s linear infinite;
+        }
+        .ai-sparkle-loader::after {
+            width: 40px;
+            height: 40px;
+            top: 10px;
+            left: 10px;
+            border-top-color: #5ccbb3;
+            border-bottom-color: #e85c24;
+            animation: aiSpinReverse 1s linear infinite;
+        }
+        @keyframes aiSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes aiSpinReverse {
+            0% { transform: rotate(360deg); }
+            100% { transform: rotate(0deg); }
+        }
+        .ai-loader-text {
+            font-size: 1.05rem;
+            font-weight: 500;
+            color: #ffffff;
+            margin: 0;
+        }
+        .ai-loader-subtext {
+            font-size: 0.85rem;
+            color: var(--admin-text-muted);
+            margin: 5px 0 0 0;
+        }
+        .ai-img-preview-box {
+            margin-top: 1rem;
+            border: 1px solid var(--admin-border);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            display: none;
+            flex-direction: column;
+            background: rgba(0,0,0,0.2);
+        }
+        .ai-img-preview-box img {
+            width: 100%;
+            max-height: 300px;
+            object-fit: contain;
+            background: #000;
+        }
+        .ai-img-preview-box .info {
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--admin-border);
+        }
     </style>
 </head>
 <body>
@@ -396,8 +691,8 @@
         </div>
         
         <ul class="sidebar-menu">
-            <li class="menu-item"><button onclick="switchTab('general')" class="tab-btn active" id="btn-general"><i data-lucide="settings"></i> General Settings</button></li>
-            <li class="menu-item"><button onclick="switchTab('leads')" class="tab-btn" id="btn-leads"><i data-lucide="inbox"></i> Leads Manager</button></li>
+            <li class="menu-item"><button onclick="switchTab('general')" class="tab-btn" id="btn-general"><i data-lucide="settings"></i> General Settings</button></li>
+            <li class="menu-item"><button onclick="switchTab('leads')" class="tab-btn active" id="btn-leads"><i data-lucide="inbox"></i> Leads Manager</button></li>
             <li class="menu-item"><button onclick="switchTab('branding')" class="tab-btn" id="btn-branding"><i data-lucide="image"></i> Branding & Logos</button></li>
             <li class="menu-item"><button onclick="switchTab('slider')" class="tab-btn" id="btn-slider"><i data-lucide="sliders"></i> Homepage Slider</button></li>
             <li class="menu-item"><button onclick="switchTab('testimonials')" class="tab-btn" id="btn-testimonials"><i data-lucide="users"></i> Testimonials</button></li>
@@ -412,7 +707,7 @@
         <div class="sidebar-footer">
             <form action="{{ route('admin.logout') }}" method="POST">
                 @csrf
-                <button type="submit" class="btn-logout">
+                <button type="submit" class="btn-logout" onclick="localStorage.removeItem('active_tab')">
                     <i data-lucide="log-out"></i> Log Out
                 </button>
             </form>
@@ -453,7 +748,7 @@
             @endif
 
             <!-- 1. GENERAL & CONTACT SETTINGS TAB -->
-            <div class="tab-panel active" id="tab-general">
+            <div class="tab-panel" id="tab-general">
                 <form action="{{ route('admin.parameters.update') }}" method="POST">
                     @csrf
                     
@@ -549,12 +844,28 @@
                         </div>
                     </div>
 
+                    <div class="admin-card">
+                        <h2>Google Gemini AI Settings</h2>
+                        <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem; margin-top: -1rem;">
+                            Provide a Google Gemini API Key from Google AI Studio. This key is used to generate blog articles, pictures, and new service pages using prompts.
+                        </p>
+                        <div class="form-grid">
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label for="gemini_api_key">Gemini API Key</label>
+                                <input type="password" id="gemini_api_key" name="gemini_api_key" class="form-control" value="{{ $site['gemini_api_key'] ?? '' }}" placeholder="Paste your Gemini API Key here...">
+                                <span style="font-size: 0.75rem; color: var(--admin-text-muted); display: block; margin-top: 5px;">
+                                    Get an API Key from the <a href="https://aistudio.google.com/" target="_blank" style="color: var(--mint-green); text-decoration: underline;">Google AI Studio Console</a>.
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
                     <button type="submit" class="btn-submit">Save Parameters</button>
                 </form>
             </div>
 
             <!-- LEADS MANAGER TAB -->
-            <div class="tab-panel" id="tab-leads">
+            <div class="tab-panel active" id="tab-leads">
                 <!-- Stats Overview Grid -->
                 <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 2rem;">
                     <div class="admin-card text-center" style="padding: 1.25rem; margin-bottom: 0;">
@@ -1112,7 +1423,12 @@
             <div class="tab-panel" id="tab-services">
                 <!-- Add/Edit Service Card -->
                 <div class="admin-card" id="service-form-container">
-                    <h2 id="service-form-title">Create New Service Page</h2>
+                    <h2 id="service-form-title">
+                        <span id="service-form-title-text">Create New Service Page</span>
+                        <button type="button" class="btn-ai-sparkle" id="service-ai-btn" onclick="openAiModal('service')">
+                            <i data-lucide="sparkles"></i> Generate with AI
+                        </button>
+                    </h2>
                     <form id="service-form" action="{{ route('admin.services.store') }}" method="POST">
                         @csrf
                         <input type="hidden" name="_method" id="service-form-method" value="POST">
@@ -1379,7 +1695,12 @@
             <div class="tab-panel" id="tab-blogs">
                 <!-- Add Blog Card -->
                 <div class="admin-card" id="blog-form-container">
-                    <h2 id="blog-form-title">Create New Blog Article</h2>
+                    <h2 id="blog-form-title">
+                        <span id="blog-form-title-text">Create New Blog Article</span>
+                        <button type="button" class="btn-ai-sparkle" id="blog-ai-btn" onclick="openAiModal('blog')">
+                            <i data-lucide="sparkles"></i> Generate with AI
+                        </button>
+                    </h2>
                     <form id="blog-form" action="{{ route('admin.blogs.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <input type="hidden" name="_method" id="blog-form-method" value="POST">
@@ -1494,7 +1815,12 @@
             <!-- 8. MEDIA MANAGER TAB -->
             <div class="tab-panel" id="tab-media">
                 <div class="admin-card">
-                    <h2>Upload Media File</h2>
+                    <h2>
+                        <span>Upload Media File</span>
+                        <button type="button" class="btn-ai-sparkle" onclick="openAiModal('image')">
+                            <i data-lucide="sparkles"></i> Generate Image with AI
+                        </button>
+                    </h2>
                     <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem; margin-top: -1rem;">
                         Upload any JPEG, PNG, GIF, WebP, or SVG image. Standard raster formats are automatically compressed and converted to the highly efficient <strong>WebP format</strong> on the server.
                     </p>
@@ -1547,6 +1873,135 @@
         </div>
     </div>
 
+    <!-- AI Toast Notification Container -->
+    <div id="ai-toast-container" style="position: fixed; bottom: 20px; right: 20px; z-index: 999999; display: flex; flex-direction: column; gap: 10px;"></div>
+
+    <!-- AI Blog Generator Modal -->
+    <div class="ai-modal-overlay" id="ai-blog-modal">
+        <div class="ai-modal-card">
+            <button class="ai-modal-close" onclick="closeAiModal('blog')">&times;</button>
+            <h3><i data-lucide="sparkles"></i> AI Blog Article Generator</h3>
+            
+            <div id="ai-blog-form-wrapper">
+                <div class="form-group">
+                    <label for="ai_blog_prompt">What should the blog article be about?</label>
+                    <textarea id="ai_blog_prompt" class="form-control" rows="4" placeholder="e.g. Benefits of choosing a home loan through a broker vs directly from a bank..."></textarea>
+                </div>
+                
+                <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label for="ai_blog_tone">Writing Tone</label>
+                        <select id="ai_blog_tone" class="form-control">
+                            <option value="Professional & Informative">Professional & Informative</option>
+                            <option value="Conversational & Friendly">Conversational & Friendly</option>
+                            <option value="Persuasive & Engaging">Persuasive & Engaging</option>
+                            <option value="Simple & Clear">Simple & Clear</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="display: flex; align-items: center; margin-top: 1.5rem;">
+                        <label style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.85rem;">
+                            <input type="checkbox" id="ai_blog_gen_image" value="1" checked style="width: 16px; height: 16px; accent-color: var(--mint-green);">
+                            Generate Cover Image
+                        </label>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end; gap: 10px;">
+                    <button type="button" class="btn-submit" style="background-color: var(--admin-input-bg); color: #fff;" onclick="closeAiModal('blog')">Cancel</button>
+                    <button type="button" class="btn-ai-sparkle" onclick="generateAiBlog()"><i data-lucide="sparkles"></i> Generate Draft</button>
+                </div>
+            </div>
+            
+            <div class="ai-loader-container" id="ai-blog-loader">
+                <div class="ai-sparkle-loader"></div>
+                <p class="ai-loader-text">Gemini is writing your article...</p>
+                <p class="ai-loader-subtext">This can take up to 20-30 seconds depending on image generation.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Service Page Generator Modal -->
+    <div class="ai-modal-overlay" id="ai-service-modal">
+        <div class="ai-modal-card">
+            <button class="ai-modal-close" onclick="closeAiModal('service')">&times;</button>
+            <h3><i data-lucide="sparkles"></i> AI Service Page Generator</h3>
+            
+            <div id="ai-service-form-wrapper">
+                <div class="form-group">
+                    <label for="ai_service_prompt">Describe the Service Page you want to create:</label>
+                    <textarea id="ai_service_prompt" class="form-control" rows="4" placeholder="e.g. Home Renovation Loans: covering collateral requirements, processing speed, competitive interest rates starting at 8.9% p.a., and top reasons to apply."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="ai_service_tone">Writing Tone</label>
+                    <select id="ai_service_tone" class="form-control">
+                        <option value="Professional & Financial">Professional & Financial</option>
+                        <option value="Informative & Helpful">Informative & Helpful</option>
+                        <option value="Persuasive & Sales-Oriented">Persuasive & Sales-Oriented</option>
+                    </select>
+                </div>
+                
+                <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end; gap: 10px;">
+                    <button type="button" class="btn-submit" style="background-color: var(--admin-input-bg); color: #fff;" onclick="closeAiModal('service')">Cancel</button>
+                    <button type="button" class="btn-ai-sparkle" onclick="generateAiService()"><i data-lucide="sparkles"></i> Generate Service</button>
+                </div>
+            </div>
+            
+            <div class="ai-loader-container" id="ai-service-loader">
+                <div class="ai-sparkle-loader"></div>
+                <p class="ai-loader-text">Gemini is generating service page details...</p>
+                <p class="ai-loader-subtext">Structuring Hero content, eligibility criteria, required documents, and FAQs.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Picture Generator Modal -->
+    <div class="ai-modal-overlay" id="ai-image-modal">
+        <div class="ai-modal-card">
+            <button class="ai-modal-close" onclick="closeAiModal('image')">&times;</button>
+            <h3><i data-lucide="sparkles"></i> AI Picture Generator (Imagen 3)</h3>
+            
+            <div id="ai-image-form-wrapper">
+                <div class="form-group">
+                    <label for="ai_image_prompt">Describe the image you want to generate:</label>
+                    <textarea id="ai_image_prompt" class="form-control" rows="4" placeholder="e.g. A realistic photo of a young couple receiving keys to their new home, warm lighting, high detail..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="ai_image_aspect_ratio">Aspect Ratio</label>
+                    <select id="ai_image_aspect_ratio" class="form-control">
+                        <option value="1:1">1:1 Square (Default)</option>
+                        <option value="16:9">16:9 Landscape (Slider / Blog cover)</option>
+                        <option value="4:3">4:3 Standard</option>
+                    </select>
+                </div>
+                
+                <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end; gap: 10px;">
+                    <button type="button" class="btn-submit" style="background-color: var(--admin-input-bg); color: #fff;" onclick="closeAiModal('image')">Cancel</button>
+                    <button type="button" class="btn-ai-sparkle" onclick="generateAiImage()"><i data-lucide="sparkles"></i> Generate Picture</button>
+                </div>
+            </div>
+            
+            <div class="ai-loader-container" id="ai-image-loader">
+                <div class="ai-sparkle-loader"></div>
+                <p class="ai-loader-text">Imagen is rendering your picture...</p>
+                <p class="ai-loader-subtext">This will take 10-15 seconds. Please do not close this modal.</p>
+            </div>
+
+            <!-- Preview box of generated image -->
+            <div class="ai-img-preview-box" id="ai-image-preview-container">
+                <img id="ai-image-preview-img" src="" alt="Generated Preview">
+                <div class="info">
+                    <span style="font-size: 0.8rem; color: var(--admin-text-muted);" id="ai-image-status-text">Saved to Media Library!</span>
+                    <button type="button" class="btn-submit" style="padding: 5px 12px; font-size: 0.8rem;" id="ai-image-copy-btn">
+                        <i data-lucide="copy" style="width: 14px; height: 14px; display: inline; vertical-align: middle;"></i> Copy URL
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <!-- Add CKEditor CSS custom overrides -->
     <style>
         .ck-editor__editable {
@@ -1563,15 +2018,28 @@
 
         // Switch Tabs logic
         function switchTab(tabId) {
-            document.querySelectorAll('.tab-panel').forEach(panel => {
-                panel.classList.remove('active');
+            const panel = document.getElementById('tab-' + tabId);
+            const btn = document.getElementById('btn-' + tabId);
+            if (!panel || !btn) return;
+
+            document.querySelectorAll('.tab-panel').forEach(p => {
+                p.classList.remove('active');
             });
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('active');
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.classList.remove('active');
             });
-            document.getElementById('tab-' + tabId).classList.add('active');
-            document.getElementById('btn-' + tabId).classList.add('active');
+            panel.classList.add('active');
+            btn.classList.add('active');
+
+            // Save to localStorage to persist tab across refreshes/saves
+            localStorage.setItem('active_tab', tabId);
         }
+
+        // Initialize active tab from localStorage, defaulting to 'leads'
+        window.addEventListener('DOMContentLoaded', () => {
+            const activeTab = localStorage.getItem('active_tab') || 'leads';
+            switchTab(activeTab);
+        });
 
         // Toggle Lead Details
         function toggleLeadDetails(id) {
@@ -1617,7 +2085,8 @@
 
         // Blog Edit functions
         function editBlog(data) {
-            document.getElementById('blog-form-title').innerText = 'Edit Blog Article: ' + data.title;
+            document.getElementById('blog-form-title-text').innerText = 'Edit Blog Article: ' + data.title;
+            document.getElementById('blog-ai-btn').style.display = 'none';
             document.getElementById('blog-form').action = '/admin/blogs/' + data.id + '/update';
             document.getElementById('blog-form-method').value = 'POST';
             document.getElementById('blog_title').value = data.title;
@@ -1638,7 +2107,8 @@
         }
 
         function cancelBlogEdit() {
-            document.getElementById('blog-form-title').innerText = 'Create New Blog Article';
+            document.getElementById('blog-form-title-text').innerText = 'Create New Blog Article';
+            document.getElementById('blog-ai-btn').style.display = 'inline-flex';
             document.getElementById('blog-form').action = "{{ route('admin.blogs.store') }}";
             document.getElementById('blog-form-method').value = 'POST';
             document.getElementById('blog_title').value = '';
@@ -1692,7 +2162,8 @@
 
         // Service Edit functions
         function editService(data) {
-            document.getElementById('service-form-title').innerText = 'Edit Service Page: ' + data.service_name;
+            document.getElementById('service-form-title-text').innerText = 'Edit Service Page: ' + data.service_name;
+            document.getElementById('service-ai-btn').style.display = 'none';
             document.getElementById('service-form').action = '/admin/services/' + data.id + '/update';
             document.getElementById('service-form-method').value = 'POST';
             
@@ -1755,7 +2226,8 @@
         }
 
         function cancelServiceEdit() {
-            document.getElementById('service-form-title').innerText = 'Create New Service Page';
+            document.getElementById('service-form-title-text').innerText = 'Create New Service Page';
+            document.getElementById('service-ai-btn').style.display = 'inline-flex';
             document.getElementById('service-form').action = "{{ route('admin.services.store') }}";
             document.getElementById('service-form-method').value = 'POST';
             
@@ -1899,6 +2371,335 @@
             };
             
             xhr.send(formData);
+        }
+
+        // AI Generation UI & AJAX Helpers
+        function openAiModal(type) {
+            const overlay = document.getElementById('ai-' + type + '-modal');
+            if (overlay) {
+                overlay.style.display = 'flex';
+                setTimeout(() => overlay.classList.add('show'), 10);
+            }
+        }
+
+        function closeAiModal(type) {
+            const overlay = document.getElementById('ai-' + type + '-modal');
+            if (overlay) {
+                overlay.classList.remove('show');
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                    const formWrapper = document.getElementById('ai-' + type + '-form-wrapper');
+                    const loader = document.getElementById('ai-' + type + '-loader');
+                    if (formWrapper) formWrapper.style.display = 'block';
+                    if (loader) loader.style.display = 'none';
+                    
+                    const promptInput = document.getElementById('ai_' + type + '_prompt');
+                    if (promptInput) promptInput.value = '';
+
+                    const previewBox = document.getElementById('ai-image-preview-container');
+                    if (previewBox) previewBox.style.display = 'none';
+                }, 300);
+            }
+        }
+
+        // Toast Notification System
+        function showToast(title, message, type = 'info', uniqueId = null) {
+            const container = document.getElementById('ai-toast-container');
+            if (!container) return null;
+
+            let toast = uniqueId ? document.getElementById(uniqueId) : null;
+            let isNew = false;
+
+            if (!toast) {
+                isNew = true;
+                toast = document.createElement('div');
+                toast.className = 'ai-toast';
+                if (uniqueId) toast.id = uniqueId;
+            }
+
+            let iconHtml = '';
+            if (type === 'info') {
+                iconHtml = '<div class="ai-toast-spinner"></div>';
+            } else if (type === 'success') {
+                iconHtml = '<div class="ai-toast-success-icon"><i data-lucide="check-circle" style="width: 20px; height: 20px;"></i></div>';
+            } else if (type === 'error') {
+                iconHtml = '<div class="ai-toast-error-icon"><i data-lucide="alert-triangle" style="width: 20px; height: 20px;"></i></div>';
+            }
+
+            toast.innerHTML = `
+                ${iconHtml}
+                <div class="ai-toast-content">
+                    <div class="ai-toast-title">${title}</div>
+                    <p class="ai-toast-message">${message}</p>
+                </div>
+                <button class="ai-toast-close" onclick="this.parentElement.remove()">&times;</button>
+            `;
+
+            if (isNew) {
+                container.appendChild(toast);
+            }
+
+            lucide.createIcons();
+
+            if (Notification.permission === 'granted' && isNew) {
+                try {
+                    new Notification(title, { body: message });
+                } catch(e) {}
+            }
+
+            if (type !== 'info') {
+                setTimeout(() => {
+                    if (toast && toast.parentElement) {
+                        toast.style.transform = 'translateX(120%)';
+                        toast.style.opacity = '0';
+                        setTimeout(() => toast.remove(), 300);
+                    }
+                }, 6000);
+            }
+
+            return toast;
+        }
+
+        if (typeof Notification !== 'undefined' && Notification.permission === 'default') {
+            Notification.requestPermission();
+        }
+
+        function generateAiBlog() {
+            const prompt = document.getElementById('ai_blog_prompt').value.trim();
+            const tone = document.getElementById('ai_blog_tone').value;
+            const generateImage = document.getElementById('ai_blog_gen_image').checked;
+
+            if (!prompt) {
+                alert('Please enter a description or topic for the blog article.');
+                return;
+            }
+
+            const formWrapper = document.getElementById('ai-blog-form-wrapper');
+            const loader = document.getElementById('ai-blog-loader');
+
+            formWrapper.style.display = 'none';
+            loader.style.display = 'flex';
+
+            // Generate blog text FIRST (without image to keep it fast!)
+            fetch("{{ route('admin.ai.blog') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                body: JSON.stringify({
+                    prompt: prompt,
+                    tone: tone,
+                    generate_image: false
+                })
+            })
+            .then(res => res.json())
+            .then(res => {
+                if (res.success && res.data) {
+                    const data = res.data;
+                    document.getElementById('blog_title').value = data.title || '';
+                    document.getElementById('blog_category').value = data.category || 'Financial Tips';
+                    document.getElementById('blog_summary').value = data.summary || '';
+                    
+                    if (blogEditor) {
+                        blogEditor.setData(data.content || '');
+                    } else {
+                        document.getElementById('blog_content').value = data.content || '';
+                    }
+
+                    closeAiModal('blog');
+                    
+                    // Now, if generateImage was checked, kick off background cover image generation!
+                    if (generateImage) {
+                        const imgPrompt = data.image_prompt || prompt;
+                        
+                        showToast("Generating Blog Cover", "AI is rendering cover image in the background...", "info", "ai-blog-cover-job");
+                        
+                        fetch("{{ route('admin.ai.image') }}", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                            },
+                            body: JSON.stringify({
+                                prompt: imgPrompt,
+                                aspect_ratio: "16:9"
+                            })
+                        })
+                        .then(imgRes => imgRes.json())
+                        .then(imgRes => {
+                            if (imgRes.success && imgRes.url) {
+                                document.getElementById('blog_image_url').value = imgRes.url;
+                                showToast("Cover Image Attached!", "AI cover image generated and attached to blog form successfully.", "success", "ai-blog-cover-job");
+                            } else {
+                                showToast("Cover Image Failed", imgRes.error || "Failed to generate cover image. You can upload or paste a link manually.", "error", "ai-blog-cover-job");
+                            }
+                        })
+                        .catch(err => {
+                            showToast("Cover Image Failed", "Network error during cover image generation.", "error", "ai-blog-cover-job");
+                        });
+                    } else {
+                        alert('AI generated draft successfully! Please review the form before publishing.');
+                    }
+                    
+                    document.getElementById('blog-form-container').scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    alert('AI Generation Error: ' + (res.error || 'Failed to generate blog article.'));
+                    formWrapper.style.display = 'block';
+                    loader.style.display = 'none';
+                }
+            })
+            .catch(err => {
+                alert('Network Error: ' + err.message);
+                formWrapper.style.display = 'block';
+                loader.style.display = 'none';
+            });
+        }
+
+        function generateAiService() {
+            const prompt = document.getElementById('ai_service_prompt').value.trim();
+            const tone = document.getElementById('ai_service_tone').value;
+
+            if (!prompt) {
+                alert('Please enter a description for the service page.');
+                return;
+            }
+
+            const formWrapper = document.getElementById('ai-service-form-wrapper');
+            const loader = document.getElementById('ai-service-loader');
+
+            formWrapper.style.display = 'none';
+            loader.style.display = 'flex';
+
+            fetch("{{ route('admin.ai.service') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                body: JSON.stringify({
+                    prompt: prompt,
+                    tone: tone
+                })
+            })
+            .then(res => res.json())
+            .then(res => {
+                if (res.success && res.data) {
+                    const data = res.data;
+                    
+                    document.getElementById('ser_service_name').value = data.service_name || '';
+                    if (data.service_name) {
+                        const slug = data.service_name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+                        document.getElementById('ser_slug').value = slug;
+                    }
+                    
+                    document.getElementById('ser_badge').value = data.badge || '';
+                    document.getElementById('ser_hero_category').value = data.hero_category || '';
+                    document.getElementById('ser_hero_title').value = data.hero_title || '';
+                    document.getElementById('ser_hero_subtitle').value = data.hero_subtitle || '';
+                    
+                    document.getElementById('ser_rate_value').value = data.rate_value || '';
+                    document.getElementById('ser_max_loan').value = data.max_loan || '';
+                    document.getElementById('ser_tenure').value = data.tenure || '';
+                    document.getElementById('ser_intro_title').value = data.intro_title || '';
+                    
+                    if (serviceIntroEditor) {
+                        serviceIntroEditor.setData(data.intro_content || '');
+                    } else {
+                        document.getElementById('ser_intro_content').value = data.intro_content || '';
+                    }
+                    
+                    document.getElementById('ser_eligibility_criteria').value = data.eligibility_criteria || '';
+                    document.getElementById('ser_documents_required').value = data.documents_required || '';
+                    document.getElementById('ser_tips_title').value = data.tips_title || '';
+                    
+                    if (serviceTipsEditor) {
+                        serviceTipsEditor.setData(data.tips_content || '');
+                    } else {
+                        document.getElementById('ser_tips_content').value = data.tips_content || '';
+                    }
+                    
+                    document.getElementById('ser_summary').value = data.summary || '';
+
+                    // Clear existing FAQs
+                    const faqContainer = document.getElementById('faq-repeater-container');
+                    faqContainer.innerHTML = '';
+
+                    // Populate FAQs
+                    if (data.faqs && Array.isArray(data.faqs)) {
+                        data.faqs.forEach(faq => {
+                            addFaqInput(faq.question, faq.answer);
+                        });
+                    }
+
+                    closeAiModal('service');
+                    alert('AI generated service page details successfully! Please review the form before saving.');
+                    document.getElementById('service-form-container').scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    alert('AI Generation Error: ' + (res.error || 'Failed to generate service page.'));
+                    formWrapper.style.display = 'block';
+                    loader.style.display = 'none';
+                }
+            })
+            .catch(err => {
+                alert('Network Error: ' + err.message);
+                formWrapper.style.display = 'block';
+                loader.style.display = 'none';
+            });
+        }
+
+        function generateAiImage() {
+            const prompt = document.getElementById('ai_image_prompt').value.trim();
+            const ratio = document.getElementById('ai_image_aspect_ratio').value;
+
+            if (!prompt) {
+                alert('Please describe the image you want to generate.');
+                return;
+            }
+
+            // Close modal immediately and run in background!
+            closeAiModal('image');
+            
+            const jobId = "ai-image-job-" + Date.now();
+            showToast("Generating AI Image", "Gemini is rendering your picture in the background...", "info", jobId);
+
+            fetch("{{ route('admin.ai.image') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                body: JSON.stringify({
+                    prompt: prompt,
+                    aspect_ratio: ratio
+                })
+            })
+            .then(res => res.json())
+            .then(res => {
+                if (res.success && res.url) {
+                    const toast = showToast("AI Image Ready!", "Your generated image is ready and saved to the library.", "success", jobId);
+                    
+                    // Add Copy URL button directly in the background toast success notification!
+                    const copyBtn = document.createElement('button');
+                    copyBtn.className = 'btn-submit';
+                    copyBtn.style = 'margin-top: 8px; font-size: 0.75rem; padding: 4px 8px; width: auto; display: inline-flex; align-items: center; gap: 4px;';
+                    copyBtn.innerHTML = '<i data-lucide="copy" style="width: 12px; height: 12px;"></i> Copy URL';
+                    const fullUrl = res.url.startsWith('http') || res.url.startsWith('//') || res.url.startsWith('/') 
+                        ? res.url 
+                        : ("{{ asset('storage') }}/" + res.url);
+                    copyBtn.onclick = function() {
+                        copyToClipboard(fullUrl, copyBtn);
+                    };
+                    
+                    toast.querySelector('.ai-toast-content').appendChild(copyBtn);
+                    lucide.createIcons();
+                } else {
+                    showToast("AI Generation Failed", res.error || "Failed to generate picture in background.", "error", jobId);
+                }
+            })
+            .catch(err => {
+                showToast("AI Generation Failed", "Network error during background image generation.", "error", jobId);
+            });
         }
     </script>
 </body>

@@ -63,4 +63,9 @@ Route::middleware(['auth'])->group(function () {
     // Leads Management
     Route::post('/admin/leads/{id}/update', [AdminController::class, 'updateLead'])->name('admin.leads.update');
     Route::post('/admin/leads/{id}/delete', [AdminController::class, 'deleteLead'])->name('admin.leads.delete');
+
+    // AI Content Generation
+    Route::post('/admin/ai/generate-blog', [AdminController::class, 'aiGenerateBlog'])->name('admin.ai.blog');
+    Route::post('/admin/ai/generate-service', [AdminController::class, 'aiGenerateService'])->name('admin.ai.service');
+    Route::post('/admin/ai/generate-image', [AdminController::class, 'aiGenerateImage'])->name('admin.ai.image');
 });
