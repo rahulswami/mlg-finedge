@@ -301,44 +301,7 @@ function initForms() {
         });
     }
     
-    // Form submissions
-    const forms = document.querySelectorAll('form');
-    forms.forEach(form => {
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            
-            // Get form values
-            const formData = new FormData(form);
-            const data = {};
-            formData.forEach((value, key) => { data[key] = value; });
-            
-            // Console log lead info for confirmation
-            console.log('--- MLG Finedge New Lead Received ---', data);
-            
-            // Close any open overlay first
-            const activeOverlays = document.querySelectorAll('.dialog-overlay.open');
-            activeOverlays.forEach(overlay => overlay.classList.remove('open'));
-            
-            // Trigger thank you success dialog
-            openDialog('success-dialog');
-            
-            // Reset form
-            form.reset();
-            
-            // Reset wizard back to first step if applicable
-            if (stepPanels.length > 0) {
-                const dots = document.querySelectorAll('.form-step-dot');
-                stepPanels.forEach((p, i) => {
-                    if (i === 0) p.classList.add('active');
-                    else p.classList.remove('active');
-                });
-                dots.forEach((dot, idx) => {
-                    if (idx === 0) dot.classList.add('active');
-                    else dot.classList.remove('active', 'completed');
-                });
-            }
-        });
-    });
+    // Form submissions are handled natively by the HTML forms submitting to the backend routes.
 }
 
 /* --- Scroll Animations via IntersectionObserver --- */

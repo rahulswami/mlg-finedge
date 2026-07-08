@@ -152,6 +152,83 @@ class HomeController extends Controller
             \Illuminate\Support\Facades\Log::error('Lead save failed: ' . $e->getMessage() . ' | File: ' . $e->getFile() . ':' . $e->getLine());
         }
 
+        // 4. Send Email Notification if SMTP is configured
+        if (!empty($siteSettings['smtp_host'])) {
+            try {
+                // Dynamically configure Laravel mailer settings
+                config([
+                    'mail.mailers.smtp.transport' => 'smtp',
+                    'mail.mailers.smtp.host' => $siteSettings['smtp_host'],
+                    'mail.mailers.smtp.port' => (int)($siteSettings['smtp_port'] ?? 587),
+                    'mail.mailers.smtp.username' => $siteSettings['smtp_username'] ?? null,
+                    'mail.mailers.smtp.password' => $siteSettings['smtp_password'] ?? null,
+                    'mail.mailers.smtp.encryption' => ($siteSettings['smtp_encryption'] ?? 'tls') === 'none' ? null : ($siteSettings['smtp_encryption'] ?? 'tls'),
+                    'mail.from.address' => $siteSettings['smtp_from_address'] ?? 'no-reply@mlgfinedge.com',
+                    'mail.from.name' => $siteSettings['smtp_from_name'] ?? 'MLG Finedge Alerts',
+                ]);
+
+                config(['mail.default' => 'smtp']);
+
+                $toEmail = $siteSettings['smtp_to_email'] ?? 'admin@mlgfinedge.com';
+                $fromAddress = $siteSettings['smtp_from_address'] ?? 'no-reply@mlgfinedge.com';
+                $fromName = $siteSettings['smtp_from_name'] ?? 'MLG Finedge Alerts';
+                $leadName = $request->name;
+
+                \Illuminate\Support\Facades\Mail::raw(
+                    "New Lead Inquiry Received:\n\n" .
+                    "Name: " . $request->name . "\n" .
+                    "Phone: " . $request->phone . "\n" .
+                    "Email: " . ($request->email ?: 'N/A') . "\n" .
+                    "Source: " . ($request->input('source', 'Contact Form')) . "\n\n" .
+                    "Details:\n" . ($compiledMessage ?: 'Requesting a quick callback/consultation.'),
+                    function ($message) use ($toEmail, $fromAddress, $fromName, $leadName) {
+                        $message->to($toEmail)
+                                ->subject('New Lead Inquiry: ' . $leadName)
+                                ->from($fromAddress, $fromName);
+                    }
+                );
+                
+                \Illuminate\Support\Facades\Log::info('Email alert sent for lead: ' . $leadName);
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('SMTP Lead Email Notification failed: ' . $e->getMessage() . ' | Line: ' . $e->getLine());
+            }
+        }
+
+        // 5. Send WhatsApp Notification if WhatsApp API settings are configured
+        if (!empty($siteSettings['whatsapp_api_url']) && !empty($siteSettings['whatsapp_admin_recipient'])) {
+            try {
+                $apiUrl = $siteSettings['whatsapp_api_url'];
+                $apiToken = $siteSettings['whatsapp_api_token'] ?? '';
+                $recipient = $siteSettings['whatsapp_admin_recipient'];
+                
+                $textMessage = "New Lead Alert!\n" .
+                              "Name: {$request->name}\n" .
+                              "Phone: {$request->phone}\n" .
+                              "Email: " . ($request->email ?: 'N/A') . "\n" .
+                              "Source: " . ($request->input('source', 'Contact Form')) . "\n" .
+                              "Message: " . ($compiledMessage ?: 'Requesting a quick callback/consultation.');
+                
+                $response = \Illuminate\Support\Facades\Http::withHeaders([
+                    'Authorization' => 'Bearer ' . $apiToken,
+                    'Content-Type' => 'application/json',
+                ])->post($apiUrl, [
+                    'to' => $recipient,
+                    'message' => $textMessage,
+                    'phone' => $recipient,
+                    'body' => $textMessage,
+                    'text' => ['body' => $textMessage]
+                ]);
+                
+                if ($response->successful()) {
+                    \Illuminate\Support\Facades\Log::info('WhatsApp notification sent successfully for lead: ' . $request->name);
+                } else {
+                    \Illuminate\Support\Facades\Log::warning('WhatsApp API returned error code: ' . $response->status() . ' | Response: ' . $response->body());
+                }
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('WhatsApp notification failed: ' . $e->getMessage() . ' | Line: ' . $e->getLine());
+            }
+        }
+
         return redirect()->route('thank-you');
     }
 

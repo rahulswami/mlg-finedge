@@ -937,6 +937,72 @@
                         </div>
                     </div>
 
+                    <div class="admin-card">
+                        <h2>SMTP Mailer Settings (Lead Notification Email)</h2>
+                        <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem; margin-top: -1rem;">
+                            Configure SMTP details to send automated email alerts to admin when a new inquiry is submitted.
+                        </p>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="smtp_host">SMTP Host</label>
+                                <input type="text" id="smtp_host" name="smtp_host" class="form-control" value="{{ $site['smtp_host'] ?? '' }}" placeholder="smtp.mailtrap.io">
+                            </div>
+                            <div class="form-group">
+                                <label for="smtp_port">SMTP Port</label>
+                                <input type="text" id="smtp_port" name="smtp_port" class="form-control" value="{{ $site['smtp_port'] ?? '587' }}" placeholder="587">
+                            </div>
+                            <div class="form-group">
+                                <label for="smtp_username">SMTP Username</label>
+                                <input type="text" id="smtp_username" name="smtp_username" class="form-control" value="{{ $site['smtp_username'] ?? '' }}" placeholder="username">
+                            </div>
+                            <div class="form-group">
+                                <label for="smtp_password">SMTP Password</label>
+                                <input type="password" id="smtp_password" name="smtp_password" class="form-control" value="{{ $site['smtp_password'] ?? '' }}" placeholder="password">
+                            </div>
+                            <div class="form-group">
+                                <label for="smtp_encryption">SMTP Encryption</label>
+                                <select id="smtp_encryption" name="smtp_encryption" class="form-control">
+                                    <option value="tls" @selected(($site['smtp_encryption'] ?? 'tls') == 'tls')>TLS</option>
+                                    <option value="ssl" @selected(($site['smtp_encryption'] ?? 'tls') == 'ssl')>SSL</option>
+                                    <option value="none" @selected(($site['smtp_encryption'] ?? 'tls') == 'none')>None</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="smtp_from_address">From Email Address</label>
+                                <input type="email" id="smtp_from_address" name="smtp_from_address" class="form-control" value="{{ $site['smtp_from_address'] ?? 'no-reply@mlgfinedge.com' }}" placeholder="no-reply@mlgfinedge.com">
+                            </div>
+                            <div class="form-group">
+                                <label for="smtp_from_name">From Sender Name</label>
+                                <input type="text" id="smtp_from_name" name="smtp_from_name" class="form-control" value="{{ $site['smtp_from_name'] ?? 'MLG Finedge Alerts' }}" placeholder="MLG Finedge Alerts">
+                            </div>
+                            <div class="form-group">
+                                <label for="smtp_to_email">Recipient Email Address (Admin Alert)</label>
+                                <input type="email" id="smtp_to_email" name="smtp_to_email" class="form-control" value="{{ $site['smtp_to_email'] ?? 'admin@mlgfinedge.com' }}" placeholder="admin@mlgfinedge.com">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="admin-card">
+                        <h2>WhatsApp API Settings (Lead Notification WhatsApp)</h2>
+                        <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem; margin-top: -1rem;">
+                            Configure WhatsApp API settings to send automated alerts when a new inquiry is submitted.
+                        </p>
+                        <div class="form-grid">
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label for="whatsapp_api_url">WhatsApp API Gateway URL</label>
+                                <input type="text" id="whatsapp_api_url" name="whatsapp_api_url" class="form-control" value="{{ $site['whatsapp_api_url'] ?? '' }}" placeholder="https://api.whatsapp.com/send or custom API endpoint">
+                            </div>
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label for="whatsapp_api_token">WhatsApp API Token / Key</label>
+                                <input type="password" id="whatsapp_api_token" name="whatsapp_api_token" class="form-control" value="{{ $site['whatsapp_api_token'] ?? '' }}" placeholder="API Token / Auth Key">
+                            </div>
+                            <div class="form-group">
+                                <label for="whatsapp_admin_recipient">Admin Recipient WhatsApp Number (with country code, no +)</label>
+                                <input type="text" id="whatsapp_admin_recipient" name="whatsapp_admin_recipient" class="form-control" value="{{ $site['whatsapp_admin_recipient'] ?? '919672777749' }}" placeholder="e.g. 919672777749">
+                            </div>
+                        </div>
+                    </div>
+
                     <button type="submit" class="btn-submit">Save Parameters</button>
                 </form>
             </div>
@@ -1037,20 +1103,20 @@
                                         </tr>
                                         
                                         <!-- Inline Expandable Detail/Edit Form Row -->
-                                        <tr id="lead-details-{{ $lead->id }}" class="lead-detail-row" style="display: none; background-color: #f8fafc;">
-                                            <td colspan="5" style="padding: 1.5rem; border-top: 1px dashed #e2e8f0; border-bottom: 1px dashed #e2e8f0;">
+                                        <tr id="lead-details-{{ $lead->id }}" class="lead-detail-row" style="display: none; background-color: var(--admin-dark-sidebar);">
+                                            <td colspan="5" style="padding: 1.5rem; border-top: 1px dashed var(--admin-border); border-bottom: 1px dashed var(--admin-border);">
                                                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
                                                     
                                                     <!-- Details Section -->
                                                     <div>
-                                                        <h4 style="margin: 0 0 0.75rem 0; color: var(--primary-teal-dark); font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px; border: none; padding: 0;">Lead Information Details</h4>
-                                                        <div style="background-color: white; border: 1px solid #e2e8f0; border-radius: var(--radius-md); padding: 1rem; font-size: 0.9rem; line-height: 1.5; color: #334155;">
+                                                        <h4 style="margin: 0 0 0.75rem 0; color: var(--mint-green); font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px; border: none; padding: 0;">Lead Information Details</h4>
+                                                        <div style="background-color: rgba(255,255,255,0.02); border: 1px solid var(--admin-border); border-radius: var(--radius-md); padding: 1rem; font-size: 0.9rem; line-height: 1.5; color: rgba(255,255,255,0.95);">
                                                             {!! nl2br(e($lead->message)) !!}
                                                         </div>
                                                         @if($lead->notes)
                                                             <div style="margin-top: 1rem;">
-                                                                <h5 style="margin: 0 0 0.5rem 0; color: #475569;">Admin Notes History</h5>
-                                                                <p style="font-size: 0.85rem; color: #64748b; font-style: italic; background-color: #f1f5f9; padding: 0.50rem 0.75rem; border-radius: 4px; border-left: 3px solid #cbd5e1; margin: 0;">
+                                                                <h5 style="margin: 0 0 0.5rem 0; color: rgba(255,255,255,0.6); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">Admin Notes History</h5>
+                                                                <p style="font-size: 0.85rem; color: rgba(255,255,255,0.85); font-style: italic; background-color: rgba(255,255,255,0.02); padding: 0.50rem 0.75rem; border-radius: 4px; border-left: 3px solid var(--mint-green); margin: 0;">
                                                                     {{ $lead->notes }}
                                                                 </p>
                                                             </div>
@@ -1059,23 +1125,23 @@
                                                     
                                                     <!-- Actions & Notes Form Section -->
                                                     <div>
-                                                        <h4 style="margin: 0 0 0.75rem 0; color: var(--primary-teal-dark); font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px; border: none; padding: 0;">Update Status & Actions</h4>
+                                                        <h4 style="margin: 0 0 0.75rem 0; color: var(--mint-green); font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px; border: none; padding: 0;">Update Status & Actions</h4>
                                                         <form action="{{ route('admin.leads.update', $lead->id) }}" method="POST" style="margin-bottom: 0;">
                                                             @csrf
                                                             <div style="display: flex; flex-direction: column; gap: 0.75rem;">
                                                                 <div class="form-group">
                                                                     <label style="font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 4px;">Lead Status</label>
-                                                                    <select name="status" class="form-control" required style="padding: 0.5rem; height: auto;">
-                                                                        <option value="New" @selected($lead->status === 'New')>New</option>
-                                                                        <option value="Contacted" @selected($lead->status === 'Contacted')>Contacted</option>
-                                                                        <option value="In Progress" @selected($lead->status === 'In Progress')>In Progress</option>
-                                                                        <option value="Closed" @selected($lead->status === 'Closed')>Closed</option>
+                                                                    <select name="status" class="form-control" required style="padding: 0.5rem; height: auto; background-color: var(--admin-dark-bg); color: #ffffff;">
+                                                                        <option value="New" @selected($lead->status === 'New') style="background-color: var(--admin-dark-bg); color: #ffffff;">New</option>
+                                                                        <option value="Contacted" @selected($lead->status === 'Contacted') style="background-color: var(--admin-dark-bg); color: #ffffff;">Contacted</option>
+                                                                        <option value="In Progress" @selected($lead->status === 'In Progress') style="background-color: var(--admin-dark-bg); color: #ffffff;">In Progress</option>
+                                                                        <option value="Closed" @selected($lead->status === 'Closed') style="background-color: var(--admin-dark-bg); color: #ffffff;">Closed</option>
                                                                     </select>
                                                                 </div>
                                                                 
                                                                 <div class="form-group">
                                                                     <label style="font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 4px;">Internal Follow-up Notes</label>
-                                                                    <textarea name="notes" class="form-control" rows="3" placeholder="Write internal notes about client conversation..." style="font-size: 0.85rem; padding: 0.5rem;">{{ $lead->notes }}</textarea>
+                                                                    <textarea name="notes" class="form-control" rows="3" placeholder="Write internal notes about client conversation..." style="font-size: 0.85rem; padding: 0.5rem; background-color: var(--admin-dark-bg); color: #ffffff;">{{ $lead->notes }}</textarea>
                                                                 </div>
                                                             </div>
                                                             <button type="submit" class="btn-submit" style="padding: 0.5rem 1rem; width: auto; margin-top: 0.75rem; font-size: 0.85rem;">
@@ -1083,7 +1149,7 @@
                                                             </button>
                                                         </form>
                                                         
-                                                        <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 1.25rem 0;">
+                                                        <hr style="border: 0; border-top: 1px solid var(--admin-border); margin: 1.25rem 0;">
                                                         
                                                         <div style="display: flex; justify-content: space-between; align-items: center;">
                                                             <span style="font-size: 0.8rem; color: #94a3b8;">Dangerous operation:</span>

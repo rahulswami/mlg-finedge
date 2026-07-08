@@ -151,7 +151,7 @@
                 <ul class="footer-contact-info">
                     <li>
                         <i data-lucide="map-pin"></i>
-                        <span>{{ $site['address'] ?? 'Gopalpura Sector 5, Near Metro Station, Jaipur, Rajasthan 302020' }}</span>
+                        <span>{{ $site['address'] ?? 'B-13 A, 10 B Scheme, Gopalpura Byepass, Behind The Park Classic, Jaipur - 302018' }}</span>
                     </li>
                     <li>
                         <i data-lucide="phone"></i>

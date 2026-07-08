@@ -41,10 +41,10 @@
       "telephone": "{{ $site['phone'] ?? '+919672777749' }}",
       "address": {
         "{{ '@type' }}": "PostalAddress",
-        "streetAddress": "{{ $site['address'] ?? 'Gopalpura Sector 5, Near Metro Station' }}",
+        "streetAddress": "{{ $site['address'] ?? 'B-13 A, 10 B Scheme, Gopalpura Byepass, Behind The Park Classic, Jaipur - 302018' }}",
         "addressLocality": "Jaipur",
         "addressRegion": "Rajasthan",
-        "postalCode": "302020",
+        "postalCode": "302018",
         "addressCountry": "IN"
       },
       "geo": {

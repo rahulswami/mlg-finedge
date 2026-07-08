@@ -52,7 +52,7 @@
                     <div class="contact-info-icon"><i data-lucide="map-pin"></i></div>
                     <div class="contact-info-content">
                         <h3>Our Office</h3>
-                        <p>{{ $site['address'] ?? 'Plot No 42, Gopalpura Sector 5, Near Gopalpura Metro Station, Jaipur, Rajasthan 302020' }}</p>
+                        <p>{{ $site['address'] ?? 'B-13 A, 10 B Scheme, Gopalpura Byepass, Behind The Park Classic, Jaipur - 302018' }}</p>
                     </div>
                 </div>
                 
