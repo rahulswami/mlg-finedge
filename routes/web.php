@@ -16,8 +16,9 @@ Route::get('/faq', [HomeController::class, 'faq'])->name('faq');
 Route::get('/blog', [HomeController::class, 'blog'])->name('blog');
 Route::get('/blog/{slug}', [HomeController::class, 'blogShow'])->name('blog.show');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
-Route::post('/contact/submit', [HomeController::class, 'contactSubmit'])->name('contact.submit');
 Route::get('/thank-you', [HomeController::class, 'thankYou'])->name('thank-you');
+Route::post('/contact/submit', [HomeController::class, 'contactSubmit'])->name('contact.submit');
+Route::get('/l/{slug}', [HomeController::class, 'landingShow'])->name('landing.show');
 Route::post('/api/database/import', [AdminController::class, 'importLiveDatabase']);
 
 // Live server DB setup — creates all missing tables in one request
@@ -78,4 +79,11 @@ Route::middleware(['auth'])->group(function () {
 
     // Cloudflare Analytics
     Route::post('/admin/cloudflare/analytics', [AdminController::class, 'getCloudflareAnalytics'])->name('admin.cloudflare.analytics');
+
+    // Landing Pages CRUD
+    Route::post('/admin/landing-pages', [AdminController::class, 'storeLandingPage'])->name('admin.landing.store');
+    Route::post('/admin/landing-pages/{id}/update', [AdminController::class, 'updateLandingPage'])->name('admin.landing.update');
+    Route::post('/admin/landing-pages/{id}/delete', [AdminController::class, 'deleteLandingPage'])->name('admin.landing.delete');
+    Route::post('/admin/ai/generate-landing', [AdminController::class, 'aiGenerateLandingPage'])->name('admin.ai.landing');
+    Route::post('/admin/ai/sync-gmb-testimonials', [AdminController::class, 'aiSyncGmbTestimonials'])->name('admin.ai.gmb-sync');
 });

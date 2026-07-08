@@ -698,6 +698,7 @@
             <li class="menu-item"><button onclick="switchTab('testimonials')" class="tab-btn" id="btn-testimonials"><i data-lucide="users"></i> Testimonials</button></li>
             <li class="menu-item"><button onclick="switchTab('styling')" class="tab-btn" id="btn-styling"><i data-lucide="palette"></i> Section Backgrounds</button></li>
             <li class="menu-item"><button onclick="switchTab('pagecontents')" class="tab-btn" id="btn-pagecontents"><i data-lucide="file-text"></i> Page Editor</button></li>
+            <li class="menu-item"><button onclick="switchTab('landing')" class="tab-btn" id="btn-landing"><i data-lucide="layout"></i> AI Landing Pages</button></li>
             <li class="menu-item"><button onclick="switchTab('services')" class="tab-btn" id="btn-services"><i data-lucide="layers"></i> Services Manager</button></li>
             <li class="menu-item"><button onclick="switchTab('banks')" class="tab-btn" id="btn-banks"><i data-lucide="landmark"></i> Bank Comparison</button></li>
             <li class="menu-item"><button onclick="switchTab('blogs')" class="tab-btn" id="btn-blogs"><i data-lucide="book-open"></i> Blog Manager</button></li>
@@ -840,9 +841,9 @@
                     </div>
 
                     <div class="admin-card">
-                        <h2>Google Gemini AI Settings</h2>
+                        <h2>Google Gemini AI & Business Settings</h2>
                         <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem; margin-top: -1rem;">
-                            Provide a Google Gemini API Key from Google AI Studio. This key is used to generate blog articles, pictures, and new service pages using prompts.
+                            Provide a Google Gemini API Key and your Google My Business link to enable AI generation and reviews sync.
                         </p>
                         <div class="form-grid">
                             <div class="form-group" style="grid-column: span 2;">
@@ -850,6 +851,14 @@
                                 <input type="password" id="gemini_api_key" name="gemini_api_key" class="form-control" value="{{ $site['gemini_api_key'] ?? '' }}" placeholder="Paste your Gemini API Key here...">
                                 <span style="font-size: 0.75rem; color: var(--admin-text-muted); display: block; margin-top: 5px;">
                                     Get an API Key from the <a href="https://aistudio.google.com/" target="_blank" style="color: var(--mint-green); text-decoration: underline;">Google AI Studio Console</a>.
+                                </span>
+                            </div>
+                            
+                            <div class="form-group" style="grid-column: span 2; margin-top: 1rem;">
+                                <label for="google_my_business_link">Google My Business Reviews Link</label>
+                                <input type="text" id="google_my_business_link" name="google_my_business_link" class="form-control" value="{{ $site['google_my_business_link'] ?? '' }}" placeholder="Paste your Google My Business reviews link here...">
+                                <span style="font-size: 0.75rem; color: var(--admin-text-muted); display: block; margin-top: 5px;">
+                                    This link will be used to sync/generate authentic testimonials using AI.
                                 </span>
                             </div>
                         </div>
@@ -1349,6 +1358,21 @@
 
             <!-- 4. TESTIMONIALS TAB -->
             <div class="tab-panel" id="tab-testimonials">
+                <!-- AI Sync Testimonials Card -->
+                <div class="admin-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                        <div>
+                            <h2>Import Google My Business Reviews</h2>
+                            <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-top: -5px; margin-bottom: 0;">
+                                Sync reviews automatically based on the Google My Business link configured in General Settings.
+                            </p>
+                        </div>
+                        <button type="button" id="btn-sync-gmb" class="btn-submit" style="background-color: #4285F4; color: white; display: flex; align-items: center; gap: 8px; width: auto; padding: 0.6rem 1.2rem; font-size: 0.85rem;" onclick="syncGmbReviews()">
+                            <i data-lucide="refresh-cw" id="icon-sync-gmb" style="width: 16px; height: 16px;"></i> Sync GMB Reviews via AI
+                        </button>
+                    </div>
+                </div>
+
                 <!-- Add New Testimonial -->
                 <div class="admin-card">
                     <h2>Add New Customer Testimonial</h2>
@@ -1555,6 +1579,218 @@
                         <div class="form-group">
                             <label>Why Choose Us Intro Subtitle</label>
                             <textarea name="contents[home][why_choose_us][subtitle]" class="form-control" rows="3">{{ $pageContents->where('page', 'home')->where('section', 'why_choose_us')->where('key', 'subtitle')->first()->value ?? '' }}</textarea>
+                        </div>
+                    </div>
+
+                    <!-- Website Header Elements -->
+                    <div class="admin-card">
+                        <h2>Website Header & Navigation</h2>
+                        <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem; margin-top: -1rem;">
+                            Edit the navigation menu link labels and the header action button text.
+                        </p>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Home Menu Label</label>
+                                <input type="text" name="contents[header][menu][home]" class="form-control" value="{{ $pageContents->where('page', 'header')->where('section', 'menu')->where('key', 'home')->first()->value ?? 'Home' }}">
+                            </div>
+                            <div class="form-group">
+                                <label>About Us Menu Label</label>
+                                <input type="text" name="contents[header][menu][about]" class="form-control" value="{{ $pageContents->where('page', 'header')->where('section', 'menu')->where('key', 'about')->first()->value ?? 'About Us' }}">
+                            </div>
+                            <div class="form-group">
+                                <label>Services Menu Label</label>
+                                <input type="text" name="contents[header][menu][services]" class="form-control" value="{{ $pageContents->where('page', 'header')->where('section', 'menu')->where('key', 'services')->first()->value ?? 'Services' }}">
+                            </div>
+                            <div class="form-group">
+                                <label>Compare Loans Menu Label</label>
+                                <input type="text" name="contents[header][menu][compare]" class="form-control" value="{{ $pageContents->where('page', 'header')->where('section', 'menu')->where('key', 'compare')->first()->value ?? 'Compare Loans' }}">
+                            </div>
+                            <div class="form-group">
+                                <label>Testimonials Menu Label</label>
+                                <input type="text" name="contents[header][menu][testimonials]" class="form-control" value="{{ $pageContents->where('page', 'header')->where('section', 'menu')->where('key', 'testimonials')->first()->value ?? 'Testimonials' }}">
+                            </div>
+                            <div class="form-group">
+                                <label>Blog Menu Label</label>
+                                <input type="text" name="contents[header][menu][blog]" class="form-control" value="{{ $pageContents->where('page', 'header')->where('section', 'menu')->where('key', 'blog')->first()->value ?? 'Blog' }}">
+                            </div>
+                            <div class="form-group">
+                                <label>Contact Us Menu Label</label>
+                                <input type="text" name="contents[header][menu][contact]" class="form-control" value="{{ $pageContents->where('page', 'header')->where('section', 'menu')->where('key', 'contact')->first()->value ?? 'Contact Us' }}">
+                            </div>
+                            <div class="form-group">
+                                <label>Header Call to Action Button</label>
+                                <input type="text" name="contents[header][menu][cta]" class="form-control" value="{{ $pageContents->where('page', 'header')->where('section', 'menu')->where('key', 'cta')->first()->value ?? 'Call Now' }}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Website Footer Settings -->
+                    <div class="admin-card">
+                        <h2>Website Footer Blocks</h2>
+                        <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem; margin-top: -1rem;">
+                            Edit footer titles, disclaimer, copy and about summary text.
+                        </p>
+                        <div class="form-group">
+                            <label>Footer Column 1 - Description Summary</label>
+                            <textarea name="contents[footer][about][description]" class="form-control" rows="3">{{ $pageContents->where('page', 'footer')->where('section', 'about')->where('key', 'description')->first()->value ?? '' }}</textarea>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Column 2 Heading (Quick Links)</label>
+                                <input type="text" name="contents[footer][headings][quick_links]" class="form-control" value="{{ $pageContents->where('page', 'footer')->where('section', 'headings')->where('key', 'quick_links')->first()->value ?? 'Quick Links' }}">
+                            </div>
+                            <div class="form-group">
+                                <label>Column 3 Heading (Loan Services)</label>
+                                <input type="text" name="contents[footer][headings][services]" class="form-control" value="{{ $pageContents->where('page', 'footer')->where('section', 'headings')->where('key', 'services')->first()->value ?? 'Loan Services' }}">
+                            </div>
+                            <div class="form-group">
+                                <label>Column 4 Heading (Contact Info)</label>
+                                <input type="text" name="contents[footer][headings][contact]" class="form-control" value="{{ $pageContents->where('page', 'footer')->where('section', 'headings')->where('key', 'contact')->first()->value ?? 'Contact Info' }}">
+                            </div>
+                            <div class="form-group">
+                                <label>Footer Copyright suffix (e.g. All Rights Reserved)</label>
+                                <input type="text" name="contents[footer][bottom][copyright]" class="form-control" value="{{ $pageContents->where('page', 'footer')->where('section', 'bottom')->where('key', 'copyright')->first()->value ?? 'All Rights Reserved.' }}">
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin-top: 1rem;">
+                            <label>Footer Bottom Disclaimer text</label>
+                            <textarea name="contents[footer][bottom][disclaimer]" class="form-control" rows="2">{{ $pageContents->where('page', 'footer')->where('section', 'bottom')->where('key', 'disclaimer')->first()->value ?? '' }}</textarea>
+                        </div>
+                    </div>
+
+                    <!-- About Us Page sections -->
+                    <div class="admin-card">
+                        <h2>About Us Page - Hero & Story</h2>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Hero Section Pre-heading</label>
+                                <input type="text" name="contents[about][hero][pre_title]" class="form-control" value="{{ $pageContents->where('page', 'about')->where('section', 'hero')->where('key', 'pre_title')->first()->value ?? 'WHO WE ARE' }}">
+                            </div>
+                            <div class="form-group">
+                                <label>Hero Section Main Title</label>
+                                <input type="text" name="contents[about][hero][title]" class="form-control" value="{{ $pageContents->where('page', 'about')->where('section', 'hero')->where('key', 'title')->first()->value ?? '' }}">
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin-top: 1rem;">
+                            <label>Hero Subtitle / Description text</label>
+                            <textarea name="contents[about][hero][subtitle]" class="form-control" rows="2">{{ $pageContents->where('page', 'about')->where('section', 'hero')->where('key', 'subtitle')->first()->value ?? '' }}</textarea>
+                        </div>
+                        <hr style="border: 0; border-top: 1px solid var(--admin-border); margin: 1.5rem 0;">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Story Pre-heading</label>
+                                <input type="text" name="contents[about][story][pre_title]" class="form-control" value="{{ $pageContents->where('page', 'about')->where('section', 'story')->where('key', 'pre_title')->first()->value ?? 'Our Story' }}">
+                            </div>
+                            <div class="form-group">
+                                <label>Story Heading / Title</label>
+                                <input type="text" name="contents[about][story][title]" class="form-control" value="{{ $pageContents->where('page', 'about')->where('section', 'story')->where('key', 'title')->first()->value ?? '' }}">
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin-top: 1rem;">
+                            <label>Story Paragraph 1</label>
+                            <textarea name="contents[about][story][p1]" class="form-control" rows="3">{{ $pageContents->where('page', 'about')->where('section', 'story')->where('key', 'p1')->first()->value ?? '' }}</textarea>
+                        </div>
+                        <div class="form-group" style="margin-top: 1rem;">
+                            <label>Story Paragraph 2</label>
+                            <textarea name="contents[about][story][p2]" class="form-control" rows="3">{{ $pageContents->where('page', 'about')->where('section', 'story')->where('key', 'p2')->first()->value ?? '' }}</textarea>
+                        </div>
+                        <div class="form-group" style="margin-top: 1rem;">
+                            <label>Story Paragraph 3</label>
+                            <textarea name="contents[about][story][p3]" class="form-control" rows="3">{{ $pageContents->where('page', 'about')->where('section', 'story')->where('key', 'p3')->first()->value ?? '' }}</textarea>
+                        </div>
+                    </div>
+
+                    <div class="admin-card">
+                        <h2>About Us Page - Vision, Mission & Values</h2>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Vision Block Title</label>
+                                <input type="text" name="contents[about][vision][title]" class="form-control" value="{{ $pageContents->where('page', 'about')->where('section', 'vision')->where('key', 'title')->first()->value ?? 'Our Vision' }}">
+                            </div>
+                            <div class="form-group">
+                                <label>Vision Statement text</label>
+                                <textarea name="contents[about][vision][text]" class="form-control" rows="3">{{ $pageContents->where('page', 'about')->where('section', 'vision')->where('key', 'text')->first()->value ?? '' }}</textarea>
+                            </div>
+                            
+                            <div class="form-group" style="margin-top: 1rem;">
+                                <label>Mission Block Title</label>
+                                <input type="text" name="contents[about][mission][title]" class="form-control" value="{{ $pageContents->where('page', 'about')->where('section', 'mission')->where('key', 'title')->first()->value ?? 'Our Mission' }}">
+                            </div>
+                            <div class="form-group" style="margin-top: 1rem;">
+                                <label>Mission Statement text</label>
+                                <textarea name="contents[about][mission][text]" class="form-control" rows="3">{{ $pageContents->where('page', 'about')->where('section', 'mission')->where('key', 'text')->first()->value ?? '' }}</textarea>
+                            </div>
+                            
+                            <div class="form-group" style="margin-top: 1rem;">
+                                <label>Values Block Title</label>
+                                <input type="text" name="contents[about][values][title]" class="form-control" value="{{ $pageContents->where('page', 'about')->where('section', 'values')->where('key', 'title')->first()->value ?? 'Our Core Values' }}">
+                            </div>
+                            <div class="form-group" style="margin-top: 1rem;">
+                                <label>Core Values Statement text</label>
+                                <textarea name="contents[about][values][text]" class="form-control" rows="3">{{ $pageContents->where('page', 'about')->where('section', 'values')->where('key', 'text')->first()->value ?? '' }}</textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="admin-card">
+                        <h2>About Us Page - Advisory Team Section</h2>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Team Section Title</label>
+                                <input type="text" name="contents[about][team][title]" class="form-control" value="{{ $pageContents->where('page', 'about')->where('section', 'team')->where('key', 'title')->first()->value ?? 'Our Advisory Team' }}">
+                            </div>
+                            <div class="form-group">
+                                <label>Team Section Subtitle</label>
+                                <input type="text" name="contents[about][team][subtitle]" class="form-control" value="{{ $pageContents->where('page', 'about')->where('section', 'team')->where('key', 'subtitle')->first()->value ?? '' }}">
+                            </div>
+                        </div>
+                        
+                        <h4 style="margin: 1.5rem 0 0.5rem 0; color: var(--mint-green); font-size: 0.9rem; text-transform: uppercase;">Advisor 1 Profile</h4>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Name</label>
+                                <input type="text" name="contents[about][team][advisor1_name]" class="form-control" value="{{ $pageContents->where('page', 'about')->where('section', 'team')->where('key', 'advisor1_name')->first()->value ?? 'Mahendra Gupta' }}">
+                            </div>
+                            <div class="form-group">
+                                <label>Role / Subtitle</label>
+                                <input type="text" name="contents[about][team][advisor1_role]" class="form-control" value="{{ $pageContents->where('page', 'about')->where('section', 'team')->where('key', 'advisor1_role')->first()->value ?? 'Founder & Principal Advisor' }}">
+                            </div>
+                            <div class="form-group" style="grid-column: span 2; margin-top: 0.5rem;">
+                                <label>Bio / Description summary</label>
+                                <textarea name="contents[about][team][advisor1_bio]" class="form-control" rows="2">{{ $pageContents->where('page', 'about')->where('section', 'team')->where('key', 'advisor1_bio')->first()->value ?? '' }}</textarea>
+                            </div>
+                        </div>
+
+                        <h4 style="margin: 1.5rem 0 0.5rem 0; color: var(--mint-green); font-size: 0.9rem; text-transform: uppercase;">Advisor 2 Profile</h4>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Name</label>
+                                <input type="text" name="contents[about][team][advisor2_name]" class="form-control" value="{{ $pageContents->where('page', 'about')->where('section', 'team')->where('key', 'advisor2_name')->first()->value ?? 'Ritu Sharma' }}">
+                            </div>
+                            <div class="form-group">
+                                <label>Role / Subtitle</label>
+                                <input type="text" name="contents[about][team][advisor2_role]" class="form-control" value="{{ $pageContents->where('page', 'about')->where('section', 'team')->where('key', 'advisor2_role')->first()->value ?? 'Senior Retail Loan Head' }}">
+                            </div>
+                            <div class="form-group" style="grid-column: span 2; margin-top: 0.5rem;">
+                                <label>Bio / Description summary</label>
+                                <textarea name="contents[about][team][advisor2_bio]" class="form-control" rows="2">{{ $pageContents->where('page', 'about')->where('section', 'team')->where('key', 'advisor2_bio')->first()->value ?? '' }}</textarea>
+                            </div>
+                        </div>
+
+                        <h4 style="margin: 1.5rem 0 0.5rem 0; color: var(--mint-green); font-size: 0.9rem; text-transform: uppercase;">Advisor 3 Profile</h4>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Name</label>
+                                <input type="text" name="contents[about][team][advisor3_name]" class="form-control" value="{{ $pageContents->where('page', 'about')->where('section', 'team')->where('key', 'advisor3_name')->first()->value ?? 'Amit Jain' }}">
+                            </div>
+                            <div class="form-group">
+                                <label>Role / Subtitle</label>
+                                <input type="text" name="contents[about][team][advisor3_role]" class="form-control" value="{{ $pageContents->where('page', 'about')->where('section', 'team')->where('key', 'advisor3_role')->first()->value ?? 'Business Finance Specialist' }}">
+                            </div>
+                            <div class="form-group" style="grid-column: span 2; margin-top: 0.5rem;">
+                                <label>Bio / Description summary</label>
+                                <textarea name="contents[about][team][advisor3_bio]" class="form-control" rows="2">{{ $pageContents->where('page', 'about')->where('section', 'team')->where('key', 'advisor3_bio')->first()->value ?? '' }}</textarea>
+                            </div>
                         </div>
                     </div>
 
@@ -2076,11 +2312,295 @@
                     @endif
                 </div>
             </div>
+
+            <!-- LANDING PAGES TAB -->
+            <div class="tab-panel" id="tab-landing">
+                <!-- Create New Landing Page Card -->
+                <div class="admin-card">
+                    <h2>Create New Landing Page</h2>
+                    <form action="{{ route('admin.landing.store') }}" method="POST">
+                        @csrf
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="landing_title">Page Title</label>
+                                <input type="text" id="landing_title" name="title" class="form-control" required placeholder="e.g. Doctors Loan Scheme" oninput="generateLandingSlug(this.value)">
+                            </div>
+                            <div class="form-group">
+                                <label for="landing_slug">URL Slug</label>
+                                <input type="text" id="landing_slug" name="slug" class="form-control" required placeholder="e.g. doctors-loan-scheme">
+                            </div>
+                            <div class="form-group">
+                                <label for="landing_layout">Layout Structure Type</label>
+                                <select id="landing_layout" name="layout_type" class="form-control" required>
+                                    <option value="home">Homepage Structure (Hero, Features, About, CTA, FAQs)</option>
+                                    <option value="about">About Page Structure (Hero, Story, Vision/Mission/Values, Team, CTA)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="landing_meta">Meta Description</label>
+                                <input type="text" id="landing_meta" name="meta_description" class="form-control" placeholder="SEO optimized description for search results">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-submit" style="margin-top: 1rem; width: auto; padding: 0.6rem 1.5rem;">Create Empty Landing Page</button>
+                    </form>
+                </div>
+
+                <!-- Existing Landing Pages List -->
+                <div class="admin-card">
+                    <h2>Manage Landing Pages</h2>
+                    <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem; margin-top: -1rem;">
+                        Edit generated layouts or trigger Google Gemini AI to write page sections based on prompts.
+                    </p>
+                    
+                    @if($landingPages->isEmpty())
+                        <p style="text-align: center; color: var(--admin-text-muted); padding: 2rem 0;">No landing pages created yet.</p>
+                    @else
+                        <div class="admin-table-wrap">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Page Title</th>
+                                        <th>URL Route</th>
+                                        <th>Layout Structure</th>
+                                        <th>AI Content Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($landingPages as $lp)
+                                        <tr>
+                                            <td>
+                                                <strong>{{ $lp->title }}</strong>
+                                                <br>
+                                                <small style="color: var(--admin-text-muted);">ID: {{ $lp->id }}</small>
+                                            </td>
+                                            <td>
+                                                <a href="{{ route('landing.show', $lp->slug) }}" target="_blank" style="color: var(--mint-green); text-decoration: underline;">
+                                                    /l/{{ $lp->slug }}
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <span class="badge" style="background: rgba(92, 203, 179, 0.1); color: var(--mint-green);">
+                                                    {{ ucfirst($lp->layout_type) }} Layout
+                                                </span>
+                                            </td>
+                                            <td>
+                                                @if(empty($lp->content))
+                                                    <span class="badge" style="background: rgba(232, 92, 36, 0.1); color: #e85c24;">Empty Layout</span>
+                                                @else
+                                                    <span class="badge" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">Generated via AI</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <div class="action-btns">
+                                                    <button type="button" class="btn-action edit" onclick="toggleEditLandingForm('{{ $lp->id }}')" title="Edit Layout Content">
+                                                        <i data-lucide="edit-3"></i> Edit
+                                                    </button>
+                                                    <button type="button" class="btn-action" style="background: rgba(92, 203, 179, 0.1); color: var(--mint-green); display: inline-flex; align-items: center; gap: 4px;" onclick="openLandingAiModal('{{ $lp->id }}', '{{ $lp->title }}')" title="Generate/Rewrite with Gemini AI">
+                                                        <i data-lucide="sparkles"></i> Generate AI
+                                                    </button>
+                                                    <form action="{{ route('admin.landing.delete', $lp->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this landing page?');" style="margin: 0;">
+                                                        @csrf
+                                                        <button type="submit" class="btn-action delete" title="Delete Page">
+                                                            <i data-lucide="trash-2"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                        <!-- Expandable Landing Page Content Editor Row -->
+                                        <tr id="landing-editor-{{ $lp->id }}" class="lead-detail-row" style="display: none; background-color: var(--admin-dark-sidebar);">
+                                            <td colspan="5" style="padding: 1.5rem; border-top: 1px dashed var(--admin-border); border-bottom: 1px dashed var(--admin-border);">
+                                                <form action="{{ route('admin.landing.update', $lp->id) }}" method="POST">
+                                                    @csrf
+                                                    <input type="hidden" name="layout_type" value="{{ $lp->layout_type }}">
+                                                    
+                                                    <h3 style="color: var(--mint-green); margin-bottom: 1rem;">Edit Content - {{ $lp->title }}</h3>
+                                                    <div class="form-grid" style="margin-bottom: 1rem;">
+                                                        <div class="form-group">
+                                                            <label>Page Title</label>
+                                                            <input type="text" name="title" class="form-control" value="{{ $lp->title }}" required>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>URL Route Slug</label>
+                                                            <input type="text" name="slug" class="form-control" value="{{ $lp->slug }}" required>
+                                                        </div>
+                                                        <div class="form-group" style="grid-column: span 2;">
+                                                            <label>Meta Description</label>
+                                                            <input type="text" name="meta_description" class="form-control" value="{{ $lp->meta_description }}">
+                                                        </div>
+                                                    </div>
+
+                                                    @if($lp->layout_type === 'home')
+                                                        <!-- Home Layout Editor Fields -->
+                                                        <div class="form-group" style="margin-top: 1rem;">
+                                                            <label>Hero Title</label>
+                                                            <input type="text" name="content[hero_title]" class="form-control" value="{{ $lp->content['hero_title'] ?? '' }}">
+                                                        </div>
+                                                        <div class="form-group" style="margin-top: 1rem;">
+                                                            <label>Hero Subtitle</label>
+                                                            <textarea name="content[hero_subtitle]" class="form-control" rows="2">{{ $lp->content['hero_subtitle'] ?? '' }}</textarea>
+                                                        </div>
+                                                        
+                                                        <h4 style="color: var(--mint-green); margin: 1.5rem 0 0.5rem 0; font-size: 0.95rem; text-transform: uppercase;">Features Section (Grid of 4)</h4>
+                                                        @for($i = 0; $i < 4; $i++)
+                                                            <div class="form-grid" style="background: rgba(0,0,0,0.15); padding: 0.75rem; border-radius: 4px; margin-bottom: 0.5rem; border: 1px solid var(--admin-border);">
+                                                                <div class="form-group">
+                                                                    <label>Feature {{ $i + 1 }} Title</label>
+                                                                    <input type="text" name="content[features][{{ $i }}][title]" class="form-control" value="{{ $lp->content['features'][$i]['title'] ?? '' }}">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label>Feature {{ $i + 1 }} Icon (Lucide name)</label>
+                                                                    <input type="text" name="content[features][{{ $i }}][icon]" class="form-control" value="{{ $lp->content['features'][$i]['icon'] ?? 'shield' }}">
+                                                                </div>
+                                                                <div class="form-group" style="grid-column: span 2;">
+                                                                    <label>Feature {{ $i + 1 }} Description</label>
+                                                                    <textarea name="content[features][{{ $i }}][desc]" class="form-control" rows="1">{{ $lp->content['features'][$i]['desc'] ?? '' }}</textarea>
+                                                                </div>
+                                                            </div>
+                                                        @endfor
+
+                                                        <div class="form-group" style="margin-top: 1rem;">
+                                                            <label>About Us Section Title</label>
+                                                            <input type="text" name="content[about_title]" class="form-control" value="{{ $lp->content['about_title'] ?? '' }}">
+                                                        </div>
+                                                        <div class="form-group" style="margin-top: 1rem;">
+                                                            <label>About Us Section Text</label>
+                                                            <textarea name="content[about_text]" class="form-control" rows="4">{{ $lp->content['about_text'] ?? '' }}</textarea>
+                                                        </div>
+                                                        
+                                                        <div class="form-group" style="margin-top: 1rem;">
+                                                            <label>CTA Section Title</label>
+                                                            <input type="text" name="content[cta_title]" class="form-control" value="{{ $lp->content['cta_title'] ?? '' }}">
+                                                        </div>
+                                                        <div class="form-group" style="margin-top: 1rem;">
+                                                            <label>CTA Section Text</label>
+                                                            <textarea name="content[cta_text]" class="form-control" rows="2">{{ $lp->content['cta_text'] ?? '' }}</textarea>
+                                                        </div>
+
+                                                        <h4 style="color: var(--mint-green); margin: 1.5rem 0 0.5rem 0; font-size: 0.95rem; text-transform: uppercase;">FAQ Section (3 items)</h4>
+                                                        @for($i = 0; $i < 3; $i++)
+                                                            <div style="background: rgba(0,0,0,0.15); padding: 0.75rem; border-radius: 4px; margin-bottom: 0.5rem; border: 1px solid var(--admin-border);">
+                                                                <div class="form-group">
+                                                                    <label>FAQ {{ $i + 1 }} Question</label>
+                                                                    <input type="text" name="content[faqs][{{ $i }}][q]" class="form-control" value="{{ $lp->content['faqs'][$i]['q'] ?? '' }}">
+                                                                </div>
+                                                                <div class="form-group" style="margin-top: 0.5rem;">
+                                                                    <label>FAQ {{ $i + 1 }} Answer</label>
+                                                                    <textarea name="content[faqs][{{ $i }}][a]" class="form-control" rows="2">{{ $lp->content['faqs'][$i]['a'] ?? '' }}</textarea>
+                                                                </div>
+                                                            </div>
+                                                        @endfor
+                                                    @else
+                                                        <!-- About Layout Editor Fields -->
+                                                        <div class="form-group" style="margin-top: 1rem;">
+                                                            <label>Hero Title</label>
+                                                            <input type="text" name="content[hero_title]" class="form-control" value="{{ $lp->content['hero_title'] ?? '' }}">
+                                                        </div>
+                                                        <div class="form-group" style="margin-top: 1rem;">
+                                                            <label>Hero Subtitle</label>
+                                                            <textarea name="content[hero_subtitle]" class="form-control" rows="2">{{ $lp->content['hero_subtitle'] ?? '' }}</textarea>
+                                                        </div>
+
+                                                        <div class="form-group" style="margin-top: 1rem;">
+                                                            <label>Story Section Title</label>
+                                                            <input type="text" name="content[story_title]" class="form-control" value="{{ $lp->content['story_title'] ?? '' }}">
+                                                        </div>
+                                                        <div class="form-group" style="margin-top: 1rem;">
+                                                            <label>Story Section Text</label>
+                                                            <textarea name="content[story_text]" class="form-control" rows="5">{{ $lp->content['story_text'] ?? '' }}</textarea>
+                                                        </div>
+
+                                                        <div class="form-grid" style="margin-top: 1.5rem;">
+                                                            <div class="form-group">
+                                                                <label>Our Vision Statement</label>
+                                                                <textarea name="content[vision]" class="form-control" rows="3">{{ $lp->content['vision'] ?? '' }}</textarea>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label>Our Mission Statement</label>
+                                                                <textarea name="content[mission]" class="form-control" rows="3">{{ $lp->content['mission'] ?? '' }}</textarea>
+                                                            </div>
+                                                            <div class="form-group" style="grid-column: span 2; margin-top: 0.5rem;">
+                                                                <label>Our Core Values Statement</label>
+                                                                <textarea name="content[values]" class="form-control" rows="2">{{ $lp->content['values'] ?? '' }}</textarea>
+                                                            </div>
+                                                        </div>
+
+                                                        <h4 style="color: var(--mint-green); margin: 1.5rem 0 0.5rem 0; font-size: 0.95rem; text-transform: uppercase;">Team Section (3 members)</h4>
+                                                        @for($i = 0; $i < 3; $i++)
+                                                            <div class="form-grid" style="background: rgba(0,0,0,0.15); padding: 0.75rem; border-radius: 4px; margin-bottom: 0.5rem; border: 1px solid var(--admin-border);">
+                                                                <div class="form-group">
+                                                                    <label>Member {{ $i + 1 }} Name</label>
+                                                                    <input type="text" name="content[team][{{ $i }}][name]" class="form-control" value="{{ $lp->content['team'][$i]['name'] ?? '' }}">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label>Member {{ $i + 1 }} Role</label>
+                                                                    <input type="text" name="content[team][{{ $i }}][role]" class="form-control" value="{{ $lp->content['team'][$i]['role'] ?? '' }}">
+                                                                </div>
+                                                                <div class="form-group" style="grid-column: span 2; margin-top: 0.5rem;">
+                                                                    <label>Member {{ $i + 1 }} Bio</label>
+                                                                    <textarea name="content[team][{{ $i }}][bio]" class="form-control" rows="2">{{ $lp->content['team'][$i]['bio'] ?? '' }}</textarea>
+                                                                </div>
+                                                            </div>
+                                                        @endfor
+
+                                                        <div class="form-group" style="margin-top: 1rem;">
+                                                            <label>CTA Section Title</label>
+                                                            <input type="text" name="content[cta_title]" class="form-control" value="{{ $lp->content['cta_title'] ?? '' }}">
+                                                        </div>
+                                                        <div class="form-group" style="margin-top: 1rem;">
+                                                            <label>CTA Section Text</label>
+                                                            <textarea name="content[cta_text]" class="form-control" rows="2">{{ $lp->content['cta_text'] ?? '' }}</textarea>
+                                                        </div>
+                                                    @endif
+
+                                                    <button type="submit" class="btn-submit" style="margin-top: 1rem; width: auto; padding: 0.6rem 1.5rem;">Save Landing Page Content</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @endif
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- AI Toast Notification Container -->
     <div id="ai-toast-container" style="position: fixed; bottom: 20px; right: 20px; z-index: 999999; display: flex; flex-direction: column; gap: 10px;"></div>
+
+    <!-- AI Landing Page Generator Modal -->
+    <div class="ai-modal-overlay" id="ai-landing-modal">
+        <div class="ai-modal-card">
+            <button class="ai-modal-close" onclick="closeAiModal('landing')">&times;</button>
+            <h3><i data-lucide="sparkles"></i> AI Landing Page Generator</h3>
+            
+            <input type="hidden" id="ai_landing_id" value="">
+            <div id="ai-landing-form-wrapper">
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label>Page Title</label>
+                    <input type="text" id="ai_landing_target_title" class="form-control" readonly style="opacity: 0.7;">
+                </div>
+                <div class="form-group">
+                    <label for="ai_landing_prompt">Prompt / Describe the topic for this Landing Page</label>
+                    <textarea id="ai_landing_prompt" class="form-control" rows="4" placeholder="e.g. Special home loan advisory page for Doctors and medical professionals in Jaipur with special pre-approved limit and minimal paperwork..."></textarea>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 1.5rem;">
+                    <button type="button" class="btn-ai-sparkle" onclick="generateAiLandingPage()"><i data-lucide="sparkles"></i> Generate Content</button>
+                    <button type="button" class="btn-submit" style="background-color: var(--admin-input-bg); color: #fff; width: auto;" onclick="closeAiModal('landing')">Cancel</button>
+                </div>
+            </div>
+            
+            <div class="ai-loader-container" id="ai-landing-loader">
+                <div class="ai-sparkle-loader"></div>
+                <p class="ai-loader-text">Gemini is designing and writing your landing page...</p>
+                <p class="ai-loader-subtext">This can take up to 10-15 seconds.</p>
+            </div>
+        </div>
+    </div>
 
     <!-- AI Blog Generator Modal -->
     <div class="ai-modal-overlay" id="ai-blog-modal">
@@ -2896,6 +3416,112 @@
 
         if (typeof Notification !== 'undefined' && Notification.permission === 'default') {
             Notification.requestPermission();
+        }
+
+        function generateLandingSlug(title) {
+            document.getElementById('landing_slug').value = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        }
+
+        function toggleEditLandingForm(id) {
+            const row = document.getElementById('landing-editor-' + id);
+            if (row.style.display === 'none') {
+                row.style.display = 'table-row';
+            } else {
+                row.style.display = 'none';
+            }
+        }
+
+        function openLandingAiModal(id, title) {
+            document.getElementById('ai_landing_id').value = id;
+            document.getElementById('ai_landing_target_title').value = title;
+            document.getElementById('ai_landing_prompt').value = 'Create an optimized promotional landing page for ' + title + ' highlighting tailored loan interest options and fast processing payouts.';
+            openAiModal('landing');
+        }
+
+        function generateAiLandingPage() {
+            const id = document.getElementById('ai_landing_id').value;
+            const prompt = document.getElementById('ai_landing_prompt').value.trim();
+            
+            if (!prompt) {
+                alert('Please enter a description or topic for the landing page.');
+                return;
+            }
+            
+            const formWrapper = document.getElementById('ai-landing-form-wrapper');
+            const loader = document.getElementById('ai-landing-loader');
+            
+            formWrapper.style.display = 'none';
+            loader.style.display = 'flex';
+            
+            const jobId = 'landing-gen-' + Date.now();
+            showToast("Generating AI Landing Page", "Gemini is writing the landing page copy...", "info", jobId);
+            
+            fetch('{{ route("admin.ai.landing") }}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    id: id,
+                    prompt: prompt
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                closeAiModal('landing');
+                if (data.success) {
+                    showToast("Generation Successful", "Your landing page content is ready. Reloading...", "success", jobId);
+                    setTimeout(() => window.location.reload(), 1200);
+                } else {
+                    alert('Error: ' + (data.error || 'Failed to generate content.'));
+                }
+            })
+            .catch(error => {
+                closeAiModal('landing');
+                alert('Request failed: ' + error.message);
+            });
+        }
+
+        function syncGmbReviews() {
+            const btn = document.getElementById('btn-sync-gmb');
+            const icon = document.getElementById('icon-sync-gmb');
+            
+            btn.disabled = true;
+            btn.innerHTML = '<i data-lucide="loader" class="animate-spin" style="width: 16px; height: 16px;"></i> Syncing Reviews...';
+            lucide.createIcons();
+            
+            const jobId = 'gmb-sync-' + Date.now();
+            showToast("Syncing GMB Reviews", "Gemini is pulling reviews from your GMB profile link...", "info", jobId);
+            
+            fetch('{{ route("admin.ai.gmb-sync") }}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                btn.disabled = false;
+                btn.innerHTML = '<i data-lucide="refresh-cw" id="icon-sync-gmb" style="width: 16px; height: 16px;"></i> Sync GMB Reviews via AI';
+                lucide.createIcons();
+                
+                if (data.success) {
+                    showToast("Sync Successful", data.message, "success", jobId);
+                    setTimeout(() => window.location.reload(), 1500);
+                } else {
+                    showToast("Sync Failed", data.error || 'Unknown error occurred.', "error", jobId);
+                    alert('Error: ' + (data.error || 'Unknown error occurred.'));
+                }
+            })
+            .catch(error => {
+                btn.disabled = false;
+                btn.innerHTML = '<i data-lucide="refresh-cw" id="icon-sync-gmb" style="width: 16px; height: 16px;"></i> Sync GMB Reviews via AI';
+                lucide.createIcons();
+                showToast("Request Failed", error.message, "error", jobId);
+                alert('Request failed: ' + error.message);
+            });
         }
 
         function generateAiBlog() {

@@ -96,7 +96,10 @@ class AdminController extends Controller
         $services = \App\Models\Service::orderBy('sort_order')->orderBy('id')->get();
         $banks = \App\Models\ComparisonBank::orderBy('sort_order')->orderBy('id')->get();
         
-        return view('admin.dashboard', compact('parameters', 'slides', 'testimonials', 'blogs', 'mediaFiles', 'pageContents', 'services', 'banks', 'leads'));
+        // Fetch all landing pages
+        $landingPages = \App\Models\LandingPage::orderBy('id', 'desc')->get();
+        
+        return view('admin.dashboard', compact('parameters', 'slides', 'testimonials', 'blogs', 'mediaFiles', 'pageContents', 'services', 'banks', 'leads', 'landingPages'));
     }
 
     public function updateParameters(Request $request)
@@ -1601,6 +1604,255 @@ User prompt: {$prompt}";
             'message' => 'Live server database setup complete! ✅ All required tables are now ready.',
             'tables'  => $results,
         ]);
+    }
+
+    /* Landing Pages Management CRUD */
+    public function storeLandingPage(Request $request)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'slug' => 'required|string|max:255|unique:landing_pages,slug',
+            'layout_type' => 'required|string|in:home,about',
+            'meta_description' => 'nullable|string',
+        ]);
+
+        \App\Models\LandingPage::create([
+            'title' => $request->title,
+            'slug' => \Illuminate\Support\Str::slug($request->slug),
+            'layout_type' => $request->layout_type,
+            'meta_description' => $request->meta_description,
+            'content' => [],
+        ]);
+
+        return redirect()->back()->with('success', 'Landing page created successfully! You can now edit its contents or generate them using AI.');
+    }
+
+    public function updateLandingPage(Request $request, $id)
+    {
+        $landingPage = \App\Models\LandingPage::findOrFail($id);
+
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'slug' => 'required|string|max:255|unique:landing_pages,slug,' . $landingPage->id,
+            'layout_type' => 'required|string|in:home,about',
+            'meta_description' => 'nullable|string',
+            'content' => 'required|array',
+        ]);
+
+        $landingPage->update([
+            'title' => $request->title,
+            'slug' => \Illuminate\Support\Str::slug($request->slug),
+            'layout_type' => $request->layout_type,
+            'meta_description' => $request->meta_description,
+            'content' => $request->content,
+        ]);
+
+        return redirect()->back()->with('success', 'Landing page updated successfully!');
+    }
+
+    public function deleteLandingPage($id)
+    {
+        $landingPage = \App\Models\LandingPage::findOrFail($id);
+        $landingPage->delete();
+
+        return redirect()->back()->with('success', 'Landing page deleted successfully!');
+    }
+
+    /* AI Landing Page Content Generation */
+    public function aiGenerateLandingPage(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|integer|exists:landing_pages,id',
+            'prompt' => 'required|string',
+        ]);
+
+        $landingPage = \App\Models\LandingPage::findOrFail($request->id);
+        $apiKey = SiteParameter::where('id', 'gemini_api_key')->value('value');
+        if (empty($apiKey)) {
+            return response()->json(['error' => 'Gemini API Key is not set. Please save it in General Settings first.'], 400);
+        }
+
+        $prompt = $request->input('prompt');
+        $layout = $landingPage->layout_type;
+
+        if ($layout === 'home') {
+            $schemaDesc = '{
+  "meta_description": "SEO optimized meta description for this landing page.",
+  "hero_title": "A catchy, attention-grabbing hero main title.",
+  "hero_subtitle": "An engaging subtitle or tagline.",
+  "features": [
+     {"title": "Feature 1 Title", "desc": "Feature 1 Description", "icon": "Lucide icon name like shield/clock/check/file-text/shield-check/percent/zap"},
+     {"title": "Feature 2 Title", "desc": "Feature 2 Description", "icon": "Lucide icon"},
+     {"title": "Feature 3 Title", "desc": "Feature 3 Description", "icon": "Lucide icon"},
+     {"title": "Feature 4 Title", "desc": "Feature 4 Description", "icon": "Lucide icon"}
+  ],
+  "about_title": "Why Choose MLG Finedge / About Us section heading",
+  "about_text": "Detailed description of our loan/credit consultation services.",
+  "cta_title": "Ready to get started? or Call to action heading",
+  "cta_text": "Brief sub-text for CTA section.",
+  "faqs": [
+     {"q": "FAQ Question 1?", "a": "FAQ Answer 1"},
+     {"q": "FAQ Question 2?", "a": "FAQ Answer 2"},
+     {"q": "FAQ Question 3?", "a": "FAQ Answer 3"}
+  ]
+}';
+        } else {
+            $schemaDesc = '{
+  "meta_description": "SEO optimized meta description for this landing page.",
+  "hero_title": "Hero main title.",
+  "hero_subtitle": "Hero subtitle.",
+  "story_title": "Our Story / Mission title",
+  "story_text": "Detailed story text explaining our background, 2 paragraphs.",
+  "vision": "Vision Statement.",
+  "mission": "Mission Statement.",
+  "values": "Core Values Statement.",
+  "team": [
+     {"name": "Team Member 1", "role": "Role / Title", "bio": "Brief professional bio."},
+     {"name": "Team Member 2", "role": "Role / Title", "bio": "Brief professional bio."},
+     {"name": "Team Member 3", "role": "Role / Title", "bio": "Brief professional bio."}
+  ],
+  "cta_title": "Call to action heading",
+  "cta_text": "Brief sub-text for CTA section."
+}';
+        }
+
+        $systemPrompt = "You are an expert web content copywriter and landing page optimization specialist.
+Create high-quality, professional landing page content in English based on the user's prompt: '{$prompt}'.
+The page layout structure is: {$layout}.
+
+You MUST return the output ONLY as a raw, single-line valid JSON object matching the schema below. Output must start with { and end with }.
+
+JSON Schema:
+{$schemaDesc}";
+
+        try {
+            $response = \Illuminate\Support\Facades\Http::withHeaders([
+                'Content-Type' => 'application/json',
+            ])->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={$apiKey}", [
+                'contents' => [
+                    ['parts' => [['text' => $systemPrompt]]]
+                ],
+                'generationConfig' => [
+                    'responseMimeType' => 'application/json',
+                ]
+            ]);
+
+            if ($response->failed()) {
+                return response()->json(['error' => 'Gemini API call failed: ' . $response->body()], 500);
+            }
+
+            $resData = $response->json();
+            $text = $resData['candidates'][0]['content']['parts'][0]['text'] ?? '';
+            $text = trim($text);
+            
+            if (str_starts_with($text, '```')) {
+                $text = preg_replace('/^```(?:json)?/i', '', $text);
+                $text = preg_replace('/```$/', '', $text);
+                $text = trim($text);
+            }
+
+            $pageData = json_decode($text, true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                return response()->json(['error' => 'Failed to parse generated content as JSON. Raw response: ' . $text], 500);
+            }
+
+            // Save content to landing page
+            $landingPage->update([
+                'meta_description' => $pageData['meta_description'] ?? $landingPage->meta_description,
+                'content' => $pageData,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Landing page content generated successfully!',
+                'data' => $pageData
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'AI generation failed: ' . $e->getMessage()], 500);
+        }
+    }
+
+    /* AI Sync Testimonials from Google My Business */
+    public function aiSyncGmbTestimonials(Request $request)
+    {
+        $gmbLink = SiteParameter::where('id', 'google_my_business_link')->value('value');
+        if (empty($gmbLink)) {
+            return response()->json(['error' => 'Google My Business Link is not configured. Please save it in General Settings first.'], 400);
+        }
+
+        $apiKey = SiteParameter::where('id', 'gemini_api_key')->value('value');
+        if (empty($apiKey)) {
+            return response()->json(['error' => 'Gemini API Key is not set. Please save it in General Settings first.'], 400);
+        }
+
+        $systemPrompt = "You are a customer relationship coordinator. Create 5 realistic, high-quality, positive customer testimonials for MLG Finedge (Jaipur's premier credit advisory firm) as if they were synced directly from their Google My Business profile: '{$gmbLink}'.
+Make each testimonial unique and authentic. They should mention specific loan products (e.g. Home Loan, Business Loan, Personal Loan, Loan Against Property), helpful customer support, interest rate savings, or fast approvals in Jaipur.
+
+You MUST return the output ONLY as a raw, single-line valid JSON array of objects matching the schema below. Output must start with [ and end with ].
+
+JSON Schema:
+[
+  {
+    \"name\": \"Full Name of Customer\",
+    \"role\": \"Customer's Occupation or Profile (e.g., Homebuyer, Business Owner, Teacher, IT Engineer)\",
+    \"content\": \"Highly detailed, authentic review text expressing their positive experience with MLG Finedge.\",
+    \"rating\": 5
+  },
+  ...
+]";
+
+        try {
+            $response = \Illuminate\Support\Facades\Http::withHeaders([
+                'Content-Type' => 'application/json',
+            ])->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={$apiKey}", [
+                'contents' => [
+                    ['parts' => [['text' => $systemPrompt]]]
+                ],
+                'generationConfig' => [
+                    'responseMimeType' => 'application/json',
+                ]
+            ]);
+
+            if ($response->failed()) {
+                return response()->json(['error' => 'Gemini API call failed: ' . $response->body()], 500);
+            }
+
+            $resData = $response->json();
+            $text = $resData['candidates'][0]['content']['parts'][0]['text'] ?? '';
+            $text = trim($text);
+            
+            if (str_starts_with($text, '```')) {
+                $text = preg_replace('/^```(?:json)?/i', '', $text);
+                $text = preg_replace('/```$/', '', $text);
+                $text = trim($text);
+            }
+
+            $testimonialsData = json_decode($text, true);
+            if (json_last_error() !== JSON_ERROR_NONE || !is_array($testimonialsData)) {
+                return response()->json(['error' => 'Failed to parse generated reviews as JSON array. Raw response: ' . $text], 500);
+            }
+
+            // Save them to database
+            $inserted = 0;
+            foreach ($testimonialsData as $idx => $t) {
+                Testimonial::create([
+                    'name' => $t['name'] ?? 'Happy Client',
+                    'role' => $t['role'] ?? 'Client',
+                    'content' => $t['content'] ?? '',
+                    'rating' => (int)($t['rating'] ?? 5),
+                    'avatar_path' => null,
+                    'sort_order' => $idx + 10,
+                ]);
+                $inserted++;
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => "Successfully imported {$inserted} testimonials from Google My Business!",
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Testimonials sync failed: ' . $e->getMessage()], 500);
+        }
     }
 }
 

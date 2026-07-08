@@ -65,25 +65,25 @@
             
             <nav>
                 <ul class="nav-links">
-                    <li><a href="{{ route('home') }}" class="nav-item {{ request()->routeIs('home') ? 'active' : '' }}">Home</a></li>
-                    <li><a href="{{ route('about') }}" class="nav-item {{ request()->routeIs('about') ? 'active' : '' }}">About Us</a></li>
+                    <li><a href="{{ route('home') }}" class="nav-item {{ request()->routeIs('home') ? 'active' : '' }}">{{ $pageContents['header']['menu']['home'] ?? 'Home' }}</a></li>
+                    <li><a href="{{ route('about') }}" class="nav-item {{ request()->routeIs('about') ? 'active' : '' }}">{{ $pageContents['header']['menu']['about'] ?? 'About Us' }}</a></li>
                     <li class="nav-dropdown-item">
-                        <a href="{{ route('services') }}" class="nav-item {{ request()->routeIs('services') || request()->routeIs('services.*') ? 'active' : '' }}">Services <i data-lucide="chevron-down" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle; margin-left: 2px;"></i></a>
+                        <a href="{{ route('services') }}" class="nav-item {{ request()->routeIs('services') || request()->routeIs('services.*') ? 'active' : '' }}">{{ $pageContents['header']['menu']['services'] ?? 'Services' }} <i data-lucide="chevron-down" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle; margin-left: 2px;"></i></a>
                         <ul class="dropdown-menu">
                             @foreach($globalServices as $gs)
                                 <li><a href="{{ route('services.show', $gs->slug) }}">{{ $gs->service_name }}</a></li>
                             @endforeach
                         </ul>
                     </li>
-                    <li><a href="{{ route('compare') }}" class="nav-item {{ request()->routeIs('compare') ? 'active' : '' }}">Compare Loans</a></li>
-                    <li><a href="{{ route('testimonials') }}" class="nav-item {{ request()->routeIs('testimonials') ? 'active' : '' }}">Testimonials</a></li>
-                    <li><a href="{{ route('blog') }}" class="nav-item {{ request()->routeIs('blog') || request()->routeIs('blog.*') ? 'active' : '' }}">Blog</a></li>
-                    <li><a href="{{ route('contact') }}" class="nav-item {{ request()->routeIs('contact') ? 'active' : '' }}">Contact Us</a></li>
+                    <li><a href="{{ route('compare') }}" class="nav-item {{ request()->routeIs('compare') ? 'active' : '' }}">{{ $pageContents['header']['menu']['compare'] ?? 'Compare Loans' }}</a></li>
+                    <li><a href="{{ route('testimonials') }}" class="nav-item {{ request()->routeIs('testimonials') ? 'active' : '' }}">{{ $pageContents['header']['menu']['testimonials'] ?? 'Testimonials' }}</a></li>
+                    <li><a href="{{ route('blog') }}" class="nav-item {{ request()->routeIs('blog') || request()->routeIs('blog.*') ? 'active' : '' }}">{{ $pageContents['header']['menu']['blog'] ?? 'Blog' }}</a></li>
+                    <li><a href="{{ route('contact') }}" class="nav-item {{ request()->routeIs('contact') ? 'active' : '' }}">{{ $pageContents['header']['menu']['contact'] ?? 'Contact Us' }}</a></li>
                 </ul>
             </nav>
             
             <div class="nav-actions">
-                <a href="tel:{{ $site['phone'] ?? '+919672777749' }}" class="btn btn-primary btn-sm"><i data-lucide="phone"></i> Call Now</a>
+                <a href="tel:{{ $site['phone'] ?? '+919672777749' }}" class="btn btn-primary btn-sm"><i data-lucide="phone"></i> {{ $pageContents['header']['menu']['cta'] ?? 'Call Now' }}</a>
             </div>
             
             <button class="mobile-toggle" aria-label="Toggle Menu">
@@ -117,7 +117,7 @@
                         </div>
                     @endif
                 </div>
-                <p>{{ $site['site_name'] ?? 'MLG Finedge' }} is Jaipur's premier credit advisory firm. We help individuals & small companies secure appropriate loan products with minimum interest cost and fast payouts.</p>
+                <p>{{ $pageContents['footer']['about']['description'] ?? (($site['site_name'] ?? 'MLG Finedge') . " is Jaipur's premier credit advisory firm. We help individuals & small companies secure appropriate loan products with minimum interest cost and fast payouts.") }}</p>
                 <div class="social-links">
                     <a href="#" class="social-icon" aria-label="Facebook"><i data-lucide="facebook"></i></a>
                     <a href="#" class="social-icon" aria-label="Instagram"><i data-lucide="instagram"></i></a>
@@ -126,7 +126,7 @@
             </div>
             
             <div class="footer-col">
-                <h3>Quick Links</h3>
+                <h3>{{ $pageContents['footer']['headings']['quick_links'] ?? 'Quick Links' }}</h3>
                 <ul class="footer-links-list">
                     <li><a href="{{ route('home') }}">Home</a></li>
                     <li><a href="{{ route('about') }}">About Us</a></li>
@@ -138,7 +138,7 @@
             </div>
             
             <div class="footer-col">
-                <h3>Loan Services</h3>
+                <h3>{{ $pageContents['footer']['headings']['services'] ?? 'Loan Services' }}</h3>
                 <ul class="footer-links-list">
                     @foreach($globalServices->take(6) as $gs)
                         <li><a href="{{ route('services.show', $gs->slug) }}">{{ $gs->service_name }}</a></li>
@@ -147,7 +147,7 @@
             </div>
             
             <div class="footer-col">
-                <h3>Contact Info</h3>
+                <h3>{{ $pageContents['footer']['headings']['contact'] ?? 'Contact Info' }}</h3>
                 <ul class="footer-contact-info">
                     <li>
                         <i data-lucide="map-pin"></i>
@@ -166,7 +166,7 @@
         </div>
         
         <div class="container footer-bottom">
-            <p>&copy; {{ date('Y') }} {{ $site['site_name'] ?? 'MLG Finedge' }}. All Rights Reserved. Disclaimer: Interest rates and terms are subject to bank/NBFC guidelines and customer credit profile assessment.</p>
+            <p>&copy; {{ date('Y') }} {{ $site['site_name'] ?? 'MLG Finedge' }}. {{ $pageContents['footer']['bottom']['copyright'] ?? 'All Rights Reserved.' }} {{ $pageContents['footer']['bottom']['disclaimer'] ?? 'Disclaimer: Interest rates and terms are subject to bank/NBFC guidelines and customer credit profile assessment.' }}</p>
             <div class="footer-bottom-links">
                 <a href="#">Privacy Policy</a>
                 <a href="#">Terms of Service</a>
@@ -276,6 +276,19 @@
             <h3>Request Submitted Successfully!</h3>
             <p style="margin-top:1rem; color: var(--text-muted);">{{ session('success') ?? 'Thank you for contacting MLG Finedge. One of our senior loan advisors will review your request and get in touch with you shortly.' }}</p>
             <button onclick="closeDialog('success-dialog')" class="btn btn-primary" style="margin-top: 2rem; width: 150px;">OK</button>
+        </div>
+    </div>
+
+    <!-- Error Modal Overlay -->
+    <div class="dialog-overlay" id="error-dialog" style="{{ session('error') ? 'display: flex;' : '' }}">
+        <div class="dialog-modal text-center">
+            <button class="dialog-close" aria-label="Close Modal" onclick="closeDialog('error-dialog')">&times;</button>
+            <div class="success-icon-wrap" style="background: rgba(232, 92, 36, 0.1); color: #e85c24;">
+                <i data-lucide="alert-triangle"></i>
+            </div>
+            <h3 style="color: #e85c24;">Submission Failed</h3>
+            <p style="margin-top:1rem; color: var(--text-muted);">{{ session('error') }}</p>
+            <button onclick="closeDialog('error-dialog')" class="btn btn-primary" style="margin-top: 2rem; width: 150px; background-color: #e85c24; border-color: #e85c24;">OK</button>
         </div>
     </div>
 

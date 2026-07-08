@@ -88,7 +88,7 @@ class HomeController extends Controller
         $siteSettings = \App\Models\SiteParameter::all()->pluck('value', 'id')->toArray();
         
         // 1. Google reCAPTCHA Verification (if enabled)
-        if (!empty($siteSettings['recaptcha_enabled']) && $siteSettings['recaptcha_enabled'] == '1') {
+        if (!empty($siteSettings['recaptcha_enabled']) && $siteSettings['recaptcha_enabled'] == '1' && !empty($siteSettings['recaptcha_site_key']) && !empty($siteSettings['recaptcha_secret_key'])) {
             $recaptchaResponse = $request->input('g-recaptcha-response');
             $secretKey = $siteSettings['recaptcha_secret_key'] ?? '';
             
@@ -230,6 +230,15 @@ class HomeController extends Controller
         }
 
         return redirect()->route('thank-you');
+    }
+
+    public function landingShow($slug)
+    {
+        $landingPage = \App\Models\LandingPage::where('slug', $slug)->first();
+        if ($landingPage) {
+            return view('landing-page', compact('landingPage'));
+        }
+        abort(404);
     }
 
     public function thankYou()

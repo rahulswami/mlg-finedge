@@ -35,9 +35,9 @@
     <!-- Details Hero -->
     <section class="details-hero">
         <div class="container text-center">
-            <span class="color-mint font-semibold" style="text-transform: uppercase; letter-spacing: 1.5px; font-size: 0.9rem;">WHO WE ARE</span>
-            <h1 style="margin-top: 10px;">About {{ $site['site_name'] ?? 'MLG Finedge' }}</h1>
-            <p style="color: var(--text-light-muted); max-width: 600px; margin: 0 auto;">Jaipur's leading credit advisory firm assisting individuals and commercial ventures in obtaining tailored financial matches.</p>
+            <span class="color-mint font-semibold" style="text-transform: uppercase; letter-spacing: 1.5px; font-size: 0.9rem;">{{ $pageContents['about']['hero']['pre_title'] ?? 'WHO WE ARE' }}</span>
+            <h1 style="margin-top: 10px;">{{ $pageContents['about']['hero']['title'] ?? ('About ' . ($site['site_name'] ?? 'MLG Finedge')) }}</h1>
+            <p style="color: var(--text-light-muted); max-width: 600px; margin: 0 auto;">{{ $pageContents['about']['hero']['subtitle'] ?? 'Jaipur\'s leading credit advisory firm assisting individuals and commercial ventures in obtaining tailored financial matches.' }}</p>
         </div>
     </section>
 
@@ -45,11 +45,11 @@
     <section class="section">
         <div class="container about-grid">
             <div class="about-content animate-on-scroll">
-                <span class="pre-title">Our Story</span>
-                <h2>Helping Jaipur Secure Better Financing</h2>
-                <p>{{ $site['site_name'] ?? 'MLG Finedge' }} was founded with a singular mission: to protect borrowers from overpriced loan products and opaque processes. Finding the right loan is rarely about accepting the first bank offer. It requires analyzing hidden parameters—such as pre-closure penalties, compound interest methods, processing times, and eligibility multipliers.</p>
-                <p>Over the last 12 years, we have built a reputation in Jaipur as a transparent, client-first consultancy that handles the heavy lifting, saving our clients time, stress, and lakhs in excess interest payments.</p>
-                <p>Whether you are a government teacher, a self-employed boutique owner, or a growing infrastructure company, we provide tailored consultation based on your income profiles and parameters.</p>
+                <span class="pre-title">{{ $pageContents['about']['story']['pre_title'] ?? 'Our Story' }}</span>
+                <h2>{{ $pageContents['about']['story']['title'] ?? 'Helping Jaipur Secure Better Financing' }}</h2>
+                <p>{{ $pageContents['about']['story']['p1'] ?? (($site['site_name'] ?? 'MLG Finedge') . " was founded with a singular mission: to protect borrowers from overpriced loan products and opaque processes. Finding the right loan is rarely about accepting the first bank offer. It requires analyzing hidden parameters—such as pre-closure penalties, compound interest methods, processing times, and eligibility multipliers.") }}</p>
+                <p>{{ $pageContents['about']['story']['p2'] ?? 'Over the last 12 years, we have built a reputation in Jaipur as a transparent, client-first consultancy that handles the heavy lifting, saving our clients time, stress, and lakhs in excess interest payments.' }}</p>
+                <p>{{ $pageContents['about']['story']['p3'] ?? 'Whether you are a government teacher, a self-employed boutique owner, or a growing infrastructure company, we provide tailored consultation based on your income profiles and parameters.' }}</p>
             </div>
             
             <div class="about-visual animate-on-scroll">
@@ -70,20 +70,20 @@
             <div class="benefits-grid">
                 <div class="benefit-block animate-on-scroll">
                     <div class="why-icon" style="margin-bottom: 1.5rem;"><i data-lucide="eye"></i></div>
-                    <h3>Our Vision</h3>
-                    <p>To be India's most trusted financial matchmaking advisory, helping thousands of families build assets and business owners generate sustainable local employment.</p>
+                    <h3>{{ $pageContents['about']['vision']['title'] ?? 'Our Vision' }}</h3>
+                    <p>{{ $pageContents['about']['vision']['text'] ?? 'To be India\'s most trusted financial matchmaking advisory, helping thousands of families build assets and business owners generate sustainable local employment.' }}</p>
                 </div>
                 
                 <div class="benefit-block highlight animate-on-scroll">
                     <div class="why-icon" style="margin-bottom: 1.5rem; background-color: rgba(255,255,255,0.1); color: var(--mint-green);"><i data-lucide="target"></i></div>
-                    <h3>Our Mission</h3>
-                    <p>To deliver absolute transparency in loan comparisons, identify optimal lenders, eliminate unnecessary bank rejections, and speed up payouts.</p>
+                    <h3>{{ $pageContents['about']['mission']['title'] ?? 'Our Mission' }}</h3>
+                    <p>{{ $pageContents['about']['mission']['text'] ?? 'To deliver absolute transparency in loan comparisons, identify optimal lenders, eliminate unnecessary bank rejections, and speed up payouts.' }}</p>
                 </div>
                 
                 <div class="benefit-block animate-on-scroll">
                     <div class="why-icon" style="margin-bottom: 1.5rem;"><i data-lucide="heart"></i></div>
-                    <h3>Our Core Values</h3>
-                    <p>Client prosperity is our priority. We are independent of single-bank biases, offering objective guidance, clear pricing, and continuous document safety.</p>
+                    <h3>{{ $pageContents['about']['values']['title'] ?? 'Our Core Values' }}</h3>
+                    <p>{{ $pageContents['about']['values']['text'] ?? 'Client prosperity is our priority. We are independent of single-bank biases, offering objective guidance, clear pricing, and continuous document safety.' }}</p>
                 </div>
             </div>
         </div>
@@ -93,37 +93,37 @@
     <section class="section">
         <div class="container">
             <div class="section-header animate-on-scroll">
-                <h2>Our Advisory Team</h2>
-                <p>Meet the credit specialists guiding you through terms, rates, and approval cycles.</p>
+                <h2>{{ $pageContents['about']['team']['title'] ?? 'Our Advisory Team' }}</h2>
+                <p>{{ $pageContents['about']['team']['subtitle'] ?? 'Meet the credit specialists guiding you through terms, rates, and approval cycles.' }}</p>
             </div>
             
             <div class="why-grid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
                 <!-- Advisor 1 -->
                 <div class="service-card text-center animate-on-scroll">
                     <div style="width:100px; height:100px; border-radius:50%; background-color:var(--primary-teal-light); margin:0 auto 1.5rem auto; display:flex; align-items:center; justify-content:center; color:white; font-size:2rem; font-weight:700;">MG</div>
-                    <h3>Mahendra Gupta</h3>
-                    <span class="color-accent" style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:1rem;">Founder & Principal Advisor</span>
-                    <p style="font-size:0.85rem;">Ex-banker with 18+ years of expertise in corporate credit, LAP approvals, and project finance deals.</p>
+                    <h3>{{ $pageContents['about']['team']['advisor1_name'] ?? 'Mahendra Gupta' }}</h3>
+                    <span class="color-accent" style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:1rem;">{{ $pageContents['about']['team']['advisor1_role'] ?? 'Founder & Principal Advisor' }}</span>
+                    <p style="font-size:0.85rem;">{{ $pageContents['about']['team']['advisor1_bio'] ?? 'Ex-banker with 18+ years of expertise in corporate credit, LAP approvals, and project finance deals.' }}</p>
                 </div>
                 
                 <!-- Advisor 2 -->
                 <div class="service-card text-center animate-on-scroll">
                     <div style="width:100px; height:100px; border-radius:50%; background-color:var(--accent-orange); margin:0 auto 1.5rem auto; display:flex; align-items:center; justify-content:center; color:white; font-size:2rem; font-weight:700;">RS</div>
-                    <h3>Ritu Sharma</h3>
-                    <span class="color-accent" style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:1rem;">Senior Retail Loan Head</span>
-                    <p style="font-size:0.85rem;">Retail specialist overseeing home loan approvals, government schemes, and salary eligibility multipliers.</p>
+                    <h3>{{ $pageContents['about']['team']['advisor2_name'] ?? 'Ritu Sharma' }}</h3>
+                    <span class="color-accent" style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:1rem;">{{ $pageContents['about']['team']['advisor2_role'] ?? 'Senior Retail Loan Head' }}</span>
+                    <p style="font-size:0.85rem;">{{ $pageContents['about']['team']['advisor2_bio'] ?? 'Retail specialist overseeing home loan approvals, government schemes, and salary eligibility multipliers.' }}</p>
                 </div>
                 
                 <!-- Advisor 3 -->
                 <div class="service-card text-center animate-on-scroll">
                     <div style="width:100px; height:100px; border-radius:50%; background-color:var(--mint-green); margin:0 auto 1.5rem auto; display:flex; align-items:center; justify-content:center; color:white; font-size:2rem; font-weight:700;">AJ</div>
-                    <h3>Amit Jain</h3>
-                    <span class="color-accent" style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:1rem;">Business Finance Specialist</span>
-                    <p style="font-size:0.85rem;">Advisor matching SMEs and startups with cash credit, overdraft, and working capital lines.</p>
+                    <h3>{{ $pageContents['about']['team']['advisor3_name'] ?? 'Amit Jain' }}</h3>
+                    <span class="color-accent" style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:1rem;">{{ $pageContents['about']['team']['advisor3_role'] ?? 'Business Finance Specialist' }}</span>
+                    <p style="font-size:0.85rem;">{{ $pageContents['about']['team']['advisor3_bio'] ?? 'Advisor matching SMEs and startups with cash credit, overdraft, and working capital lines.' }}</p>
                 </div>
             </div>
         </div>
-    </section>
+    </section>n>
 
     <!-- Final Call to Action -->
     <section class="final-cta-section">
