@@ -1755,7 +1755,11 @@
                                 <label>Role / Subtitle</label>
                                 <input type="text" name="contents[about][team][advisor1_role]" class="form-control" value="{{ $pageContents->where('page', 'about')->where('section', 'team')->where('key', 'advisor1_role')->first()->value ?? 'Founder & Principal Advisor' }}">
                             </div>
-                            <div class="form-group" style="grid-column: span 2; margin-top: 0.5rem;">
+                            <div class="form-group">
+                                <label>Initials</label>
+                                <input type="text" name="contents[about][team][advisor1_initials]" class="form-control" value="{{ $pageContents->where('page', 'about')->where('section', 'team')->where('key', 'advisor1_initials')->first()->value ?? 'MG' }}" placeholder="MG">
+                            </div>
+                            <div class="form-group" style="grid-column: span 3; margin-top: 0.5rem;">
                                 <label>Bio / Description summary</label>
                                 <textarea name="contents[about][team][advisor1_bio]" class="form-control" rows="2">{{ $pageContents->where('page', 'about')->where('section', 'team')->where('key', 'advisor1_bio')->first()->value ?? '' }}</textarea>
                             </div>
@@ -1771,7 +1775,11 @@
                                 <label>Role / Subtitle</label>
                                 <input type="text" name="contents[about][team][advisor2_role]" class="form-control" value="{{ $pageContents->where('page', 'about')->where('section', 'team')->where('key', 'advisor2_role')->first()->value ?? 'Senior Retail Loan Head' }}">
                             </div>
-                            <div class="form-group" style="grid-column: span 2; margin-top: 0.5rem;">
+                            <div class="form-group">
+                                <label>Initials</label>
+                                <input type="text" name="contents[about][team][advisor2_initials]" class="form-control" value="{{ $pageContents->where('page', 'about')->where('section', 'team')->where('key', 'advisor2_initials')->first()->value ?? 'RS' }}" placeholder="RS">
+                            </div>
+                            <div class="form-group" style="grid-column: span 3; margin-top: 0.5rem;">
                                 <label>Bio / Description summary</label>
                                 <textarea name="contents[about][team][advisor2_bio]" class="form-control" rows="2">{{ $pageContents->where('page', 'about')->where('section', 'team')->where('key', 'advisor2_bio')->first()->value ?? '' }}</textarea>
                             </div>
@@ -1787,7 +1795,11 @@
                                 <label>Role / Subtitle</label>
                                 <input type="text" name="contents[about][team][advisor3_role]" class="form-control" value="{{ $pageContents->where('page', 'about')->where('section', 'team')->where('key', 'advisor3_role')->first()->value ?? 'Business Finance Specialist' }}">
                             </div>
-                            <div class="form-group" style="grid-column: span 2; margin-top: 0.5rem;">
+                            <div class="form-group">
+                                <label>Initials</label>
+                                <input type="text" name="contents[about][team][advisor3_initials]" class="form-control" value="{{ $pageContents->where('page', 'about')->where('section', 'team')->where('key', 'advisor3_initials')->first()->value ?? 'AJ' }}" placeholder="AJ">
+                            </div>
+                            <div class="form-group" style="grid-column: span 3; margin-top: 0.5rem;">
                                 <label>Bio / Description summary</label>
                                 <textarea name="contents[about][team][advisor3_bio]" class="form-control" rows="2">{{ $pageContents->where('page', 'about')->where('section', 'team')->where('key', 'advisor3_bio')->first()->value ?? '' }}</textarea>
                             </div>

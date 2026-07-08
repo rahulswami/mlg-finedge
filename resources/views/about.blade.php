@@ -100,7 +100,7 @@
             <div class="why-grid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
                 <!-- Advisor 1 -->
                 <div class="service-card text-center animate-on-scroll">
-                    <div style="width:100px; height:100px; border-radius:50%; background-color:var(--primary-teal-light); margin:0 auto 1.5rem auto; display:flex; align-items:center; justify-content:center; color:white; font-size:2rem; font-weight:700;">MG</div>
+                    <div style="width:100px; height:100px; border-radius:50%; background-color:var(--primary-teal-light); margin:0 auto 1.5rem auto; display:flex; align-items:center; justify-content:center; color:white; font-size:2rem; font-weight:700;">{{ $pageContents['about']['team']['advisor1_initials'] ?? 'MG' }}</div>
                     <h3>{{ $pageContents['about']['team']['advisor1_name'] ?? 'Mahendra Gupta' }}</h3>
                     <span class="color-accent" style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:1rem;">{{ $pageContents['about']['team']['advisor1_role'] ?? 'Founder & Principal Advisor' }}</span>
                     <p style="font-size:0.85rem;">{{ $pageContents['about']['team']['advisor1_bio'] ?? 'Ex-banker with 18+ years of expertise in corporate credit, LAP approvals, and project finance deals.' }}</p>
@@ -108,7 +108,7 @@
                 
                 <!-- Advisor 2 -->
                 <div class="service-card text-center animate-on-scroll">
-                    <div style="width:100px; height:100px; border-radius:50%; background-color:var(--accent-orange); margin:0 auto 1.5rem auto; display:flex; align-items:center; justify-content:center; color:white; font-size:2rem; font-weight:700;">RS</div>
+                    <div style="width:100px; height:100px; border-radius:50%; background-color:var(--accent-orange); margin:0 auto 1.5rem auto; display:flex; align-items:center; justify-content:center; color:white; font-size:2rem; font-weight:700;">{{ $pageContents['about']['team']['advisor2_initials'] ?? 'RS' }}</div>
                     <h3>{{ $pageContents['about']['team']['advisor2_name'] ?? 'Ritu Sharma' }}</h3>
                     <span class="color-accent" style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:1rem;">{{ $pageContents['about']['team']['advisor2_role'] ?? 'Senior Retail Loan Head' }}</span>
                     <p style="font-size:0.85rem;">{{ $pageContents['about']['team']['advisor2_bio'] ?? 'Retail specialist overseeing home loan approvals, government schemes, and salary eligibility multipliers.' }}</p>
@@ -116,7 +116,7 @@
                 
                 <!-- Advisor 3 -->
                 <div class="service-card text-center animate-on-scroll">
-                    <div style="width:100px; height:100px; border-radius:50%; background-color:var(--mint-green); margin:0 auto 1.5rem auto; display:flex; align-items:center; justify-content:center; color:white; font-size:2rem; font-weight:700;">AJ</div>
+                    <div style="width:100px; height:100px; border-radius:50%; background-color:var(--mint-green); margin:0 auto 1.5rem auto; display:flex; align-items:center; justify-content:center; color:white; font-size:2rem; font-weight:700;">{{ $pageContents['about']['team']['advisor3_initials'] ?? 'AJ' }}</div>
                     <h3>{{ $pageContents['about']['team']['advisor3_name'] ?? 'Amit Jain' }}</h3>
                     <span class="color-accent" style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:1rem;">{{ $pageContents['about']['team']['advisor3_role'] ?? 'Business Finance Specialist' }}</span>
                     <p style="font-size:0.85rem;">{{ $pageContents['about']['team']['advisor3_bio'] ?? 'Advisor matching SMEs and startups with cash credit, overdraft, and working capital lines.' }}</p>
