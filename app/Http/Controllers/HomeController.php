@@ -87,27 +87,7 @@ class HomeController extends Controller
 
         $siteSettings = \App\Models\SiteParameter::all()->pluck('value', 'id')->toArray();
         
-        // 1. Google reCAPTCHA Verification (if enabled)
-        if (!empty($siteSettings['recaptcha_enabled']) && $siteSettings['recaptcha_enabled'] == '1' && !empty($siteSettings['recaptcha_site_key']) && !empty($siteSettings['recaptcha_secret_key'])) {
-            $recaptchaResponse = $request->input('g-recaptcha-response');
-            $secretKey = $siteSettings['recaptcha_secret_key'] ?? '';
-            
-            if (empty($recaptchaResponse)) {
-                return redirect()->back()->withInput()->with('error', 'Please complete the Google reCAPTCHA verification to submit the form.');
-            }
-            
-            $verifyResponse = \Illuminate\Support\Facades\Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
-                'secret' => $secretKey,
-                'response' => $recaptchaResponse,
-                'remoteip' => $request->ip()
-            ]);
-            
-            if (!$verifyResponse->successful() || !$verifyResponse->json('success')) {
-                return redirect()->back()->withInput()->with('error', 'Google reCAPTCHA verification failed. Please try again.');
-            }
-        }
-
-        // 2. Build detailed compilation message
+        // 1. Build detailed compilation message
         $compiledMessage = '';
         if ($request->filled('loan_type')) {
             $compiledMessage .= 'Loan Type: ' . ucwords($request->loan_type) . "\n";
@@ -122,9 +102,10 @@ class HomeController extends Controller
             $compiledMessage .= 'Details: ' . $request->message . "\n";
         }
 
-        // 3. Save Lead to MySQL
+        // 2. Save Lead immediately to guarantee it is saved in the database
+        $lead = null;
         try {
-            // Auto-create leads table if it doesn't exist (for live server compatibility)
+            // Auto-create leads table if it doesn't exist
             if (!\Illuminate\Support\Facades\Schema::hasTable('leads')) {
                 \Illuminate\Support\Facades\Schema::create('leads', function (\Illuminate\Database\Schema\Blueprint $table) {
                     $table->id();
@@ -137,10 +118,9 @@ class HomeController extends Controller
                     $table->text('notes')->nullable();
                     $table->timestamps();
                 });
-                \Illuminate\Support\Facades\Log::info('Leads table auto-created on live server.');
             }
 
-            \App\Models\Lead::create([
+            $lead = \App\Models\Lead::create([
                 'name'    => $request->name,
                 'phone'   => $request->phone,
                 'email'   => $request->email,
@@ -148,8 +128,49 @@ class HomeController extends Controller
                 'source'  => $request->input('source', 'Contact Form'),
                 'status'  => 'New',
             ]);
-        } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error('Lead save failed: ' . $e->getMessage() . ' | File: ' . $e->getFile() . ':' . $e->getLine());
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Foolproof Lead Save failed: ' . $e->getMessage());
+        }
+
+        // 3. Google reCAPTCHA Verification (if enabled)
+        // We evaluate reCAPTCHA to flag spam, but we do NOT block the redirect to thank-you so conversion pixels can fire.
+        $isSpam = false;
+        $spamReason = '';
+        if (!empty($siteSettings['recaptcha_enabled']) && $siteSettings['recaptcha_enabled'] == '1' && !empty($siteSettings['recaptcha_site_key']) && !empty($siteSettings['recaptcha_secret_key'])) {
+            try {
+                $recaptchaResponse = $request->input('g-recaptcha-response');
+                $secretKey = $siteSettings['recaptcha_secret_key'] ?? '';
+                
+                if (empty($recaptchaResponse)) {
+                    $isSpam = true;
+                    $spamReason = 'reCAPTCHA response checkbox was empty/unchecked.';
+                } else {
+                    $verifyResponse = \Illuminate\Support\Facades\Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+                        'secret' => $secretKey,
+                        'response' => $recaptchaResponse,
+                        'remoteip' => $request->ip()
+                    ]);
+                    
+                    if (!$verifyResponse->successful() || !$verifyResponse->json('success')) {
+                        $isSpam = true;
+                        $spamReason = 'reCAPTCHA verification failed on Google endpoint.';
+                    }
+                }
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('reCAPTCHA safety check encountered exception: ' . $e->getMessage());
+            }
+        }
+
+        // Update lead status if it was flagged as spam
+        if ($isSpam && $lead) {
+            try {
+                $lead->update([
+                    'status' => 'Spam',
+                    'notes' => 'Flagged: ' . $spamReason
+                ]);
+            } catch (\Throwable $e) {
+                // Ignore silent update errors
+            }
         }
 
         // 4. Send Email Notification if SMTP is configured
@@ -165,9 +186,8 @@ class HomeController extends Controller
                     'mail.mailers.smtp.encryption' => ($siteSettings['smtp_encryption'] ?? 'tls') === 'none' ? null : ($siteSettings['smtp_encryption'] ?? 'tls'),
                     'mail.from.address' => $siteSettings['smtp_from_address'] ?? 'no-reply@mlgfinedge.com',
                     'mail.from.name' => $siteSettings['smtp_from_name'] ?? 'MLG Finedge Alerts',
+                    'mail.default' => 'smtp',
                 ]);
-
-                config(['mail.default' => 'smtp']);
 
                 $toEmail = $siteSettings['smtp_to_email'] ?? 'admin@mlgfinedge.com';
                 $fromAddress = $siteSettings['smtp_from_address'] ?? 'no-reply@mlgfinedge.com';
@@ -175,7 +195,7 @@ class HomeController extends Controller
                 $leadName = $request->name;
 
                 \Illuminate\Support\Facades\Mail::raw(
-                    "New Lead Inquiry Received:\n\n" .
+                    "New Lead Inquiry Received" . ($isSpam ? " [Flagged Spam]" : "") . ":\n\n" .
                     "Name: " . $request->name . "\n" .
                     "Phone: " . $request->phone . "\n" .
                     "Email: " . ($request->email ?: 'N/A') . "\n" .
@@ -189,7 +209,7 @@ class HomeController extends Controller
                 );
                 
                 \Illuminate\Support\Facades\Log::info('Email alert sent for lead: ' . $leadName);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 \Illuminate\Support\Facades\Log::error('SMTP Lead Email Notification failed: ' . $e->getMessage() . ' | Line: ' . $e->getLine());
             }
         }
@@ -201,7 +221,7 @@ class HomeController extends Controller
                 $apiToken = $siteSettings['whatsapp_api_token'] ?? '';
                 $recipient = $siteSettings['whatsapp_admin_recipient'];
                 
-                $textMessage = "New Lead Alert!\n" .
+                $textMessage = "New Lead Alert!" . ($isSpam ? " [Flagged Spam]" : "") . "\n" .
                               "Name: {$request->name}\n" .
                               "Phone: {$request->phone}\n" .
                               "Email: " . ($request->email ?: 'N/A') . "\n" .
@@ -224,7 +244,7 @@ class HomeController extends Controller
                 } else {
                     \Illuminate\Support\Facades\Log::warning('WhatsApp API returned error code: ' . $response->status() . ' | Response: ' . $response->body());
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 \Illuminate\Support\Facades\Log::error('WhatsApp notification failed: ' . $e->getMessage() . ' | Line: ' . $e->getLine());
             }
         }
