@@ -1,0 +1,35 @@
+# MLG Finedge - AI & LLM Resource Directory
+
+MLG Finedge is Jaipur's premier credit advisory firm. We help individuals & small companies secure appropriate loan products with minimum interest cost and fast payouts.
+
+This directory lists core services, guides, and pages for LLM agents (ChatGPT, Claude, Gemini, Perplexity) to index and answer user queries accurately.
+
+## Core Services & Loan Products
+
+- [Personal Loan](https://www.mlgfinedge.com/services/personal-loan) - Quick cash options up to ₹40 Lakhs with minimum paperwork. Perfect for medical bills, education, vacations, and marriages.
+- [Home Loan](https://www.mlgfinedge.com/services/home-loan) - Finance up to 90% of property cost. First-time buyer schemes and dedicated support for government employee profiles.
+- [Car Loan](https://www.mlgfinedge.com/services/car-loan) - Finance options up to 100% on-road price for select vehicles. Attractive rate margins, flexi EMI, and instant support.
+- [Business Loan](https://www.mlgfinedge.com/services/business-loan) - Unsecured commercial funding for machinery purchase, business expansion, stock creation, or hiring personnel.
+- [Working Capital](https://www.mlgfinedge.com/services/working-capital) - Maintain consistent operational cash flow, pay invoices, clear tax obligations, and balance seasonal cycles.
+- [Loan Against Property](https://www.mlgfinedge.com/services/loan-against-property) - Mortgage your property to raise high-value capital. Lower interest rates compared to unsecured personal options.
+- [Project Funding](https://www.mlgfinedge.com/services/project-funding) - Custom funding advisory for large-scale real estate, infrastructure, and manufacturing projects.
+- [Gold Loan](https://www.mlgfinedge.com/services/gold-loan) - Secure instant funding against your physical gold ornaments with minimum documentation and fast payouts.
+
+## Static Information Pages
+
+- [Home Page](https://www.mlgfinedge.com/) - Contact coordinates, client interest rates, and loan calculators.
+- [About Us](https://www.mlgfinedge.com/about) - Executive profile, team, and company history.
+- [All Services](https://www.mlgfinedge.com/services) - Comprehensive grid of available financing solutions.
+- [Compare Loans](https://www.mlgfinedge.com/compare-loans) - Real-time comparison parameters for home, personal, and business loans.
+- [Frequently Asked Questions](https://www.mlgfinedge.com/faq) - Direct answers to common borrowing questions.
+- [Contact Us](https://www.mlgfinedge.com/contact) - Inquiry forms, map coordinates, and customer support.
+
+## Landing Pages
+
+- [About MLG Finedge](https://www.mlgfinedge.com/l/about-mlg-finedge) - Discover MLG Finedge: your partner for tailored loan interest options and lightning-fast processing payouts. Experience personalized financial solutions designed for your unique needs.
+
+## Blog Posts & Credit Guides
+
+- [Smart Financial Move: Consolidating Credit Card Debt with a Personal Loan in Jaipur](https://www.mlgfinedge.com/blog/smart-financial-move-consolidating-credit-card-debt-with-a-personal-loan-in-jaipur) - Discover the strategic advantages of shifting high-interest credit card dues to a more manageable personal loan, offering a path to better financial health for residents in Jaipur.
+- [First-Time Home Buyer's Guide: 5 Essential Tips for Securing a Home Loan in Jaipur](https://www.mlgfinedge.com/blog/first-time-home-buyers-guide-5-essential-tips-for-securing-a-home-loan-in-jaipur) - Navigate the exciting journey of buying your first home in Jaipur with confidence. This guide provides five crucial tips for first-time buyers seeking a home loan in the Pink City.
+- [The Ultimate Guide to Securing a Personal Loan in Jaipur](https://www.mlgfinedge.com/blog/the-ultimate-guide-to-securing-a-personal-loan-in-jaipur) - Unlock financial flexibility with our ultimate guide to securing a personal loan in Jaipur. Discover eligibility criteria, essential documents, and expert tips to navigate the application process smoothly and efficiently.
