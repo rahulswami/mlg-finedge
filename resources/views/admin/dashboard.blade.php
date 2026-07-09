@@ -36,6 +36,9 @@
             flex-direction: column;
             padding: 1.5rem 0;
             flex-shrink: 0;
+            overflow-y: auto;
+            max-height: 100vh;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s ease, border-color 0.3s ease;
         }
 
         .sidebar-brand {
@@ -706,7 +709,7 @@
 
         /* Mobile Hamburger & Close buttons */
         .mobile-toggle-btn {
-            display: none;
+            display: inline-flex;
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--admin-border);
             color: #ffffff;
@@ -797,6 +800,19 @@
             color: var(--mint-green);
             background-color: rgba(92, 203, 179, 0.08);
             border-color: var(--mint-green);
+        }
+
+        @media (min-width: 992px) {
+            body.sidebar-collapsed .sidebar {
+                width: 0;
+                padding-left: 0;
+                padding-right: 0;
+                border-right-color: transparent;
+                overflow: hidden;
+            }
+            body.sidebar-collapsed {
+                --admin-sidebar-w: 0px;
+            }
         }
 
         /* Media Queries for Layout Responsiveness */
@@ -999,6 +1015,29 @@
                         <div class="form-group" style="margin-top: 1.25rem;">
                             <label for="address">Physical Address</label>
                             <input type="text" id="address" name="address" class="form-control" value="{{ $site['address'] ?? '' }}" required>
+                        </div>
+                    </div>
+
+                    <div class="admin-card">
+                        <h2>Social Media Profiles</h2>
+                        <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem; margin-top: -1rem;">Add links to your official social media pages to show them in the footer.</p>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="social_facebook">Facebook URL</label>
+                                <input type="url" id="social_facebook" name="social_facebook" class="form-control" value="{{ $site['social_facebook'] ?? '' }}" placeholder="https://facebook.com/yourpage">
+                            </div>
+                            <div class="form-group">
+                                <label for="social_instagram">Instagram URL</label>
+                                <input type="url" id="social_instagram" name="social_instagram" class="form-control" value="{{ $site['social_instagram'] ?? '' }}" placeholder="https://instagram.com/yourusername">
+                            </div>
+                            <div class="form-group">
+                                <label for="social_linkedin">LinkedIn URL</label>
+                                <input type="url" id="social_linkedin" name="social_linkedin" class="form-control" value="{{ $site['social_linkedin'] ?? '' }}" placeholder="https://linkedin.com/company/yourcompany">
+                            </div>
+                            <div class="form-group">
+                                <label for="social_twitter">Twitter / X URL</label>
+                                <input type="url" id="social_twitter" name="social_twitter" class="form-control" value="{{ $site['social_twitter'] ?? '' }}" placeholder="https://twitter.com/yourhandle">
+                            </div>
                         </div>
                     </div>
 
@@ -2877,13 +2916,20 @@
 
                 <div id="seo-results" style="display: none;">
                     <!-- Quick tabs inside results to switch categories -->
-                    <div style="display: flex; gap: 8px; overflow-x: auto; margin-bottom: 1.5rem; padding-bottom: 5px; border-bottom: 1px solid var(--admin-border);">
-                        <button type="button" class="btn-submit active" id="seo-tab-btn-content" onclick="switchSeoResultTab('content')" style="width: auto; padding: 0.5rem 1rem; font-size: 0.85rem;">Pages & Blogs</button>
-                        <button type="button" class="btn-submit" id="seo-tab-btn-backlinks" onclick="switchSeoResultTab('backlinks')" style="width: auto; padding: 0.5rem 1rem; font-size: 0.85rem; background-color: var(--admin-input-bg); color: #fff;">Backlink Targets</button>
-                        <button type="button" class="btn-submit" id="seo-tab-btn-quora" onclick="switchSeoResultTab('quora')" style="width: auto; padding: 0.5rem 1rem; font-size: 0.85rem; background-color: var(--admin-input-bg); color: #fff;">Quora & Q&A</button>
-                        <button type="button" class="btn-submit" id="seo-tab-btn-social" onclick="switchSeoResultTab('social')" style="width: auto; padding: 0.5rem 1rem; font-size: 0.85rem; background-color: var(--admin-input-bg); color: #fff;">Social & Pinterest</button>
-                        <button type="button" class="btn-submit" id="seo-tab-btn-bookmarking" onclick="switchSeoResultTab('bookmarking')" style="width: auto; padding: 0.5rem 1rem; font-size: 0.85rem; background-color: var(--admin-input-bg); color: #fff;">Bookmarking & Syndication</button>
-                        <button type="button" class="btn-submit" id="seo-tab-btn-other" onclick="switchSeoResultTab('other')" style="width: auto; padding: 0.5rem 1rem; font-size: 0.85rem; background-color: var(--admin-input-bg); color: #fff;">Growth Tactics</button>
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 1.5rem; border-bottom: 1px solid var(--admin-border); padding-bottom: 10px; flex-wrap: wrap;">
+                        <div style="display: flex; gap: 8px; overflow-x: auto; flex-grow: 1; padding-bottom: 5px;">
+                            <button type="button" class="btn-submit active" id="seo-tab-btn-content" onclick="switchSeoResultTab('content')" style="width: auto; padding: 0.5rem 1rem; font-size: 0.85rem;">Pages & Blogs</button>
+                            <button type="button" class="btn-submit" id="seo-tab-btn-backlinks" onclick="switchSeoResultTab('backlinks')" style="width: auto; padding: 0.5rem 1rem; font-size: 0.85rem; background-color: var(--admin-input-bg); color: #fff;">Backlink Targets</button>
+                            <button type="button" class="btn-submit" id="seo-tab-btn-quora" onclick="switchSeoResultTab('quora')" style="width: auto; padding: 0.5rem 1rem; font-size: 0.85rem; background-color: var(--admin-input-bg); color: #fff;">Quora & Q&A</button>
+                            <button type="button" class="btn-submit" id="seo-tab-btn-social" onclick="switchSeoResultTab('social')" style="width: auto; padding: 0.5rem 1rem; font-size: 0.85rem; background-color: var(--admin-input-bg); color: #fff;">Social & Pinterest</button>
+                            <button type="button" class="btn-submit" id="seo-tab-btn-bookmarking" onclick="switchSeoResultTab('bookmarking')" style="width: auto; padding: 0.5rem 1rem; font-size: 0.85rem; background-color: var(--admin-input-bg); color: #fff;">Bookmarking & Syndication</button>
+                            <button type="button" class="btn-submit" id="seo-tab-btn-other" onclick="switchSeoResultTab('other')" style="width: auto; padding: 0.5rem 1rem; font-size: 0.85rem; background-color: var(--admin-input-bg); color: #fff;">Growth Tactics</button>
+                        </div>
+                        <div>
+                            <button type="button" class="btn-submit" onclick="downloadSeoPdf()" style="width: auto; padding: 0.5rem 1.25rem; font-size: 0.85rem; background-color: var(--accent-teal); color: var(--primary-teal-dark); font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
+                                <i data-lucide="download" style="width: 16px; height: 16px;"></i> Download PDF Report
+                            </button>
+                        </div>
                     </div>
 
                     <!-- Result Panels -->
@@ -3260,6 +3306,8 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/classic/ckeditor.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- html2pdf.js CDN for PDF Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script>
         lucide.createIcons();
 
@@ -3526,14 +3574,18 @@
             }
         }
 
-        // Toggle Sidebar drawer on mobile
+        // Toggle Sidebar drawer on mobile or collapse on desktop
         function toggleSidebar() {
             const sidebar = document.querySelector('.sidebar');
             const backdrop = document.getElementById('sidebar-backdrop');
             if (sidebar) {
-                sidebar.classList.toggle('show');
-                if (backdrop) {
-                    backdrop.classList.toggle('show');
+                if (window.innerWidth >= 992) {
+                    document.body.classList.toggle('sidebar-collapsed');
+                } else {
+                    sidebar.classList.toggle('show');
+                    if (backdrop) {
+                        backdrop.classList.toggle('show');
+                    }
                 }
             }
         }
@@ -3571,6 +3623,8 @@
             }
         }
 
+        let latestSeoData = null;
+
         // AJAX Generate SEO Strategy
         function generateSeoRecommendations() {
             const keywords = document.getElementById('seo_keywords').value.trim();
@@ -3600,6 +3654,450 @@
                 loader.style.display = 'none';
                 if (res.success && res.data) {
                     const data = res.data;
+                    latestSeoData = data;
+                    
+                    // Render 1. On-Site Content Table
+                    const contentTbody = document.getElementById('seo-table-content');
+                    contentTbody.innerHTML = '';
+                    if (data.pages_blogs && data.pages_blogs.length) {
+                        data.pages_blogs.forEach(item => {
+                            contentTbody.innerHTML += `
+                                <tr>
+                                    <td><span class="badge" style="background-color: rgba(92, 203, 179, 0.1); color: var(--mint-green); border: 1px solid rgba(92, 203, 179, 0.3); font-size: 0.75rem;">${item.type}</span></td>
+                                    <td><strong>${item.title}</strong></td>
+                                    <td><code style="font-size: 0.8rem; background: rgba(255,255,255,0.05); padding: 2px 4px; border-radius: 4px;">${item.keywords}</code></td>
+                                    <td>${item.summary}</td>
+                                </tr>
+                            `;
+                        });
+                    } else {
+                        contentTbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">No content ideas generated.</td></tr>';
+                    }
+
+                    // Render 2. Backlinks Table
+                    const backlinksTbody = document.getElementById('seo-table-backlinks');
+                    backlinksTbody.innerHTML = '';
+                    if (data.third_party_articles && data.third_party_articles.length) {
+                        data.third_party_articles.forEach(item => {
+                            backlinksTbody.innerHTML += `
+                                <tr>
+                                    <td><strong>${item.platform_type}</strong></td>
+                                    <td>${item.title}</td>
+                                    <td><code style="font-size: 0.8rem; background: rgba(255,255,255,0.05); padding: 2px 4px; border-radius: 4px;">${item.keywords}</code></td>
+                                    <td>${item.context}</td>
+                                </tr>
+                            `;
+                        });
+                    } else {
+                        backlinksTbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">No off-site article suggestions.</td></tr>';
+                    }
+
+                    // Render 3. Quora Cards
+                    const quoraContainer = document.getElementById('seo-cards-quora');
+                    quoraContainer.innerHTML = '';
+                    if (data.quora_questions && data.quora_questions.length) {
+                        data.quora_questions.forEach(item => {
+                            quoraContainer.innerHTML += `
+                                <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--admin-border); border-radius: var(--radius-md); padding: 1.5rem;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 8px;">
+                                        <span class="badge" style="background-color: rgba(232, 92, 36, 0.1); color: var(--accent-orange); font-size: 0.75rem;">${item.topic}</span>
+                                        <a href="https://www.quora.com/search?q=${encodeURIComponent(item.question_direction)}" target="_blank" class="btn-submit" style="width: auto; padding: 4px 10px; font-size: 0.75rem; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
+                                            <i data-lucide="external-link" style="width: 12px; height: 12px;"></i> Search on Quora
+                                        </a>
+                                    </div>
+                                    <h4 style="margin: 0 0 1rem 0; font-size: 1.1rem; color: #fff;">${item.question_direction}</h4>
+                                    <strong style="font-size: 0.85rem; color: var(--mint-green); display: block; margin-bottom: 0.5rem;">Tactical Answer Blueprint:</strong>
+                                    <ul style="margin: 0; padding-left: 1.25rem; font-size: 0.9rem; color: rgba(255,255,255,0.85);">
+                                        ${item.draft_answer_points.split('\n').map(pt => pt.trim() ? `<li>${pt.replace(/^[-\*\d\.]+\s*/, '')}</li>` : '').join('')}
+                                    </ul>
+                                </div>
+                            `;
+                        });
+                    } else {
+                        quoraContainer.innerHTML = '<p style="text-align: center; color: var(--admin-text-muted);">No Quora suggestions generated.</p>';
+                    }
+
+                    // Render 4. Pinterest Table
+                    const pinterestTbody = document.getElementById('seo-table-pinterest');
+                    pinterestTbody.innerHTML = '';
+                    if (data.pinterest_posts && data.pinterest_posts.length) {
+                        data.pinterest_posts.forEach(item => {
+                            pinterestTbody.innerHTML += `
+                                <tr>
+                                    <td><strong style="color: #fff;">${item.overlay_text}</strong></td>
+                                    <td>${item.visual_idea}</td>
+                                    <td><span class="badge" style="background: rgba(255,255,255,0.05); color: #fff; font-size: 0.75rem;">${item.category}</span></td>
+                                </tr>
+                            `;
+                        });
+                    } else {
+                        pinterestTbody.innerHTML = '<tr><td colspan="3" style="text-align: center;">No Pinterest suggestions.</td></tr>';
+                    }
+
+                    // Render 5. Social Media Cards
+                    const socialContainer = document.getElementById('seo-cards-social');
+                    socialContainer.innerHTML = '';
+                    if (data.social_media && data.social_media.length) {
+                        data.social_media.forEach((item, index) => {
+                            const postTextEscaped = item.post_copy.replace(/`/g, '\\`').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                            socialContainer.innerHTML += `
+                                <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--admin-border); border-radius: var(--radius-md); padding: 1.25rem;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                        <span class="badge" style="background-color: rgba(92, 102, 241, 0.1); color: #a855f7; font-size: 0.75rem;">${item.platform}</span>
+                                        <button class="btn-submit" style="width: auto; padding: 4px 10px; font-size: 0.75rem;" onclick="copySeoSocialCopy(this, \`${postTextEscaped}\`)">
+                                            <i data-lucide="copy" style="width: 12px; height: 12px; display: inline; vertical-align: middle;"></i> Copy Caption
+                                        </button>
+                                    </div>
+                                    <p style="font-family: inherit; font-size: 0.9rem; white-space: pre-wrap; margin: 0 0 1rem 0; color: rgba(255,255,255,0.85);">${item.post_copy}</p>
+                                    <div style="font-size: 0.8rem; background: rgba(0,0,0,0.15); padding: 8px 12px; border-radius: 4px;">
+                                        <strong style="color: var(--mint-green);">Graphic Concept:</strong> ${item.graphic_concept}
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    } else {
+                        socialContainer.innerHTML = '<p style="text-align: center; color: var(--admin-text-muted);">No social posts generated.</p>';
+                    }
+
+                    // Render 6. Bookmarking Platforms
+                    const bookmarkingTbody = document.getElementById('seo-table-bookmarking');
+                    bookmarkingTbody.innerHTML = '';
+                    if (data.bookmarking_sites && data.bookmarking_sites.length) {
+                        data.bookmarking_sites.forEach(item => {
+                            const link = item.url.startsWith('http') ? item.url : 'https://' + item.url;
+                            bookmarkingTbody.innerHTML += `
+                                <tr>
+                                    <td>
+                                        <a href="${link}" target="_blank" style="color: var(--mint-green); font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
+                                            ${item.name} <i data-lucide="external-link" style="width: 12px; height: 12px;"></i>
+                                        </a>
+                                    </td>
+                                    <td>${item.strategy}</td>
+                                </tr>
+                            `;
+                        });
+                    } else {
+                        bookmarkingTbody.innerHTML = '<tr><td colspan="2" style="text-align: center;">No bookmarking sites suggested.</td></tr>';
+                    }
+
+                    // Render 7. Syndication Platforms
+                    const syndicationTbody = document.getElementById('seo-table-syndication');
+                    syndicationTbody.innerHTML = '';
+                    if (data.blog_promotion && data.blog_promotion.length) {
+                        data.blog_promotion.forEach(item => {
+                            const link = item.url.startsWith('http') ? item.url : 'https://' + item.url;
+                            syndicationTbody.innerHTML += `
+                                <tr>
+                                    <td>
+                                        <a href="${link}" target="_blank" style="color: var(--mint-green); font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
+                                            ${item.name} <i data-lucide="external-link" style="width: 12px; height: 12px;"></i>
+                                        </a>
+                                    </td>
+                                    <td>${item.strategy}</td>
+                                </tr>
+                            `;
+                        });
+                    } else {
+                        syndicationTbody.innerHTML = '<tr><td colspan="2" style="text-align: center;">No syndication sites suggested.</td></tr>';
+                    }
+
+                    // Render 8. Other growth tactics
+                    const otherContainer = document.getElementById('seo-cards-other');
+                    otherContainer.innerHTML = '';
+                    if (data.other_backlinks && data.other_backlinks.length) {
+                        data.other_backlinks.forEach(item => {
+                            otherContainer.innerHTML += `
+                                <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--admin-border); border-radius: var(--radius-md); padding: 1.25rem;">
+                                    <h4 style="margin: 0 0 0.5rem 0; font-size: 1.05rem; color: var(--mint-green); font-weight: 600;">${item.strategy_name}</h4>
+                                    <p style="font-size: 0.88rem; margin: 0; color: rgba(255,255,255,0.85);">${item.action_steps}</p>
+                                </div>
+                            `;
+                        });
+                    } else {
+                        otherContainer.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: var(--admin-text-muted);">No additional tactics generated.</p>';
+                    }
+
+                    // Trigger Lucide icons instantiation
+                    setTimeout(() => lucide.createIcons(), 100);
+
+                    // Show results and switch to Content Tab by default
+                    results.style.display = 'block';
+                    switchSeoResultTab('content');
+                    results.scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    alert('Error: ' + (res.error || 'Failed to generate SEO strategy.'));
+                }
+            })
+            .catch(err => {
+                loader.style.display = 'none';
+                alert('Network Error: ' + err.message);
+            });
+        }
+
+        // Generate and download a beautifully-styled PDF report on the client side
+        function downloadSeoPdf() {
+            if (!latestSeoData) {
+                alert('No SEO data available to download. Please generate recommendations first.');
+                return;
+            }
+            
+            const keywords = document.getElementById('seo_keywords').value.trim();
+            const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+            
+            // Build temporary off-screen container for rendering
+            const printEl = document.createElement('div');
+            printEl.style.padding = '20px';
+            printEl.style.color = '#333333';
+            printEl.style.backgroundColor = '#ffffff';
+            printEl.style.fontFamily = "'Outfit', 'Inter', sans-serif";
+            printEl.style.lineHeight = '1.5';
+            
+            let html = `
+                <div style="border-bottom: 2px solid #5ccbb3; padding-bottom: 15px; margin-bottom: 25px;">
+                    <h1 style="color: #0a1112; margin: 0 0 5px 0; font-size: 26px;">MLG Finedge - AI SEO Recommendation Blueprint</h1>
+                    <p style="color: #555; margin: 0; font-size: 13px;"><strong>Generated Date:</strong> ${dateStr} | <strong>Target Keywords:</strong> ${keywords}</p>
+                </div>
+                
+                <h2 style="color: #0a1112; font-size: 18px; margin-top: 20px; border-bottom: 1px solid #ddd; padding-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px;">1. On-Site Content structure Recommendations</h2>
+                <table style="width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12px; margin-bottom: 30px;">
+                    <thead>
+                        <tr style="background-color: #f7f9f9; border-bottom: 2px solid #ddd;">
+                            <th style="padding: 10px; text-align: left; width: 15%; border: 1px solid #ddd; font-weight: bold;">Type</th>
+                            <th style="padding: 10px; text-align: left; width: 30%; border: 1px solid #ddd; font-weight: bold;">Recommended Title</th>
+                            <th style="padding: 10px; text-align: left; width: 20%; border: 1px solid #ddd; font-weight: bold;">Keywords</th>
+                            <th style="padding: 10px; text-align: left; width: 35%; border: 1px solid #ddd; font-weight: bold;">Outline & Search Intent</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            if (latestSeoData.pages_blogs && latestSeoData.pages_blogs.length) {
+                latestSeoData.pages_blogs.forEach(item => {
+                    html += `
+                        <tr style="border-bottom: 1px solid #ddd;">
+                            <td style="padding: 8px 10px; border: 1px solid #ddd; font-weight: bold; color: #0f766e;">${item.type}</td>
+                            <td style="padding: 8px 10px; border: 1px solid #ddd;"><strong>${item.title}</strong></td>
+                            <td style="padding: 8px 10px; border: 1px solid #ddd; font-family: monospace; background-color: #f8fafc;">${item.keywords}</td>
+                            <td style="padding: 8px 10px; border: 1px solid #ddd; color: #444;">${item.summary}</td>
+                        </tr>
+                    `;
+                });
+            } else {
+                html += `<tr><td colspan="4" style="text-align: center; padding: 12px;">No content ideas.</td></tr>`;
+            }
+            
+            html += `
+                    </tbody>
+                </table>
+                
+                <div style="page-break-after: always;"></div>
+                
+                <h2 style="color: #0a1112; font-size: 18px; margin-top: 20px; border-bottom: 1px solid #ddd; padding-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px;">2. Third-Party Off-Site Articles & Backlinks</h2>
+                <table style="width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12px; margin-bottom: 30px;">
+                    <thead>
+                        <tr style="background-color: #f7f9f9; border-bottom: 2px solid #ddd;">
+                            <th style="padding: 10px; text-align: left; width: 20%; border: 1px solid #ddd; font-weight: bold;">Platform Type</th>
+                            <th style="padding: 10px; text-align: left; width: 30%; border: 1px solid #ddd; font-weight: bold;">Article Title Idea</th>
+                            <th style="padding: 10px; text-align: left; width: 20%; border: 1px solid #ddd; font-weight: bold;">Anchor Keywords</th>
+                            <th style="padding: 10px; text-align: left; width: 30%; border: 1px solid #ddd; font-weight: bold;">Backlink Integration Context</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            if (latestSeoData.third_party_articles && latestSeoData.third_party_articles.length) {
+                latestSeoData.third_party_articles.forEach(item => {
+                    html += `
+                        <tr style="border-bottom: 1px solid #ddd;">
+                            <td style="padding: 8px 10px; border: 1px solid #ddd; font-weight: bold;">${item.platform_type}</td>
+                            <td style="padding: 8px 10px; border: 1px solid #ddd;"><strong>${item.title}</strong></td>
+                            <td style="padding: 8px 10px; border: 1px solid #ddd; font-family: monospace; background-color: #f8fafc;">${item.keywords}</td>
+                            <td style="padding: 8px 10px; border: 1px solid #ddd; color: #444;">${item.context}</td>
+                        </tr>
+                    `;
+                });
+            } else {
+                html += `<tr><td colspan="4" style="text-align: center; padding: 12px;">No guest posting suggestions.</td></tr>`;
+            }
+            
+            html += `
+                    </tbody>
+                </table>
+                
+                <h2 style="color: #0a1112; font-size: 18px; margin-top: 30px; border-bottom: 1px solid #ddd; padding-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px;">3. Quora Q&A Authority Roadmap</h2>
+                <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 10px; margin-bottom: 30px;">
+            `;
+            
+            if (latestSeoData.quora_questions && latestSeoData.quora_questions.length) {
+                latestSeoData.quora_questions.forEach(item => {
+                    html += `
+                        <div style="border: 1px solid #ddd; padding: 15px; border-radius: 6px; background-color: #fafafa;">
+                            <span style="font-size: 10px; font-weight: bold; background: #e85c24; color: white; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 8px; text-transform: uppercase;">${item.topic}</span>
+                            <h4 style="margin: 0 0 10px 0; font-size: 14px; color: #0a1112; font-weight: bold;">Question: ${item.question_direction}</h4>
+                            <p style="margin: 0 0 5px 0; font-size: 12px; color: #555; font-weight: bold;">Tactical Answer Outline:</p>
+                            <ul style="margin: 0; padding-left: 20px; font-size: 12px; color: #444;">
+                                ${item.draft_answer_points.split('\n').map(pt => pt.trim() ? `<li>${pt.replace(/^[-\*\d\.]+\s*/, '')}</li>` : '').join('')}
+                            </ul>
+                        </div>
+                    `;
+                });
+            } else {
+                html += `<p style="font-size: 13px;">No Quora suggestions.</p>`;
+            }
+            
+            html += `
+                </div>
+                
+                <div style="page-break-after: always;"></div>
+                
+                <h2 style="color: #0a1112; font-size: 18px; margin-top: 20px; border-bottom: 1px solid #ddd; padding-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px;">4. Pinterest Graphics & Written Social Copy</h2>
+                <h3 style="font-size: 14px; margin-top: 15px; margin-bottom: 8px; color: #333; font-weight: bold;">Pinterest Overlay Graphics</h3>
+                <table style="width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 35px;">
+                    <thead>
+                        <tr style="background-color: #f7f9f9; border-bottom: 2px solid #ddd;">
+                            <th style="padding: 10px; text-align: left; width: 30%; border: 1px solid #ddd; font-weight: bold;">Overlay Bold Text</th>
+                            <th style="padding: 10px; text-align: left; width: 50%; border: 1px solid #ddd; font-weight: bold;">Visual Graphic Concept</th>
+                            <th style="padding: 10px; text-align: left; width: 20%; border: 1px solid #ddd; font-weight: bold;">Category</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            if (latestSeoData.pinterest_posts && latestSeoData.pinterest_posts.length) {
+                latestSeoData.pinterest_posts.forEach(item => {
+                    html += `
+                        <tr style="border-bottom: 1px solid #ddd;">
+                            <td style="padding: 8px 10px; border: 1px solid #ddd; font-weight: bold;">${item.overlay_text}</td>
+                            <td style="padding: 8px 10px; border: 1px solid #ddd; color: #444;">${item.visual_idea}</td>
+                            <td style="padding: 8px 10px; border: 1px solid #ddd;">${item.category}</td>
+                        </tr>
+                    `;
+                });
+            } else {
+                html += `<tr><td colspan="3" style="text-align: center; padding: 12px;">No Pinterest suggestions.</td></tr>`;
+            }
+            
+            html += `
+                    </tbody>
+                </table>
+                
+                <h3 style="font-size: 14px; margin-top: 20px; margin-bottom: 10px; color: #333; font-weight: bold;">Social Media Written Copy</h3>
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+            `;
+            
+            if (latestSeoData.social_media && latestSeoData.social_media.length) {
+                latestSeoData.social_media.forEach(item => {
+                    html += `
+                        <div style="border: 1px solid #ddd; padding: 15px; border-radius: 6px; background-color: #fcfcfc;">
+                            <strong style="color: #4f46e5; font-size: 12px; display: block; margin-bottom: 6px; text-transform: uppercase;">Platform: ${item.platform}</strong>
+                            <p style="margin: 0 0 12px 0; font-size: 12px; white-space: pre-wrap; color: #333; line-height: 1.6; background-color: #fff; padding: 10px; border: 1px solid #eee; border-radius: 4px;">${item.post_copy}</p>
+                            <div style="font-size: 11px; color: #444; background: #f1f5f9; padding: 8px 12px; border-radius: 4px; border-left: 3px solid #64748b;">
+                                <strong>Graphic Concept:</strong> ${item.graphic_concept}
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                html += `<p style="font-size: 13px;">No social copy suggestions.</p>`;
+            }
+            
+            html += `
+                </div>
+                
+                <div style="page-break-after: always;"></div>
+                
+                <h2 style="color: #0a1112; font-size: 18px; margin-top: 20px; border-bottom: 1px solid #ddd; padding-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px;">5. Social Bookmarking & Syndication Directories</h2>
+                <h3 style="font-size: 14px; margin-top: 15px; margin-bottom: 8px; color: #333; font-weight: bold;">Social Bookmarking Websites</h3>
+                <table style="width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 30px;">
+                    <thead>
+                        <tr style="background-color: #f7f9f9; border-bottom: 2px solid #ddd;">
+                            <th style="padding: 10px; text-align: left; width: 30%; border: 1px solid #ddd; font-weight: bold;">Platform</th>
+                            <th style="padding: 10px; text-align: left; width: 70%; border: 1px solid #ddd; font-weight: bold;">Tactical Submission Strategy</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            if (latestSeoData.bookmarking_sites && latestSeoData.bookmarking_sites.length) {
+                latestSeoData.bookmarking_sites.forEach(item => {
+                    html += `
+                        <tr style="border-bottom: 1px solid #ddd;">
+                            <td style="padding: 8px 10px; border: 1px solid #ddd;"><strong>${item.name}</strong><br><span style="font-size: 10px; color: #666;">${item.url}</span></td>
+                            <td style="padding: 8px 10px; border: 1px solid #ddd; color: #444;">${item.strategy}</td>
+                        </tr>
+                    `;
+                });
+            } else {
+                html += `<tr><td colspan="2" style="text-align: center; padding: 12px;">No bookmarking sites.</td></tr>`;
+            }
+            
+            html += `
+                    </tbody>
+                </table>
+                
+                <h3 style="font-size: 14px; margin-top: 20px; margin-bottom: 8px; color: #333; font-weight: bold;">Blog Syndication Platforms</h3>
+                <table style="width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 30px;">
+                    <thead>
+                        <tr style="background-color: #f7f9f9; border-bottom: 2px solid #ddd;">
+                            <th style="padding: 10px; text-align: left; width: 30%; border: 1px solid #ddd; font-weight: bold;">Platform</th>
+                            <th style="padding: 10px; text-align: left; width: 70%; border: 1px solid #ddd; font-weight: bold;">Syndication Strategy</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            if (latestSeoData.blog_promotion && latestSeoData.blog_promotion.length) {
+                latestSeoData.blog_promotion.forEach(item => {
+                    html += `
+                        <tr style="border-bottom: 1px solid #ddd;">
+                            <td style="padding: 8px 10px; border: 1px solid #ddd;"><strong>${item.name}</strong><br><span style="font-size: 10px; color: #666;">${item.url}</span></td>
+                            <td style="padding: 8px 10px; border: 1px solid #ddd; color: #444;">${item.strategy}</td>
+                        </tr>
+                    `;
+                });
+            } else {
+                html += `<tr><td colspan="2" style="text-align: center; padding: 12px;">No syndication sites.</td></tr>`;
+            }
+            
+            html += `
+                    </tbody>
+                </table>
+                
+                <h2 style="color: #0a1112; font-size: 18px; margin-top: 20px; border-bottom: 1px solid #ddd; padding-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px;">6. Advanced Growth Tactics</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px;">
+            `;
+            
+            if (latestSeoData.other_backlinks && latestSeoData.other_backlinks.length) {
+                latestSeoData.other_backlinks.forEach(item => {
+                    html += `
+                        <div style="border: 1px solid #ddd; padding: 12px; border-radius: 6px; background-color: #fafafa;">
+                            <h4 style="margin: 0 0 6px 0; font-size: 13px; color: #0f766e; font-weight: bold;">${item.strategy_name}</h4>
+                            <p style="margin: 0; font-size: 11px; color: #555; line-height: 1.5;">${item.action_steps}</p>
+                        </div>
+                    `;
+                });
+            } else {
+                html += `<p style="font-size: 13px;">No additional tactics.</p>`;
+            }
+            
+            html += `
+                </div>
+            `;
+            
+            printEl.innerHTML = html;
+            
+            const opt = {
+                margin:       [15, 15, 15, 15],
+                filename:     'MLG_Finedge_SEO_Blueprint_' + keywords.replace(/[^a-z0-9]+/gi, '_') + '.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
+            };
+            
+            html2pdf().set(opt).from(printEl).save();
+        }
+
                     
                     // Render 1. On-Site Content Table
                     const contentTbody = document.getElementById('seo-table-content');

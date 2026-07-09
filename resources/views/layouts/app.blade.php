@@ -119,9 +119,18 @@
                 </div>
                 <p>{{ $pageContents['footer']['about']['description'] ?? (($site['site_name'] ?? 'MLG Finedge') . " is Jaipur's premier credit advisory firm. We help individuals & small companies secure appropriate loan products with minimum interest cost and fast payouts.") }}</p>
                 <div class="social-links">
-                    <a href="#" class="social-icon" aria-label="Facebook"><i data-lucide="facebook"></i></a>
-                    <a href="#" class="social-icon" aria-label="Instagram"><i data-lucide="instagram"></i></a>
-                    <a href="#" class="social-icon" aria-label="LinkedIn"><i data-lucide="linkedin"></i></a>
+                    @if(!empty($site['social_facebook']))
+                        <a href="{{ $site['social_facebook'] }}" target="_blank" class="social-icon" aria-label="Facebook"><i data-lucide="facebook"></i></a>
+                    @endif
+                    @if(!empty($site['social_instagram']))
+                        <a href="{{ $site['social_instagram'] }}" target="_blank" class="social-icon" aria-label="Instagram"><i data-lucide="instagram"></i></a>
+                    @endif
+                    @if(!empty($site['social_linkedin']))
+                        <a href="{{ $site['social_linkedin'] }}" target="_blank" class="social-icon" aria-label="LinkedIn"><i data-lucide="linkedin"></i></a>
+                    @endif
+                    @if(!empty($site['social_twitter']))
+                        <a href="{{ $site['social_twitter'] }}" target="_blank" class="social-icon" aria-label="Twitter"><i data-lucide="twitter"></i></a>
+                    @endif
                 </div>
             </div>
             
