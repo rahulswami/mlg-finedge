@@ -3708,7 +3708,7 @@
                                     <h4 style="margin: 0 0 1rem 0; font-size: 1.1rem; color: #fff;">${item.question_direction}</h4>
                                     <strong style="font-size: 0.85rem; color: var(--mint-green); display: block; margin-bottom: 0.5rem;">Tactical Answer Blueprint:</strong>
                                     <ul style="margin: 0; padding-left: 1.25rem; font-size: 0.9rem; color: rgba(255,255,255,0.85);">
-                                        ${item.draft_answer_points.split('\n').map(pt => pt.trim() ? `<li>${pt.replace(/^[-\*\d\.]+\s*/, '')}</li>` : '').join('')}
+                                        ${item.draft_answer_points.split('\n').map(pt => pt.trim() ? ('<li>' + pt.replace(/^[-\*\d\.]+\s*/, '') + '</li>') : '').join('')}
                                     </ul>
                                 </div>
                             `;
@@ -3936,7 +3936,7 @@
                             <h4 style="margin: 0 0 10px 0; font-size: 14px; color: #0a1112; font-weight: bold;">Question: ${item.question_direction}</h4>
                             <p style="margin: 0 0 5px 0; font-size: 12px; color: #555; font-weight: bold;">Tactical Answer Outline:</p>
                             <ul style="margin: 0; padding-left: 20px; font-size: 12px; color: #444;">
-                                ${item.draft_answer_points.split('\n').map(pt => pt.trim() ? `<li>${pt.replace(/^[-\*\d\.]+\s*/, '')}</li>` : '').join('')}
+                                ${item.draft_answer_points.split('\n').map(pt => pt.trim() ? ('<li>' + pt.replace(/^[-\*\d\.]+\s*/, '') + '</li>') : '').join('')}
                             </ul>
                         </div>
                     `;
@@ -4096,199 +4096,6 @@
             };
             
             html2pdf().set(opt).from(printEl).save();
-        }
-
-                    
-                    // Render 1. On-Site Content Table
-                    const contentTbody = document.getElementById('seo-table-content');
-                    contentTbody.innerHTML = '';
-                    if (data.pages_blogs && data.pages_blogs.length) {
-                        data.pages_blogs.forEach(item => {
-                            contentTbody.innerHTML += `
-                                <tr>
-                                    <td><span class="badge" style="background-color: rgba(92, 203, 179, 0.1); color: var(--mint-green); border: 1px solid rgba(92, 203, 179, 0.3); font-size: 0.75rem;">${item.type}</span></td>
-                                    <td><strong>${item.title}</strong></td>
-                                    <td><code style="font-size: 0.8rem; background: rgba(255,255,255,0.05); padding: 2px 4px; border-radius: 4px;">${item.keywords}</code></td>
-                                    <td>${item.summary}</td>
-                                </tr>
-                            `;
-                        });
-                    } else {
-                        contentTbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">No content ideas generated.</td></tr>';
-                    }
-
-                    // Render 2. Backlinks Table
-                    const backlinksTbody = document.getElementById('seo-table-backlinks');
-                    backlinksTbody.innerHTML = '';
-                    if (data.third_party_articles && data.third_party_articles.length) {
-                        data.third_party_articles.forEach(item => {
-                            backlinksTbody.innerHTML += `
-                                <tr>
-                                    <td><strong>${item.platform_type}</strong></td>
-                                    <td>${item.title}</td>
-                                    <td><code style="font-size: 0.8rem; background: rgba(255,255,255,0.05); padding: 2px 4px; border-radius: 4px;">${item.keywords}</code></td>
-                                    <td>${item.context}</td>
-                                </tr>
-                            `;
-                        });
-                    } else {
-                        backlinksTbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">No off-site article suggestions.</td></tr>';
-                    }
-
-                    // Render 3. Quora Cards
-                    const quoraContainer = document.getElementById('seo-cards-quora');
-                    quoraContainer.innerHTML = '';
-                    if (data.quora_questions && data.quora_questions.length) {
-                        data.quora_questions.forEach(item => {
-                            quoraContainer.innerHTML += `
-                                <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--admin-border); border-radius: var(--radius-md); padding: 1.5rem;">
-                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 8px;">
-                                        <span class="badge" style="background-color: rgba(232, 92, 36, 0.1); color: var(--accent-orange); font-size: 0.75rem;">${item.topic}</span>
-                                        <a href="https://www.quora.com/search?q=${encodeURIComponent(item.question_direction)}" target="_blank" class="btn-submit" style="width: auto; padding: 4px 10px; font-size: 0.75rem; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
-                                            <i data-lucide="external-link" style="width: 12px; height: 12px;"></i> Search on Quora
-                                        </a>
-                                    </div>
-                                    <h4 style="margin: 0 0 1rem 0; font-size: 1.1rem; color: #fff;">${item.question_direction}</h4>
-                                    <strong style="font-size: 0.85rem; color: var(--mint-green); display: block; margin-bottom: 0.5rem;">Tactical Answer Blueprint:</strong>
-                                    <ul style="margin: 0; padding-left: 1.25rem; font-size: 0.9rem; color: rgba(255,255,255,0.85);">
-                                        ${item.draft_answer_points.split('\n').map(pt => pt.trim() ? `<li>${pt.replace(/^[-\*\d\.]+\s*/, '')}</li>` : '').join('')}
-                                    </ul>
-                                </div>
-                            `;
-                        });
-                    } else {
-                        quoraContainer.innerHTML = '<p style="text-align: center; color: var(--admin-text-muted);">No Quora suggestions generated.</p>';
-                    }
-
-                    // Render 4. Pinterest Table
-                    const pinterestTbody = document.getElementById('seo-table-pinterest');
-                    pinterestTbody.innerHTML = '';
-                    if (data.pinterest_posts && data.pinterest_posts.length) {
-                        data.pinterest_posts.forEach(item => {
-                            pinterestTbody.innerHTML += `
-                                <tr>
-                                    <td><strong style="color: #fff;">${item.overlay_text}</strong></td>
-                                    <td>${item.visual_idea}</td>
-                                    <td><span class="badge" style="background: rgba(255,255,255,0.05); color: #fff; font-size: 0.75rem;">${item.category}</span></td>
-                                </tr>
-                            `;
-                        });
-                    } else {
-                        pinterestTbody.innerHTML = '<tr><td colspan="3" style="text-align: center;">No Pinterest suggestions.</td></tr>';
-                    }
-
-                    // Render 5. Social Media Cards
-                    const socialContainer = document.getElementById('seo-cards-social');
-                    socialContainer.innerHTML = '';
-                    if (data.social_media && data.social_media.length) {
-                        data.social_media.forEach((item, index) => {
-                            const postTextEscaped = item.post_copy.replace(/`/g, '\\`').replace(/'/g, "\\'").replace(/"/g, '&quot;');
-                            socialContainer.innerHTML += `
-                                <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--admin-border); border-radius: var(--radius-md); padding: 1.25rem;">
-                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                                        <span class="badge" style="background-color: rgba(92, 102, 241, 0.1); color: #a855f7; font-size: 0.75rem;">${item.platform}</span>
-                                        <button class="btn-submit" style="width: auto; padding: 4px 10px; font-size: 0.75rem;" onclick="copySeoSocialCopy(this, \`${postTextEscaped}\`)">
-                                            <i data-lucide="copy" style="width: 12px; height: 12px; display: inline; vertical-align: middle;"></i> Copy Caption
-                                        </button>
-                                    </div>
-                                    <p style="font-family: inherit; font-size: 0.9rem; white-space: pre-wrap; margin: 0 0 1rem 0; color: rgba(255,255,255,0.85);">${item.post_copy}</p>
-                                    <div style="font-size: 0.8rem; background: rgba(0,0,0,0.15); padding: 8px 12px; border-radius: 4px;">
-                                        <strong style="color: var(--mint-green);">Graphic Concept:</strong> ${item.graphic_concept}
-                                    </div>
-                                </div>
-                            `;
-                        });
-                    } else {
-                        socialContainer.innerHTML = '<p style="text-align: center; color: var(--admin-text-muted);">No social posts generated.</p>';
-                    }
-
-                    // Render 6. Bookmarking Platforms
-                    const bookmarkingTbody = document.getElementById('seo-table-bookmarking');
-                    bookmarkingTbody.innerHTML = '';
-                    if (data.bookmarking_sites && data.bookmarking_sites.length) {
-                        data.bookmarking_sites.forEach(item => {
-                            const link = item.url.startsWith('http') ? item.url : 'https://' + item.url;
-                            bookmarkingTbody.innerHTML += `
-                                <tr>
-                                    <td>
-                                        <a href="${link}" target="_blank" style="color: var(--mint-green); font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
-                                            ${item.name} <i data-lucide="external-link" style="width: 12px; height: 12px;"></i>
-                                        </a>
-                                    </td>
-                                    <td>${item.strategy}</td>
-                                </tr>
-                            `;
-                        });
-                    } else {
-                        bookmarkingTbody.innerHTML = '<tr><td colspan="2" style="text-align: center;">No bookmarking sites suggested.</td></tr>';
-                    }
-
-                    // Render 7. Syndication Platforms
-                    const syndicationTbody = document.getElementById('seo-table-syndication');
-                    syndicationTbody.innerHTML = '';
-                    if (data.blog_promotion && data.blog_promotion.length) {
-                        data.blog_promotion.forEach(item => {
-                            const link = item.url.startsWith('http') ? item.url : 'https://' + item.url;
-                            syndicationTbody.innerHTML += `
-                                <tr>
-                                    <td>
-                                        <a href="${link}" target="_blank" style="color: var(--mint-green); font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
-                                            ${item.name} <i data-lucide="external-link" style="width: 12px; height: 12px;"></i>
-                                        </a>
-                                    </td>
-                                    <td>${item.strategy}</td>
-                                </tr>
-                            `;
-                        });
-                    } else {
-                        syndicationTbody.innerHTML = '<tr><td colspan="2" style="text-align: center;">No syndication sites suggested.</td></tr>';
-                    }
-
-                    // Render 8. Other growth tactics
-                    const otherContainer = document.getElementById('seo-cards-other');
-                    otherContainer.innerHTML = '';
-                    if (data.other_backlinks && data.other_backlinks.length) {
-                        data.other_backlinks.forEach(item => {
-                            otherContainer.innerHTML += `
-                                <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--admin-border); border-radius: var(--radius-md); padding: 1.25rem;">
-                                    <h4 style="margin: 0 0 0.5rem 0; font-size: 1.05rem; color: var(--mint-green); font-weight: 600;">${item.strategy_name}</h4>
-                                    <p style="font-size: 0.88rem; margin: 0; color: rgba(255,255,255,0.85);">${item.action_steps}</p>
-                                </div>
-                            `;
-                        });
-                    } else {
-                        otherContainer.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: var(--admin-text-muted);">No additional tactics generated.</p>';
-                    }
-
-                    // Trigger Lucide icons instantiation
-                    setTimeout(() => lucide.createIcons(), 100);
-
-                    // Show results and switch to Content Tab by default
-                    results.style.display = 'block';
-                    switchSeoResultTab('content');
-                    results.scrollIntoView({ behavior: 'smooth' });
-                } else {
-                    alert('Error: ' + (res.error || 'Failed to generate SEO strategy.'));
-                }
-            })
-            .catch(err => {
-                loader.style.display = 'none';
-                alert('Network Error: ' + err.message);
-            });
-        }
-
-        function copySeoSocialCopy(btn, text) {
-            navigator.clipboard.writeText(text).then(() => {
-                const originalText = btn.innerHTML;
-                btn.innerHTML = '<i data-lucide="check" style="width: 12px; height: 12px; display: inline; vertical-align: middle;"></i> Copied!';
-                lucide.createIcons();
-                setTimeout(() => {
-                    btn.innerHTML = originalText;
-                    lucide.createIcons();
-                }, 2000);
-            }).catch(err => {
-                alert('Failed to copy to clipboard.');
-            });
         }
 
         // GMB Modal Management
