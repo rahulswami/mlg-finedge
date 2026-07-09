@@ -26,6 +26,7 @@ class Service extends Model
         'summary',
         'is_active',
         'sort_order',
+        'schema_markup',
     ];
 
     protected $casts = [

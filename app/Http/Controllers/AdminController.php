@@ -324,6 +324,7 @@ class AdminController extends Controller
             'image' => 'nullable|image|max:5000',
             'image_url' => 'nullable|string',
             'slug' => 'nullable|string|max:255|unique:blogs,slug',
+            'schema_markup' => 'nullable|string',
         ]);
 
         $slug = $request->slug ?: \Illuminate\Support\Str::slug($request->title);
@@ -347,6 +348,7 @@ class AdminController extends Controller
             'content' => $request->content,
             'image_path' => $imagePath,
             'published_at' => $request->published_at ? \Carbon\Carbon::parse($request->published_at) : now(),
+            'schema_markup' => $request->schema_markup,
         ]);
 
         return redirect()->back()->with('success', 'Blog post created successfully!');
@@ -362,6 +364,7 @@ class AdminController extends Controller
             'image' => 'nullable|image|max:5000',
             'image_url' => 'nullable|string',
             'slug' => 'required|string|max:255|unique:blogs,slug,' . $id,
+            'schema_markup' => 'nullable|string',
         ]);
 
         $blog = \App\Models\Blog::findOrFail($id);
@@ -384,6 +387,7 @@ class AdminController extends Controller
             'content' => $request->content,
             'image_path' => $imagePath,
             'published_at' => $request->published_at ? \Carbon\Carbon::parse($request->published_at) : $blog->published_at,
+            'schema_markup' => $request->schema_markup,
         ]);
 
         return redirect()->back()->with('success', 'Blog post updated successfully!');
@@ -642,6 +646,7 @@ class AdminController extends Controller
             'badge' => 'nullable|string|max:255',
             'summary' => 'nullable|string',
             'sort_order' => 'nullable|integer',
+            'schema_markup' => 'nullable|string',
         ]);
 
         if (empty($validated['slug'])) {
@@ -690,6 +695,7 @@ class AdminController extends Controller
             'badge' => 'nullable|string|max:255',
             'summary' => 'nullable|string',
             'sort_order' => 'nullable|integer',
+            'schema_markup' => 'nullable|string',
         ]);
 
         $faqs = [];
@@ -1637,6 +1643,7 @@ User prompt: {$prompt}";
             'layout_type' => 'required|string|in:home,about',
             'meta_description' => 'nullable|string',
             'content' => 'required|array',
+            'schema_markup' => 'nullable|string',
         ]);
 
         $landingPage->update([
@@ -1645,6 +1652,7 @@ User prompt: {$prompt}";
             'layout_type' => $request->layout_type,
             'meta_description' => $request->meta_description,
             'content' => $request->content,
+            'schema_markup' => $request->schema_markup,
         ]);
 
         return redirect()->back()->with('success', 'Landing page updated successfully!');
@@ -1852,6 +1860,253 @@ JSON Schema:
             ]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Testimonials sync failed: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function aiGenerateSeoRecommendations(Request $request)
+    {
+        $request->validate([
+            'keywords' => 'required|string',
+        ]);
+
+        $apiKey = SiteParameter::where('id', 'gemini_api_key')->value('value');
+        if (empty($apiKey)) {
+            return response()->json(['error' => 'Gemini API Key is not set. Please save it in General Settings first.'], 400);
+        }
+
+        $keywords = $request->input('keywords');
+
+        $systemPrompt = "You are an elite SEO strategist, SEO growth hacker, and digital marketing expert.
+Based on the following keywords provided by the user, you must output a comprehensive, highly tactical SEO and backlink strategy.
+Target Keywords: {$keywords}
+
+You MUST return the output ONLY as a raw, single-line valid JSON object matching the schema below. Do not wrap the JSON in Markdown code block quotes (e.g. do not use ```json ... ```). Output must start with { and end with }.
+
+JSON Schema:
+{
+  \"pages_blogs\": [
+    {
+      \"type\": \"Blog / Subpage / Landing Page / Comparison Page\",
+      \"title\": \"Highly catchy, SEO-optimized title or page name\",
+      \"keywords\": \"Specific subset of keywords targeted here\",
+      \"summary\": \"Brief outline of the content, search intent explanation, and structure (e.g. 'Target search intent for comparison, list top 5 benefits, add FAQs at the end')\"
+    }
+  ],
+  \"third_party_articles\": [
+    {
+      \"platform_type\": \"Guest Post / Medium / Finance Forum / Industry Blog\",
+      \"title\": \"Title of the guest article to pitch\",
+      \"keywords\": \"Anchor text keywords to embed\",
+      \"context\": \"Specific context or paragraph direction where the backlink to our site fits naturally (e.g. 'A paragraph explaining interest rate calculators should link to our calculator page')\"
+    }
+  ],
+  \"quora_questions\": [
+    {
+      \"topic\": \"Topic or category on Quora\",
+      \"question_direction\": \"E.g., 'Is it a good time to get a home loan?' or 'How can a small business get unsecured funding?'\",
+      \"draft_answer_points\": \"Detailed bullet points explaining how to write a helpful, authority answer, and where to naturally plug our website\"
+    }
+  ],
+  \"pinterest_posts\": [
+    {
+      \"visual_idea\": \"Description of the pin layout/image (e.g. 'An infographic showing loan processing steps with a mint green background')\",
+      \"overlay_text\": \"Bold overlay text (e.g. 'How to get a home loan in 5 steps!')\",
+      \"category\": \"Category (e.g. Personal Finance, Loans, Business Hacks)\"
+    }
+  ],
+  \"social_media\": [
+    {
+      \"platform\": \"LinkedIn / Facebook / Instagram\",
+      \"post_copy\": \"Fully written, engaging post copy complete with emojis, key points, call-to-action, and relevant hashtags\",
+      \"graphic_concept\": \"Brief suggestion for what the post image or carousel should show\"
+    }
+  ],
+  \"bookmarking_sites\": [
+    {
+      \"name\": \"Reddit / Mix.com / Digg / Slashdot / BizSugar\",
+      \"url\": \"URL of the platform\",
+      \"strategy\": \"Highly tactical advice on where to submit (e.g. '/r/personalfinanceindia' or 'BizSugar financing group') and how to write the bookmark description to avoid spam filters\"
+    }
+  ],
+  \"blog_promotion\": [
+    {
+      \"name\": \"Medium / Dev.to / HubPages / SlideShare\",
+      \"url\": \"URL of the platform\",
+      \"strategy\": \"Syndication strategy (e.g. 'Republish blog article with canonical link to our website after 48 hours to leverage Medium Domain Authority')\"
+    }
+  ],
+  \"other_backlinks\": [
+    {
+      \"strategy_name\": \"E.g. Broken Link Building / Financial Directories / Local Business Citations\",
+      \"action_steps\": \"Step-by-step instructions on how to identify targets, draft outreach emails, or submit details to obtain the link\"
+    }
+  ]
+}";
+
+        try {
+            $response = \Illuminate\Support\Facades\Http::withHeaders([
+                'Content-Type' => 'application/json',
+            ])->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={$apiKey}", [
+                'contents' => [
+                    ['parts' => [['text' => $systemPrompt]]]
+                ],
+                'generationConfig' => [
+                    'responseMimeType' => 'application/json',
+                ]
+            ]);
+
+            if ($response->failed()) {
+                return response()->json(['error' => 'Gemini API call failed: ' . $response->body()], 500);
+            }
+
+            $resData = $response->json();
+            $text = $resData['candidates'][0]['content']['parts'][0]['text'] ?? '';
+            $text = trim($text);
+            
+            if (str_starts_with($text, '```')) {
+                $text = preg_replace('/^```(?:json)?/i', '', $text);
+                $text = preg_replace('/```$/', '', $text);
+                $text = trim($text);
+            }
+
+            $seoData = json_decode($text, true);
+            if (json_last_error() !== JSON_ERROR_NONE || !is_array($seoData)) {
+                return response()->json(['error' => 'Failed to parse generated SEO strategy as JSON. Raw response: ' . $text], 500);
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => $seoData,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'SEO Strategy generation failed: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function generateSitemap(Request $request)
+    {
+        try {
+            \Illuminate\Support\Facades\Artisan::call('sitemap:generate');
+            $output = \Illuminate\Support\Facades\Artisan::output();
+            return redirect()->back()->with('success', 'Sitemap successfully regenerated! ' . $output);
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to generate sitemap: ' . $e->getMessage());
+        }
+    }
+
+    public function aiDraftGmbPost(Request $request)
+    {
+        $type = $request->input('type');
+        $id = $request->input('id');
+
+        if (!in_array($type, ['blog', 'service', 'landing'])) {
+            return response()->json(['error' => 'Invalid content type.'], 400);
+        }
+
+        $apiKey = SiteParameter::where('id', 'gemini_api_key')->value('value');
+        if (empty($apiKey)) {
+            return response()->json(['error' => 'Gemini API Key is not set. Please save it in General Settings first.'], 400);
+        }
+
+        $title = '';
+        $summary = '';
+        $url = '';
+        $baseUrl = 'https://www.mlgfinedge.com';
+
+        if ($type === 'blog') {
+            $blog = \App\Models\Blog::findOrFail($id);
+            $title = $blog->title;
+            $summary = $blog->summary;
+            $url = $baseUrl . '/blog/' . $blog->slug;
+        } elseif ($type === 'service') {
+            $service = \App\Models\Service::findOrFail($id);
+            $title = $service->service_name;
+            $summary = $service->summary;
+            $url = $baseUrl . '/services/' . $service->slug;
+        } else {
+            $lp = \App\Models\LandingPage::findOrFail($id);
+            $title = $lp->title;
+            $summary = $lp->meta_description;
+            $url = $baseUrl . '/l/' . $lp->slug;
+        }
+
+        $prompt = "You are an expert local SEO manager. Create a highly engaging, high-converting Google Business Profile (Google My Business) local post draft for the following page:
+Title: \"{$title}\"
+Summary: \"{$summary}\"
+Page Link: \"{$url}\"
+
+Strict Instructions:
+1. Write a compelling summary of the article/service suitable for local audiences in Jaipur (under 800 characters).
+2. Incorporate 2-3 relevant hashtags (e.g. #JaipurLoans, #HomeLoansJaipur, etc.).
+3. End with a strong call-to-action phrase prompting users to click 'Learn More' to visit the link.
+4. Keep the draft strictly under 1400 characters (Google GBP limit is 1500).
+5. Output ONLY the drafted post text directly without markdown quotes, backticks, or introduction.";
+
+        try {
+            $response = \Illuminate\Support\Facades\Http::withHeaders([
+                'Content-Type' => 'application/json',
+            ])->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={$apiKey}", [
+                'contents' => [
+                    ['parts' => [['text' => $prompt]]]
+                ]
+            ]);
+
+            if ($response->failed()) {
+                return response()->json(['error' => 'Gemini API call failed: ' . $response->body()], 500);
+            }
+
+            $resData = $response->json();
+            $draft = $resData['candidates'][0]['content']['parts'][0]['text'] ?? '';
+            
+            return response()->json([
+                'success' => true,
+                'draft' => trim($draft),
+                'url' => $url
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Draft generation failed: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function publishGmbPost(Request $request)
+    {
+        $locationId = SiteParameter::where('id', 'gmb_location_id')->value('value');
+        $accessToken = SiteParameter::where('id', 'gmb_access_token')->value('value');
+
+        if (empty($locationId) || empty($accessToken)) {
+            return response()->json([
+                'error' => 'Google Business Profile credentials are not configured in General Settings. Please set GBP Location ID and Access Token to enable direct publishing.'
+            ], 400);
+        }
+
+        $text = $request->input('text');
+        $url = $request->input('url');
+
+        if (empty($text) || empty($url)) {
+            return response()->json(['error' => 'Post text and target URL are required.'], 400);
+        }
+
+        try {
+            $parent = 'locations/' . preg_replace('/^locations\//', '', $locationId);
+            
+            $response = \Illuminate\Support\Facades\Http::withToken($accessToken)
+                ->post("https://mybusinessbusinessinformation.googleapis.com/v1/{$parent}/localPosts", [
+                    'languageCode' => 'en-US',
+                    'summary' => $text,
+                    'callToAction' => [
+                        'actionType' => 'LEARN_MORE',
+                        'url' => $url
+                    ],
+                    'topicType' => 'STANDARD'
+                ]);
+
+            if ($response->failed()) {
+                return response()->json(['error' => 'GBP API Error: ' . $response->body()], 500);
+            }
+
+            return response()->json(['success' => true, 'data' => $response->json()]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Publishing failed: ' . $e->getMessage()], 500);
         }
     }
 }

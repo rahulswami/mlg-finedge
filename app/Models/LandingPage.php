@@ -12,6 +12,7 @@ class LandingPage extends Model
         'layout_type',
         'meta_description',
         'content',
+        'schema_markup',
     ];
 
     protected $casts = [

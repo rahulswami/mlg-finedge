@@ -673,6 +673,208 @@
             align-items: center;
             border-top: 1px solid var(--admin-border);
         }
+
+        /* Custom Scrollbar for Main Content, Sidebar, Mobile Scroll, and Tables */
+        .admin-content, .sidebar, .mobile-tabs-scroll, .admin-table-wrap {
+            --scrollbar-thumb: var(--mint-green);
+            --scrollbar-track: rgba(255, 255, 255, 0.02);
+            scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+            scrollbar-width: thin;
+        }
+        @supports not (scrollbar-color: auto) {
+            .admin-content::-webkit-scrollbar,
+            .sidebar::-webkit-scrollbar,
+            .mobile-tabs-scroll::-webkit-scrollbar,
+            .admin-table-wrap::-webkit-scrollbar {
+                width: 6px;
+                height: 6px;
+            }
+            .admin-content::-webkit-scrollbar-thumb,
+            .sidebar::-webkit-scrollbar-thumb,
+            .mobile-tabs-scroll::-webkit-scrollbar-thumb,
+            .admin-table-wrap::-webkit-scrollbar-thumb {
+                background: var(--scrollbar-thumb);
+                border-radius: 3px;
+            }
+            .admin-content::-webkit-scrollbar-track,
+            .sidebar::-webkit-scrollbar-track,
+            .mobile-tabs-scroll::-webkit-scrollbar-track,
+            .admin-table-wrap::-webkit-scrollbar-track {
+                background: var(--scrollbar-track);
+            }
+        }
+
+        /* Mobile Hamburger & Close buttons */
+        .mobile-toggle-btn {
+            display: none;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--admin-border);
+            color: #ffffff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-md);
+            transition: all 0.2s ease;
+            width: 40px;
+            height: 40px;
+        }
+        .mobile-toggle-btn:hover {
+            background-color: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: var(--mint-green);
+        }
+
+        .sidebar-close-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--admin-text-muted);
+            font-size: 1.25rem;
+            cursor: pointer;
+            padding: 0.25rem;
+            align-items: center;
+            justify-content: center;
+            margin-left: auto;
+            border-radius: var(--radius-sm);
+            transition: color 0.2s;
+        }
+        .sidebar-close-btn:hover {
+            color: #ff6b6b;
+        }
+
+        /* Mobile Backdrop */
+        .sidebar-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 1040;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .sidebar-backdrop.show {
+            display: block;
+            opacity: 1;
+        }
+
+        /* Mobile Swipe Tab Strip */
+        .mobile-tabs-scroll {
+            display: none;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--admin-border);
+            background-color: var(--admin-dark-sidebar);
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none; /* Hide for firefox */
+        }
+        .mobile-tabs-scroll::-webkit-scrollbar {
+            display: none; /* Hide for Chrome/Safari */
+        }
+        .mobile-tab-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--admin-border);
+            color: var(--admin-text-muted);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .mobile-tab-btn:hover, .mobile-tab-btn.active {
+            color: var(--mint-green);
+            background-color: rgba(92, 203, 179, 0.08);
+            border-color: var(--mint-green);
+        }
+
+        /* Media Queries for Layout Responsiveness */
+        @media (max-width: 991.98px) {
+            body {
+                flex-direction: column;
+                height: 100vh;
+                overflow: hidden;
+            }
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                z-index: 1050;
+                transform: translateX(-100%);
+                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                height: 100%;
+                box-shadow: 20px 0 30px rgba(0, 0, 0, 0.5);
+            }
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            .sidebar-close-btn {
+                display: inline-flex;
+            }
+            .mobile-toggle-btn {
+                display: inline-flex;
+            }
+            .mobile-tabs-scroll {
+                display: flex;
+            }
+            .admin-header {
+                padding: 0 1rem;
+            }
+            .admin-content {
+                padding: 1.25rem;
+            }
+            .admin-card {
+                padding: 1.25rem;
+                margin-bottom: 1.25rem;
+            }
+            /* Form grid styling */
+            .form-grid {
+                grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+                gap: 1rem;
+            }
+            .ai-toast {
+                max-width: calc(100vw - 40px);
+            }
+        }
+
+        @media (max-width: 575.98px) {
+            .admin-header h1 {
+                font-size: 1.2rem;
+            }
+            .admin-user span {
+                display: none; /* Hide user name on small mobile, keep avatar */
+            }
+            .admin-card h2 {
+                font-size: 1.1rem;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            .admin-card h2 button {
+                width: 100%;
+                justify-content: center;
+            }
+            .btn-submit {
+                width: 100%;
+                text-align: center;
+            }
+            /* Form fields */
+            .form-group[style*="grid-column: span 2"] {
+                grid-column: span 1 !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -688,6 +890,9 @@
                 <path d="M72 35 H85 V48" stroke="#e85c24" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
             <span>MLG FINEDGE</span>
+            <button class="sidebar-close-btn" onclick="toggleSidebar()" aria-label="Close Sidebar">
+                <i data-lucide="x"></i>
+            </button>
         </div>
         
         <ul class="sidebar-menu">
@@ -704,6 +909,7 @@
             <li class="menu-item"><button onclick="switchTab('blogs')" class="tab-btn" id="btn-blogs"><i data-lucide="book-open"></i> Blog Manager</button></li>
             <li class="menu-item"><button onclick="switchTab('media')" class="tab-btn" id="btn-media"><i data-lucide="hard-drive"></i> Media Manager</button></li>
             <li class="menu-item"><button onclick="switchTab('analytics')" class="tab-btn" id="btn-analytics"><i data-lucide="bar-chart-2"></i> Web Analytics</button></li>
+            <li class="menu-item"><button onclick="switchTab('seo')" class="tab-btn" id="btn-seo"><i data-lucide="trending-up"></i> SEO Optimizer</button></li>
         </ul>
         
         <div class="sidebar-footer">
@@ -716,16 +922,42 @@
         </div>
     </div>
 
+    <!-- Sidebar Backdrop for Mobile -->
+    <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="toggleSidebar()"></div>
+
     <!-- Main Content Panel -->
     <div class="main-panel">
         <div class="admin-header">
-            <h1>CMS Control Panel</h1>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <button class="mobile-toggle-btn" onclick="toggleSidebar()" aria-label="Toggle Sidebar">
+                    <i data-lucide="menu"></i>
+                </button>
+                <h1>CMS Control Panel</h1>
+            </div>
             <div style="display: flex; gap: 1.5rem; align-items: center;">
                 <div class="admin-user">
                     <span>{{ Auth::user()->name }}</span>
                     <div class="admin-user-avatar">{{ substr(Auth::user()->name, 0, 1) }}</div>
                 </div>
             </div>
+        </div>
+
+        <!-- Mobile Quick-Switch Tabs -->
+        <div class="mobile-tabs-scroll">
+            <button onclick="switchTab('general')" class="mobile-tab-btn" id="m-btn-general"><i data-lucide="settings" style="width: 14px; height: 14px;"></i> General</button>
+            <button onclick="switchTab('leads')" class="mobile-tab-btn" id="m-btn-leads"><i data-lucide="inbox" style="width: 14px; height: 14px;"></i> Leads</button>
+            <button onclick="switchTab('branding')" class="mobile-tab-btn" id="m-btn-branding"><i data-lucide="image" style="width: 14px; height: 14px;"></i> Branding</button>
+            <button onclick="switchTab('slider')" class="mobile-tab-btn" id="m-btn-slider"><i data-lucide="sliders" style="width: 14px; height: 14px;"></i> Slider</button>
+            <button onclick="switchTab('testimonials')" class="mobile-tab-btn" id="m-btn-testimonials"><i data-lucide="users" style="width: 14px; height: 14px;"></i> Testimonials</button>
+            <button onclick="switchTab('styling')" class="mobile-tab-btn" id="m-btn-styling"><i data-lucide="palette" style="width: 14px; height: 14px;"></i> Styling</button>
+            <button onclick="switchTab('pagecontents')" class="mobile-tab-btn" id="m-btn-pagecontents"><i data-lucide="file-text" style="width: 14px; height: 14px;"></i> Pages</button>
+            <button onclick="switchTab('landing')" class="mobile-tab-btn" id="m-btn-landing"><i data-lucide="layout" style="width: 14px; height: 14px;"></i> AI Pages</button>
+            <button onclick="switchTab('services')" class="mobile-tab-btn" id="m-btn-services"><i data-lucide="layers" style="width: 14px; height: 14px;"></i> Services</button>
+            <button onclick="switchTab('banks')" class="mobile-tab-btn" id="m-btn-banks"><i data-lucide="landmark" style="width: 14px; height: 14px;"></i> Banks</button>
+            <button onclick="switchTab('blogs')" class="mobile-tab-btn" id="m-btn-blogs"><i data-lucide="book-open" style="width: 14px; height: 14px;"></i> Blogs</button>
+            <button onclick="switchTab('media')" class="mobile-tab-btn" id="m-btn-media"><i data-lucide="hard-drive" style="width: 14px; height: 14px;"></i> Media</button>
+            <button onclick="switchTab('analytics')" class="mobile-tab-btn" id="m-btn-analytics"><i data-lucide="bar-chart-2" style="width: 14px; height: 14px;"></i> Analytics</button>
+            <button onclick="switchTab('seo')" class="mobile-tab-btn" id="m-btn-seo"><i data-lucide="trending-up" style="width: 14px; height: 14px;"></i> SEO</button>
         </div>
 
         <div class="admin-content">
@@ -859,6 +1091,22 @@
                                 <input type="text" id="google_my_business_link" name="google_my_business_link" class="form-control" value="{{ $site['google_my_business_link'] ?? '' }}" placeholder="Paste your Google My Business reviews link here...">
                                 <span style="font-size: 0.75rem; color: var(--admin-text-muted); display: block; margin-top: 5px;">
                                     This link will be used to sync/generate authentic testimonials using AI.
+                                </span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="gmb_location_id">Google Business Profile Location ID (Optional)</label>
+                                <input type="text" id="gmb_location_id" name="gmb_location_id" class="form-control" value="{{ $site['gmb_location_id'] ?? '' }}" placeholder="e.g. locations/1234567890">
+                                <span style="font-size: 0.75rem; color: var(--admin-text-muted); display: block; margin-top: 5px;">
+                                    Required for direct API publishing. Format: <code>locations/YOUR_LOCATION_ID</code>
+                                </span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="gmb_access_token">Google Business Profile Access Token (Optional)</label>
+                                <input type="password" id="gmb_access_token" name="gmb_access_token" class="form-control" value="{{ $site['gmb_access_token'] ?? '' }}" placeholder="Paste your OAuth access token here...">
+                                <span style="font-size: 0.75rem; color: var(--admin-text-muted); display: block; margin-top: 5px;">
+                                    OAuth 2.0 Bearer Access Token with <code>https://www.googleapis.com/auth/business.manage</code> scope.
                                 </span>
                             </div>
                         </div>
@@ -1056,7 +1304,7 @@
                             <p style="font-size: 0.85rem;">When clients submit a form on the website, they will appear here.</p>
                         </div>
                     @else
-                        <div style="overflow-x: auto;">
+                        <div class="admin-table-wrap">
                             <table class="admin-table">
                                 <thead>
                                     <tr>
@@ -1893,6 +2141,11 @@
                                 <label for="ser_summary">Short Summary (shown in lists & footer)</label>
                                 <textarea id="ser_summary" name="summary" class="form-control" rows="2" placeholder="Brief summary of the service..."></textarea>
                             </div>
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label for="ser_schema_markup">Custom Schema Markup (JSON-LD script)</label>
+                                <textarea id="ser_schema_markup" name="schema_markup" class="form-control" rows="3" placeholder='<script type="application/ld+json">...</script>'></textarea>
+                                <span style="font-size: 0.75rem; color: var(--admin-text-muted);">Paste the complete <code>&lt;script type="application/ld+json"&gt;...&lt;/script&gt;</code> block to override the default service schema.</span>
+                            </div>
                             <div class="form-group">
                                 <label style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer; margin-top: 1rem;">
                                     <input type="checkbox" id="ser_is_active" name="is_active" value="1" checked style="width: 18px; height: 18px; accent-color: var(--mint-green);">
@@ -1953,6 +2206,10 @@
                                                 <button class="btn-submit" style="padding: 4px 10px; font-size: 0.8rem; background-color: var(--admin-input-bg); color: #fff;" 
                                                     onclick="editService({{ json_encode($s) }})">
                                                     Edit
+                                                </button>
+                                                <button class="btn-submit" style="padding: 4px 10px; font-size: 0.8rem; background-color: rgba(66, 133, 244, 0.1); color: #4285f4; border: 1px solid rgba(66, 133, 244, 0.3);" 
+                                                    onclick="openGmbShareModal('service', {{ json_encode($s) }})">
+                                                    GMB
                                                 </button>
                                                 <form action="{{ route('admin.services.delete', $s->id) }}" method="POST" onsubmit="return confirm('Delete this service page? This action cannot be undone.')">
                                                     @csrf
@@ -2132,6 +2389,11 @@
                             <textarea id="blog_summary" name="summary" class="form-control" required placeholder="A brief 1-2 sentence description of the article..." rows="2"></textarea>
                         </div>
                         <div class="form-group" style="margin-top: 1.25rem;">
+                            <label for="blog_schema_markup">Custom Schema Markup (JSON-LD script)</label>
+                            <textarea id="blog_schema_markup" name="schema_markup" class="form-control" placeholder='<script type="application/ld+json">...</script>' rows="3"></textarea>
+                            <span style="font-size: 0.75rem; color: var(--admin-text-muted);">Paste the complete <code>&lt;script type="application/ld+json"&gt;...&lt;/script&gt;</code> block to override the default blog posting schema.</span>
+                        </div>
+                        <div class="form-group" style="margin-top: 1.25rem;">
                             <label for="blog_content">Article Content (HTML Editor)</label>
                             <textarea id="blog_content" name="content" class="form-control" placeholder="Write article content here..."></textarea>
                         </div>
@@ -2183,8 +2445,12 @@
                                                         category: '{{ addslashes($b->category) }}',
                                                         published_at: '{{ $b->published_at ? $b->published_at->format('Y-m-d\TH:i') : $b->created_at->format('Y-m-d\TH:i') }}',
                                                         summary: '{{ addslashes(str_replace(["\r", "\n"], ' ', $b->summary)) }}',
-                                                        content: '{{ addslashes(str_replace(["\r", "\n"], ' ', $b->content)) }}'
+                                                        content: '{{ addslashes(str_replace(["\r", "\n"], ' ', $b->content)) }}',
+                                                        image_path: '{{ addslashes($b->image_path) }}',
+                                                        schema_markup: '{{ addslashes(str_replace(["\r", "\n"], ' ', $b->schema_markup)) }}'
                                                     })"><i data-lucide="edit"></i></button>
+                                                <button type="button" class="btn-action" style="background-color: rgba(66, 133, 244, 0.1); color: #4285f4; border: 1px solid rgba(66, 133, 244, 0.3);" title="Share to Google Business Profile" 
+                                                    onclick="openGmbShareModal('blog', {id: {{ $b->id }}, title: '{{ addslashes($b->title) }}', summary: '{{ addslashes(str_replace(["\r", "\n"], ' ', $b->summary)) }}'})"><i data-lucide="share-2"></i></button>
                                                 <form action="{{ route('admin.blogs.delete', $b->id) }}" method="POST" onsubmit="return confirm('Delete this blog post?')">
                                                     @csrf
                                                     <button type="submit" class="btn-action delete" title="Delete"><i data-lucide="trash-2"></i></button>
@@ -2411,6 +2677,9 @@
                                                     <button type="button" class="btn-action" style="background: rgba(92, 203, 179, 0.1); color: var(--mint-green); display: inline-flex; align-items: center; gap: 4px;" onclick="openLandingAiModal('{{ $lp->id }}', '{{ $lp->title }}')" title="Generate/Rewrite with Gemini AI">
                                                         <i data-lucide="sparkles"></i> Generate AI
                                                     </button>
+                                                    <button type="button" class="btn-action" style="background: rgba(66, 133, 244, 0.1); color: #4285f4; display: inline-flex; align-items: center; gap: 4px;" onclick="openGmbShareModal('landing', {{ json_encode($lp) }})" title="Share to Google Business Profile">
+                                                        <i data-lucide="share-2"></i> GMB
+                                                    </button>
                                                     <form action="{{ route('admin.landing.delete', $lp->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this landing page?');" style="margin: 0;">
                                                         @csrf
                                                         <button type="submit" class="btn-action delete" title="Delete Page">
@@ -2441,6 +2710,11 @@
                                                         <div class="form-group" style="grid-column: span 2;">
                                                             <label>Meta Description</label>
                                                             <input type="text" name="meta_description" class="form-control" value="{{ $lp->meta_description }}">
+                                                        </div>
+                                                        <div class="form-group" style="grid-column: span 2;">
+                                                            <label>Custom Schema Markup (JSON-LD script)</label>
+                                                            <textarea name="schema_markup" class="form-control" rows="3" placeholder='<script type="application/ld+json">...</script>'>{{ $lp->schema_markup ?? '' }}</textarea>
+                                                            <span style="font-size: 0.75rem; color: var(--admin-text-muted);">Paste the complete <code>&lt;script type="application/ld+json"&gt;...&lt;/script&gt;</code> block.</span>
                                                         </div>
                                                     </div>
 
@@ -2575,7 +2849,182 @@
                                 </tbody>
                             </table>
                         </div>
-                    @endif
+                </div>
+            </div>
+
+            <!-- SEO OPTIMIZER TAB -->
+            <div class="tab-panel" id="tab-seo">
+                <div class="admin-card">
+                    <h2><i data-lucide="trending-up" style="display: inline-block; vertical-align: middle; margin-right: 5px;"></i> AI SEO Recommendations & Link-Building Blueprint</h2>
+                    <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem; margin-top: -1rem;">
+                        Enter the target keywords or topics you want to rank for. Our AI will analyze search intent and draft a comprehensive blueprint of content ideas, guest articles, Quora answers, social copy, bookmarking platforms, and backlink opportunities.
+                    </p>
+                    <div class="form-group">
+                        <label for="seo_keywords">Target Keywords (comma-separated or one per line)</label>
+                        <textarea id="seo_keywords" class="form-control" rows="3" placeholder="e.g. low interest home loan, best financial adviser jaipur, secure business loans for startups"></textarea>
+                    </div>
+                    <button type="button" class="btn-ai-sparkle" onclick="generateSeoRecommendations()" style="margin-top: 1rem; padding: 0.75rem 1.5rem; font-size: 0.95rem;">
+                        <i data-lucide="sparkles"></i> Generate SEO Blueprint
+                    </button>
+                </div>
+
+                <div class="admin-card" id="seo-loader" style="display: none; padding: 4rem 2rem; text-align: center;">
+                    <div class="ai-sparkle-loader" style="margin: 0 auto 1.5rem auto;"></div>
+                    <h3 style="margin: 0; font-size: 1.25rem;">Analyzing Keywords & Formulating SEO Blueprint...</h3>
+                    <p style="color: var(--admin-text-muted); margin-top: 5px; font-size: 0.9rem;">Gemini is researching backlink strategies and content maps in the background.</p>
+                </div>
+
+                <div id="seo-results" style="display: none;">
+                    <!-- Quick tabs inside results to switch categories -->
+                    <div style="display: flex; gap: 8px; overflow-x: auto; margin-bottom: 1.5rem; padding-bottom: 5px; border-bottom: 1px solid var(--admin-border);">
+                        <button type="button" class="btn-submit active" id="seo-tab-btn-content" onclick="switchSeoResultTab('content')" style="width: auto; padding: 0.5rem 1rem; font-size: 0.85rem;">Pages & Blogs</button>
+                        <button type="button" class="btn-submit" id="seo-tab-btn-backlinks" onclick="switchSeoResultTab('backlinks')" style="width: auto; padding: 0.5rem 1rem; font-size: 0.85rem; background-color: var(--admin-input-bg); color: #fff;">Backlink Targets</button>
+                        <button type="button" class="btn-submit" id="seo-tab-btn-quora" onclick="switchSeoResultTab('quora')" style="width: auto; padding: 0.5rem 1rem; font-size: 0.85rem; background-color: var(--admin-input-bg); color: #fff;">Quora & Q&A</button>
+                        <button type="button" class="btn-submit" id="seo-tab-btn-social" onclick="switchSeoResultTab('social')" style="width: auto; padding: 0.5rem 1rem; font-size: 0.85rem; background-color: var(--admin-input-bg); color: #fff;">Social & Pinterest</button>
+                        <button type="button" class="btn-submit" id="seo-tab-btn-bookmarking" onclick="switchSeoResultTab('bookmarking')" style="width: auto; padding: 0.5rem 1rem; font-size: 0.85rem; background-color: var(--admin-input-bg); color: #fff;">Bookmarking & Syndication</button>
+                        <button type="button" class="btn-submit" id="seo-tab-btn-other" onclick="switchSeoResultTab('other')" style="width: auto; padding: 0.5rem 1rem; font-size: 0.85rem; background-color: var(--admin-input-bg); color: #fff;">Growth Tactics</button>
+                    </div>
+
+                    <!-- Result Panels -->
+                    <!-- 1. Content Panel -->
+                    <div class="seo-result-panel active" id="seo-panel-content">
+                        <div class="admin-card">
+                            <h2>On-Site Content Structure Recommendations</h2>
+                            <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem;">Create new pages or write detailed blog posts for these target keywords to establish topical authority.</p>
+                            <div class="admin-table-wrap">
+                                <table class="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 15%;">Type</th>
+                                            <th style="width: 25%;">Recommended Title</th>
+                                            <th style="width: 20%;">Target Keywords</th>
+                                            <th style="width: 40%;">Content Outline & Search Intent</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="seo-table-content"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. Backlinks Panel -->
+                    <div class="seo-result-panel" id="seo-panel-backlinks" style="display: none;">
+                        <div class="admin-card">
+                            <h2>Third-Party Off-Site Content & Backlinks</h2>
+                            <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem;">Draft guest posts or articles to pitch to financial portals and external platforms to build domain authority.</p>
+                            <div class="admin-table-wrap">
+                                <table class="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 20%;">Platform Type</th>
+                                            <th style="width: 30%;">Article Title Idea</th>
+                                            <th style="width: 20%;">Target Anchor Keywords</th>
+                                            <th style="width: 30%;">Backlink Integration Context</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="seo-table-backlinks"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Quora Panel -->
+                    <div class="seo-result-panel" id="seo-panel-quora" style="display: none;">
+                        <div class="admin-card">
+                            <h2>Quora Authority Building & Referral Traffic</h2>
+                            <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem;">Answer these questions on Quora to capture high-intent referral traffic and establish financial niche expertise.</p>
+                            <div id="seo-cards-quora" style="display: flex; flex-direction: column; gap: 1rem;"></div>
+                        </div>
+                    </div>
+
+                    <!-- 4. Social & Pinterest Panel -->
+                    <div class="seo-result-panel" id="seo-panel-social" style="display: none;">
+                        <div class="form-grid">
+                            <div class="admin-card">
+                                <h2>Pinterest Graphic & Post Layouts</h2>
+                                <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem;">Create high-engagement pins targeting financial boards.</p>
+                                <div class="admin-table-wrap">
+                                    <table class="admin-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Overlay Bold Text</th>
+                                                <th>Visual Graphic Concept</th>
+                                                <th>Category</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="seo-table-pinterest"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="admin-card">
+                                <h2>Written Social Media Posts</h2>
+                                <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem;">Ready-to-use captions and concepts for LinkedIn, Facebook, and Instagram.</p>
+                                <div id="seo-cards-social" style="display: flex; flex-direction: column; gap: 1rem;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 5. Bookmarking & Syndication Panel -->
+                    <div class="seo-result-panel" id="seo-panel-bookmarking" style="display: none;">
+                        <div class="form-grid">
+                            <div class="admin-card">
+                                <h2>Bookmarking Websites & Submission Strategy</h2>
+                                <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem;">Share links to your newly written pages on these social bookmarking platforms.</p>
+                                <div class="admin-table-wrap">
+                                    <table class="admin-table">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 25%;">Platform</th>
+                                                <th style="width: 75%;">Tactical Submission Strategy</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="seo-table-bookmarking"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="admin-card">
+                                <h2>Blog Promotion & Syndication Websites</h2>
+                                <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem;">Republish or syndicate your blog posts to reach wider audiences.</p>
+                                <div class="admin-table-wrap">
+                                    <table class="admin-table">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 25%;">Platform</th>
+                                                <th style="width: 75%;">Tactical Syndication Strategy</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="seo-table-syndication"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 6. Other growth tactics -->
+                    <div class="seo-result-panel" id="seo-panel-other" style="display: none;">
+                        <div class="admin-card">
+                            <h2>Growth Tactics & Backlink Submission Blueprints</h2>
+                            <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem;">Implement these white-hat link acquisition strategies to grow domain authority.</p>
+                            <div id="seo-cards-other" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- XML Sitemap Generator Card -->
+                <div class="admin-card" style="margin-top: 2rem;">
+                    <h2><i data-lucide="map" style="display: inline-block; vertical-align: middle; margin-right: 5px;"></i> XML Sitemap Generator</h2>
+                    <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem; margin-top: -1rem;">
+                        Regenerate the website XML sitemap to include all newly created service pages, blog articles, and landing pages for search engines like Google.
+                    </p>
+                    <form action="{{ route('admin.sitemap.generate') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="btn-submit" style="width: auto; padding: 0.75rem 1.5rem;">
+                            <i data-lucide="refresh-cw" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 4px;"></i> Regenerate Sitemap
+                        </button>
+                    </form>
+                    <p style="font-size: 0.85rem; margin-top: 10px; color: var(--admin-text-muted);">
+                        Sitemap URL: <a href="/sitemap.xml" target="_blank" style="color: var(--mint-green); text-decoration: underline;">/sitemap.xml</a>
+                    </p>
                 </div>
             </div>
         </div>
@@ -2654,6 +3103,64 @@
                 <div class="ai-sparkle-loader"></div>
                 <p class="ai-loader-text">Gemini is writing your article...</p>
                 <p class="ai-loader-subtext">This can take up to 20-30 seconds depending on image generation.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- GMB Sharing Modal -->
+    <div class="ai-modal-overlay" id="gmb-share-modal">
+        <div class="ai-modal-card">
+            <button class="ai-modal-close" onclick="closeGmbModal()">&times;</button>
+            <h3><i data-lucide="share-2" style="color: #4285F4; display: inline-block; vertical-align: middle;"></i> Share to Google Business Profile</h3>
+            
+            <div id="gmb-form-wrapper">
+                <input type="hidden" id="gmb_post_type">
+                <input type="hidden" id="gmb_post_id">
+                <input type="hidden" id="gmb_target_url">
+                
+                <div class="form-group" style="margin-bottom: 1.25rem;">
+                    <label><strong>Post Text Copy (AI Generated or Custom)</strong></label>
+                    <textarea id="gmb_post_text" class="form-control" rows="8" placeholder="Drafting your GMB post..."></textarea>
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label><strong>Action Button (CTA) Target Link</strong></label>
+                    <input type="text" id="gmb_post_cta_url" class="form-control" readonly style="background-color: var(--admin-input-bg); opacity: 0.8;">
+                    <span style="font-size: 0.75rem; color: var(--admin-text-muted); display: block; margin-top: 5px;">
+                        This CTA button redirects users to the page above with the label "Learn More".
+                    </span>
+                </div>
+                
+                <div style="background: rgba(232, 92, 36, 0.1); border: 1px solid rgba(232, 92, 36, 0.3); border-radius: var(--radius-sm); padding: 12px; margin-bottom: 1.5rem; font-size: 0.85rem;" id="gmb-manual-notice">
+                    <strong style="color: var(--accent-orange);"><i data-lucide="info" style="width: 14px; height: 14px; display: inline; vertical-align: middle;"></i> Tip:</strong>
+                    Copy the draft and use the "Open GMB Dashboard" button to publish it manually on Google Business Profile if GBP API is not configured.
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                    <div>
+                        <button type="button" class="btn-ai-sparkle" onclick="generateGmbDraft()" id="gmb-draft-btn" style="padding: 0.5rem 1rem; font-size: 0.85rem; width: auto;">
+                            <i data-lucide="sparkles"></i> Draft with AI
+                        </button>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button type="button" class="btn-submit" style="background-color: var(--admin-input-bg); color: #fff; width: auto;" onclick="closeGmbModal()">Cancel</button>
+                        
+                        @if(!empty($site['gmb_location_id']) && !empty($site['gmb_access_token']))
+                            <button type="button" class="btn-submit" style="background-color: #4285F4; color: #fff; width: auto;" onclick="publishGmbPostDirect()" id="gmb-publish-btn">
+                                <i data-lucide="check"></i> Publish Now
+                            </button>
+                        @endif
+                        
+                        <button type="button" class="btn-submit" style="background-color: var(--mint-green); color: var(--primary-teal-dark); width: auto;" onclick="copyAndOpenGmb()" id="gmb-manual-btn">
+                            <i data-lucide="external-link"></i> Copy & Open Dashboard
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="ai-loader-container" id="gmb-loader" style="display: none;">
+                <div class="ai-sparkle-loader" style="margin: 0 auto 1.5rem auto;"></div>
+                <p class="ai-loader-text" id="gmb-loader-text">Drafting post with Gemini AI...</p>
             </div>
         </div>
     </div>
@@ -2982,7 +3489,8 @@
         function switchTab(tabId) {
             const panel = document.getElementById('tab-' + tabId);
             const btn = document.getElementById('btn-' + tabId);
-            if (!panel || !btn) return;
+            const mBtn = document.getElementById('m-btn-' + tabId);
+            if (!panel) return;
 
             document.querySelectorAll('.tab-panel').forEach(p => {
                 p.classList.remove('active');
@@ -2990,14 +3498,42 @@
             document.querySelectorAll('.tab-btn').forEach(b => {
                 b.classList.remove('active');
             });
+            document.querySelectorAll('.mobile-tab-btn').forEach(b => {
+                b.classList.remove('active');
+            });
             panel.classList.add('active');
-            btn.classList.add('active');
+            if (btn) btn.classList.add('active');
+            if (mBtn) {
+                mBtn.classList.add('active');
+                // Scroll the mobile tab button into view automatically
+                mBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
 
             // Save to localStorage to persist tab across refreshes/saves
             localStorage.setItem('active_tab', tabId);
 
             if (tabId === 'analytics') {
                 fetchCloudflareAnalytics();
+            }
+
+            // Close sidebar on mobile
+            const sidebar = document.querySelector('.sidebar');
+            const backdrop = document.getElementById('sidebar-backdrop');
+            if (sidebar && sidebar.classList.contains('show')) {
+                sidebar.classList.remove('show');
+                if (backdrop) backdrop.classList.remove('show');
+            }
+        }
+
+        // Toggle Sidebar drawer on mobile
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const backdrop = document.getElementById('sidebar-backdrop');
+            if (sidebar) {
+                sidebar.classList.toggle('show');
+                if (backdrop) {
+                    backdrop.classList.toggle('show');
+                }
             }
         }
 
@@ -3006,6 +3542,376 @@
             const activeTab = localStorage.getItem('active_tab') || 'leads';
             switchTab(activeTab);
         });
+
+        // SEO Recommendations Switch Result Tab
+        function switchSeoResultTab(tabId) {
+            // Remove active class from all buttons and add background styling
+            document.querySelectorAll('[id^="seo-tab-btn-"]').forEach(btn => {
+                btn.classList.remove('active');
+                btn.style.backgroundColor = 'var(--admin-input-bg)';
+                btn.style.color = '#fff';
+            });
+            // Hide all subpanels
+            document.querySelectorAll('.seo-result-panel').forEach(panel => {
+                panel.style.display = 'none';
+            });
+            
+            // Activate the clicked button
+            const activeBtn = document.getElementById('seo-tab-btn-' + tabId);
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+                activeBtn.style.backgroundColor = 'var(--mint-green)';
+                activeBtn.style.color = 'var(--primary-teal-dark)';
+            }
+            // Show the clicked panel
+            const activePanel = document.getElementById('seo-panel-' + tabId);
+            if (activePanel) {
+                activePanel.style.display = activePanel.classList.contains('form-grid') ? 'grid' : 'block';
+            }
+        }
+
+        // AJAX Generate SEO Strategy
+        function generateSeoRecommendations() {
+            const keywords = document.getElementById('seo_keywords').value.trim();
+            if (!keywords) {
+                alert('Please enter at least one target keyword.');
+                return;
+            }
+
+            const loader = document.getElementById('seo-loader');
+            const results = document.getElementById('seo-results');
+            loader.style.display = 'block';
+            results.style.display = 'none';
+            loader.scrollIntoView({ behavior: 'smooth' });
+
+            fetch("{{ route('admin.ai.seo-recommendations') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                body: JSON.stringify({
+                    keywords: keywords
+                })
+            })
+            .then(res => res.json())
+            .then(res => {
+                loader.style.display = 'none';
+                if (res.success && res.data) {
+                    const data = res.data;
+                    
+                    // Render 1. On-Site Content Table
+                    const contentTbody = document.getElementById('seo-table-content');
+                    contentTbody.innerHTML = '';
+                    if (data.pages_blogs && data.pages_blogs.length) {
+                        data.pages_blogs.forEach(item => {
+                            contentTbody.innerHTML += `
+                                <tr>
+                                    <td><span class="badge" style="background-color: rgba(92, 203, 179, 0.1); color: var(--mint-green); border: 1px solid rgba(92, 203, 179, 0.3); font-size: 0.75rem;">${item.type}</span></td>
+                                    <td><strong>${item.title}</strong></td>
+                                    <td><code style="font-size: 0.8rem; background: rgba(255,255,255,0.05); padding: 2px 4px; border-radius: 4px;">${item.keywords}</code></td>
+                                    <td>${item.summary}</td>
+                                </tr>
+                            `;
+                        });
+                    } else {
+                        contentTbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">No content ideas generated.</td></tr>';
+                    }
+
+                    // Render 2. Backlinks Table
+                    const backlinksTbody = document.getElementById('seo-table-backlinks');
+                    backlinksTbody.innerHTML = '';
+                    if (data.third_party_articles && data.third_party_articles.length) {
+                        data.third_party_articles.forEach(item => {
+                            backlinksTbody.innerHTML += `
+                                <tr>
+                                    <td><strong>${item.platform_type}</strong></td>
+                                    <td>${item.title}</td>
+                                    <td><code style="font-size: 0.8rem; background: rgba(255,255,255,0.05); padding: 2px 4px; border-radius: 4px;">${item.keywords}</code></td>
+                                    <td>${item.context}</td>
+                                </tr>
+                            `;
+                        });
+                    } else {
+                        backlinksTbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">No off-site article suggestions.</td></tr>';
+                    }
+
+                    // Render 3. Quora Cards
+                    const quoraContainer = document.getElementById('seo-cards-quora');
+                    quoraContainer.innerHTML = '';
+                    if (data.quora_questions && data.quora_questions.length) {
+                        data.quora_questions.forEach(item => {
+                            quoraContainer.innerHTML += `
+                                <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--admin-border); border-radius: var(--radius-md); padding: 1.5rem;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 8px;">
+                                        <span class="badge" style="background-color: rgba(232, 92, 36, 0.1); color: var(--accent-orange); font-size: 0.75rem;">${item.topic}</span>
+                                        <a href="https://www.quora.com/search?q=${encodeURIComponent(item.question_direction)}" target="_blank" class="btn-submit" style="width: auto; padding: 4px 10px; font-size: 0.75rem; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
+                                            <i data-lucide="external-link" style="width: 12px; height: 12px;"></i> Search on Quora
+                                        </a>
+                                    </div>
+                                    <h4 style="margin: 0 0 1rem 0; font-size: 1.1rem; color: #fff;">${item.question_direction}</h4>
+                                    <strong style="font-size: 0.85rem; color: var(--mint-green); display: block; margin-bottom: 0.5rem;">Tactical Answer Blueprint:</strong>
+                                    <ul style="margin: 0; padding-left: 1.25rem; font-size: 0.9rem; color: rgba(255,255,255,0.85);">
+                                        ${item.draft_answer_points.split('\n').map(pt => pt.trim() ? `<li>${pt.replace(/^[-\*\d\.]+\s*/, '')}</li>` : '').join('')}
+                                    </ul>
+                                </div>
+                            `;
+                        });
+                    } else {
+                        quoraContainer.innerHTML = '<p style="text-align: center; color: var(--admin-text-muted);">No Quora suggestions generated.</p>';
+                    }
+
+                    // Render 4. Pinterest Table
+                    const pinterestTbody = document.getElementById('seo-table-pinterest');
+                    pinterestTbody.innerHTML = '';
+                    if (data.pinterest_posts && data.pinterest_posts.length) {
+                        data.pinterest_posts.forEach(item => {
+                            pinterestTbody.innerHTML += `
+                                <tr>
+                                    <td><strong style="color: #fff;">${item.overlay_text}</strong></td>
+                                    <td>${item.visual_idea}</td>
+                                    <td><span class="badge" style="background: rgba(255,255,255,0.05); color: #fff; font-size: 0.75rem;">${item.category}</span></td>
+                                </tr>
+                            `;
+                        });
+                    } else {
+                        pinterestTbody.innerHTML = '<tr><td colspan="3" style="text-align: center;">No Pinterest suggestions.</td></tr>';
+                    }
+
+                    // Render 5. Social Media Cards
+                    const socialContainer = document.getElementById('seo-cards-social');
+                    socialContainer.innerHTML = '';
+                    if (data.social_media && data.social_media.length) {
+                        data.social_media.forEach((item, index) => {
+                            const postTextEscaped = item.post_copy.replace(/`/g, '\\`').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                            socialContainer.innerHTML += `
+                                <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--admin-border); border-radius: var(--radius-md); padding: 1.25rem;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                        <span class="badge" style="background-color: rgba(92, 102, 241, 0.1); color: #a855f7; font-size: 0.75rem;">${item.platform}</span>
+                                        <button class="btn-submit" style="width: auto; padding: 4px 10px; font-size: 0.75rem;" onclick="copySeoSocialCopy(this, \`${postTextEscaped}\`)">
+                                            <i data-lucide="copy" style="width: 12px; height: 12px; display: inline; vertical-align: middle;"></i> Copy Caption
+                                        </button>
+                                    </div>
+                                    <p style="font-family: inherit; font-size: 0.9rem; white-space: pre-wrap; margin: 0 0 1rem 0; color: rgba(255,255,255,0.85);">${item.post_copy}</p>
+                                    <div style="font-size: 0.8rem; background: rgba(0,0,0,0.15); padding: 8px 12px; border-radius: 4px;">
+                                        <strong style="color: var(--mint-green);">Graphic Concept:</strong> ${item.graphic_concept}
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    } else {
+                        socialContainer.innerHTML = '<p style="text-align: center; color: var(--admin-text-muted);">No social posts generated.</p>';
+                    }
+
+                    // Render 6. Bookmarking Platforms
+                    const bookmarkingTbody = document.getElementById('seo-table-bookmarking');
+                    bookmarkingTbody.innerHTML = '';
+                    if (data.bookmarking_sites && data.bookmarking_sites.length) {
+                        data.bookmarking_sites.forEach(item => {
+                            const link = item.url.startsWith('http') ? item.url : 'https://' + item.url;
+                            bookmarkingTbody.innerHTML += `
+                                <tr>
+                                    <td>
+                                        <a href="${link}" target="_blank" style="color: var(--mint-green); font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
+                                            ${item.name} <i data-lucide="external-link" style="width: 12px; height: 12px;"></i>
+                                        </a>
+                                    </td>
+                                    <td>${item.strategy}</td>
+                                </tr>
+                            `;
+                        });
+                    } else {
+                        bookmarkingTbody.innerHTML = '<tr><td colspan="2" style="text-align: center;">No bookmarking sites suggested.</td></tr>';
+                    }
+
+                    // Render 7. Syndication Platforms
+                    const syndicationTbody = document.getElementById('seo-table-syndication');
+                    syndicationTbody.innerHTML = '';
+                    if (data.blog_promotion && data.blog_promotion.length) {
+                        data.blog_promotion.forEach(item => {
+                            const link = item.url.startsWith('http') ? item.url : 'https://' + item.url;
+                            syndicationTbody.innerHTML += `
+                                <tr>
+                                    <td>
+                                        <a href="${link}" target="_blank" style="color: var(--mint-green); font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
+                                            ${item.name} <i data-lucide="external-link" style="width: 12px; height: 12px;"></i>
+                                        </a>
+                                    </td>
+                                    <td>${item.strategy}</td>
+                                </tr>
+                            `;
+                        });
+                    } else {
+                        syndicationTbody.innerHTML = '<tr><td colspan="2" style="text-align: center;">No syndication sites suggested.</td></tr>';
+                    }
+
+                    // Render 8. Other growth tactics
+                    const otherContainer = document.getElementById('seo-cards-other');
+                    otherContainer.innerHTML = '';
+                    if (data.other_backlinks && data.other_backlinks.length) {
+                        data.other_backlinks.forEach(item => {
+                            otherContainer.innerHTML += `
+                                <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--admin-border); border-radius: var(--radius-md); padding: 1.25rem;">
+                                    <h4 style="margin: 0 0 0.5rem 0; font-size: 1.05rem; color: var(--mint-green); font-weight: 600;">${item.strategy_name}</h4>
+                                    <p style="font-size: 0.88rem; margin: 0; color: rgba(255,255,255,0.85);">${item.action_steps}</p>
+                                </div>
+                            `;
+                        });
+                    } else {
+                        otherContainer.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: var(--admin-text-muted);">No additional tactics generated.</p>';
+                    }
+
+                    // Trigger Lucide icons instantiation
+                    setTimeout(() => lucide.createIcons(), 100);
+
+                    // Show results and switch to Content Tab by default
+                    results.style.display = 'block';
+                    switchSeoResultTab('content');
+                    results.scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    alert('Error: ' + (res.error || 'Failed to generate SEO strategy.'));
+                }
+            })
+            .catch(err => {
+                loader.style.display = 'none';
+                alert('Network Error: ' + err.message);
+            });
+        }
+
+        function copySeoSocialCopy(btn, text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<i data-lucide="check" style="width: 12px; height: 12px; display: inline; vertical-align: middle;"></i> Copied!';
+                lucide.createIcons();
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    lucide.createIcons();
+                }, 2000);
+            }).catch(err => {
+                alert('Failed to copy to clipboard.');
+            });
+        }
+
+        // GMB Modal Management
+        function openGmbShareModal(type, data) {
+            document.getElementById('gmb_post_type').value = type;
+            document.getElementById('gmb_post_id').value = data.id;
+            
+            const baseUrl = 'https://www.mlgfinedge.com';
+            let targetUrl = '';
+            if (type === 'blog') {
+                targetUrl = baseUrl + '/blog/' + data.slug;
+            } else if (type === 'service') {
+                targetUrl = baseUrl + '/services/' + data.slug;
+            } else {
+                targetUrl = baseUrl + '/l/' + data.slug;
+            }
+            
+            document.getElementById('gmb_target_url').value = targetUrl;
+            document.getElementById('gmb_post_cta_url').value = targetUrl;
+            document.getElementById('gmb_post_text').value = '';
+            
+            // Open modal
+            document.getElementById('gmb-share-modal').classList.add('show');
+            
+            // Auto draft with AI
+            generateGmbDraft();
+        }
+
+        function closeGmbModal() {
+            document.getElementById('gmb-share-modal').classList.remove('show');
+        }
+
+        function generateGmbDraft() {
+            const type = document.getElementById('gmb_post_type').value;
+            const id = document.getElementById('gmb_post_id').value;
+            const form = document.getElementById('gmb-form-wrapper');
+            const loader = document.getElementById('gmb-loader');
+            
+            form.style.display = 'none';
+            loader.style.display = 'block';
+            
+            fetch("{{ route('admin.ai.gmb-draft') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                body: JSON.stringify({ type: type, id: id })
+            })
+            .then(res => res.json())
+            .then(res => {
+                loader.style.display = 'none';
+                form.style.display = 'block';
+                if (res.success && res.draft) {
+                    document.getElementById('gmb_post_text').value = res.draft;
+                } else {
+                    alert('AI Drafting failed: ' + (res.error || 'Unknown error'));
+                    document.getElementById('gmb_post_text').value = 'Failed to draft post. Please write manually.';
+                }
+            })
+            .catch(err => {
+                loader.style.display = 'none';
+                form.style.display = 'block';
+                alert('Network Error drafting post: ' + err.message);
+            });
+        }
+
+        function copyAndOpenGmb() {
+            const text = document.getElementById('gmb_post_text').value;
+            if (!text) {
+                alert('No text draft to copy!');
+                return;
+            }
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Post content copied to clipboard!', 'success');
+                setTimeout(() => {
+                    window.open('https://business.google.com/', '_blank');
+                }, 800);
+            }).catch(err => {
+                alert('Failed to copy to clipboard.');
+            });
+        }
+
+        function publishGmbPostDirect() {
+            const text = document.getElementById('gmb_post_text').value;
+            const url = document.getElementById('gmb_target_url').value;
+            const publishBtn = document.getElementById('gmb-publish-btn');
+            
+            if (!text) {
+                alert('Please enter post text.');
+                return;
+            }
+            
+            const originalHtml = publishBtn.innerHTML;
+            publishBtn.disabled = true;
+            publishBtn.innerHTML = 'Publishing...';
+            
+            fetch("{{ route('admin.gmb.publish') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                body: JSON.stringify({ text: text, url: url })
+            })
+            .then(res => res.json())
+            .then(res => {
+                publishBtn.disabled = false;
+                publishBtn.innerHTML = originalHtml;
+                if (res.success) {
+                    showToast('Successfully published post directly to Google Business Profile!', 'success');
+                    closeGmbModal();
+                } else {
+                    alert('API Publish failed: ' + (res.error || 'Unknown error'));
+                }
+            })
+            .catch(err => {
+                publishBtn.disabled = false;
+                publishBtn.innerHTML = originalHtml;
+                alert('Network Error publishing: ' + err.message);
+            });
+        }
 
         // Toggle Lead Details
         function toggleLeadDetails(id) {
@@ -3060,6 +3966,7 @@
             document.getElementById('blog_category').value = data.category;
             document.getElementById('blog_published_at').value = data.published_at;
             document.getElementById('blog_summary').value = data.summary;
+            document.getElementById('blog_schema_markup').value = data.schema_markup || '';
             if (blogEditor) {
                 blogEditor.setData(data.content);
             } else {
@@ -3082,6 +3989,7 @@
             document.getElementById('blog_category').selectedIndex = 0;
             document.getElementById('blog_published_at').value = "{{ date('Y-m-d\TH:i') }}";
             document.getElementById('blog_summary').value = '';
+            document.getElementById('blog_schema_markup').value = '';
             document.getElementById('blog_image_url').value = '';
             if (blogEditor) {
                 blogEditor.setData('');
@@ -3163,6 +4071,7 @@
             }
             
             document.getElementById('ser_summary').value = data.summary || '';
+            document.getElementById('ser_schema_markup').value = data.schema_markup || '';
             document.getElementById('ser_is_active').checked = !!data.is_active;
             
             // Clear and rebuild FAQs
@@ -3227,6 +4136,7 @@
             }
             
             document.getElementById('ser_summary').value = '';
+            document.getElementById('ser_schema_markup').value = '';
             document.getElementById('ser_is_active').checked = true;
             
             document.getElementById('faq-repeater-container').innerHTML = '';

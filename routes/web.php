@@ -76,6 +76,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/admin/ai/generate-blog', [AdminController::class, 'aiGenerateBlog'])->name('admin.ai.blog');
     Route::post('/admin/ai/generate-service', [AdminController::class, 'aiGenerateService'])->name('admin.ai.service');
     Route::post('/admin/ai/generate-image', [AdminController::class, 'aiGenerateImage'])->name('admin.ai.image');
+    Route::post('/admin/ai/seo-recommendations', [AdminController::class, 'aiGenerateSeoRecommendations'])->name('admin.ai.seo-recommendations');
 
     // Cloudflare Analytics
     Route::post('/admin/cloudflare/analytics', [AdminController::class, 'getCloudflareAnalytics'])->name('admin.cloudflare.analytics');
@@ -86,4 +87,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/admin/landing-pages/{id}/delete', [AdminController::class, 'deleteLandingPage'])->name('admin.landing.delete');
     Route::post('/admin/ai/generate-landing', [AdminController::class, 'aiGenerateLandingPage'])->name('admin.ai.landing');
     Route::post('/admin/ai/sync-gmb-testimonials', [AdminController::class, 'aiSyncGmbTestimonials'])->name('admin.ai.gmb-sync');
+
+    // GMB Sharing & Sitemap Routes
+    Route::post('/admin/sitemap/generate', [AdminController::class, 'generateSitemap'])->name('admin.sitemap.generate');
+    Route::post('/admin/ai/draft-gmb-post', [AdminController::class, 'aiDraftGmbPost'])->name('admin.ai.gmb-draft');
+    Route::post('/admin/gmb/publish-post', [AdminController::class, 'publishGmbPost'])->name('admin.gmb.publish');
 });

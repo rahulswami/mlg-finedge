@@ -4,54 +4,58 @@
 @section('meta_description', ($service->seo_meta_description ?? $service->summary))
 
 @section('schema')
-<script type="application/ld+json">
-{
-  "{{ '@' }}context": "https://schema.org",
-  "{{ '@graph' }}": [
-    {
-      "{{ '@type' }}": "Service",
-      "{{ '@id' }}": "{{ route('services.show', $service->slug) }}/#service",
-      "name": "{{ $service->service_name }}",
-      "description": "{{ $service->summary }}",
-      "provider": {
-        "{{ '@type' }}": "Organization",
-        "{{ '@id' }}": "{{ route('home') }}/#organization",
-        "name": "{{ $site['site_name'] ?? 'MLG Finedge' }}",
-        "url": "{{ route('home') }}"
-      },
-      "areaServed": {
-        "{{ '@type' }}": "State",
-        "name": "Rajasthan"
-      },
-      "serviceType": "FinancialService",
-      "offers": {
-        "{{ '@type' }}": "Offer",
-        "priceCurrency": "INR",
-        "description": "Interest rates starting from {{ $service->rate_value ?? 'Lowest Rates' }}"
-      }
-    }
-    @if(!empty($service->faqs) && is_array($service->faqs))
-    ,
-    {
-      "{{ '@type' }}": "FAQPage",
-      "{{ '@id' }}": "{{ route('services.show', $service->slug) }}/#faq",
-      "mainEntity": [
-        @foreach($service->faqs as $index => $faq)
+    @if(!empty($service->schema_markup))
+        {!! $service->schema_markup !!}
+    @else
+        <script type="application/ld+json">
         {
-          "{{ '@type' }}": "Question",
-          "name": "{{ $faq['question'] ?? '' }}",
-          "acceptedAnswer": {
-            "{{ '@type' }}": "Answer",
-            "text": "{{ $faq['answer'] ?? '' }}"
-          }
-        }{{ $index < count($service->faqs) - 1 ? ',' : '' }}
-        @endforeach
-      ]
-    }
+          "{{ '@' }}context": "https://schema.org",
+          "{{ '@graph' }}": [
+            {
+              "{{ '@type' }}": "Service",
+              "{{ '@id' }}": "{{ route('services.show', $service->slug) }}/#service",
+              "name": "{{ $service->service_name }}",
+              "description": "{{ $service->summary }}",
+              "provider": {
+                "{{ '@type' }}": "Organization",
+                "{{ '@id' }}": "{{ route('home') }}/#organization",
+                "name": "{{ $site['site_name'] ?? 'MLG Finedge' }}",
+                "url": "{{ route('home') }}"
+              },
+              "areaServed": {
+                "{{ '@type' }}": "State",
+                "name": "Rajasthan"
+              },
+              "serviceType": "FinancialService",
+              "offers": {
+                "{{ '@type' }}": "Offer",
+                "priceCurrency": "INR",
+                "description": "Interest rates starting from {{ $service->rate_value ?? 'Lowest Rates' }}"
+              }
+            }
+            @if(!empty($service->faqs) && is_array($service->faqs))
+            ,
+            {
+              "{{ '@type' }}": "FAQPage",
+              "{{ '@id' }}": "{{ route('services.show', $service->slug) }}/#faq",
+              "mainEntity": [
+                @foreach($service->faqs as $index => $faq)
+                {
+                  "{{ '@type' }}": "Question",
+                  "name": "{{ $faq['question'] ?? '' }}",
+                  "acceptedAnswer": {
+                    "{{ '@type' }}": "Answer",
+                    "text": "{{ $faq['answer'] ?? '' }}"
+                  }
+                }{{ $index < count($service->faqs) - 1 ? ',' : '' }}
+                @endforeach
+              ]
+            }
+            @endif
+          ]
+        }
+        </script>
     @endif
-  ]
-}
-</script>
 @endsection
 
 @section('content')

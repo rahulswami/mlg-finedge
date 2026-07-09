@@ -4,34 +4,38 @@
 @section('meta_description', $blog->summary)
 
 @section('schema')
-<script type="application/ld+json">
-{
-  "{{ '@' }}context": "https://schema.org",
-  "{{ '@graph' }}": [
-    {
-      "{{ '@type' }}": "BlogPosting",
-      "{{ '@id' }}": "{{ route('blog.show', $blog->slug) }}/#post",
-      "headline": "{{ $blog->title }}",
-      "description": "{{ $blog->summary }}",
-      "datePublished": "{{ $blog->published_at->toIso8601String() }}",
-      "dateModified": "{{ $blog->updated_at->toIso8601String() }}",
-      "mainEntityOfPage": "{{ route('blog.show', $blog->slug) }}",
-      "image": "{{ $blog->image_path ? site_image($blog->image_path) : asset('assets/images/blog-default.jpg') }}",
-      "author": {
-        "{{ '@type' }}": "Organization",
-        "name": "MLG Finedge Advisory Team",
-        "url": "{{ route('home') }}"
-      },
-      "publisher": {
-        "{{ '@type' }}": "Organization",
-        "{{ '@id' }}": "{{ route('home') }}/#organization",
-        "name": "{{ $site['site_name'] ?? 'MLG Finedge' }}",
-        "url": "{{ route('home') }}"
-      }
-    }
-  ]
-}
-</script>
+    @if(!empty($blog->schema_markup))
+        {!! $blog->schema_markup !!}
+    @else
+        <script type="application/ld+json">
+        {
+          "{{ '@' }}context": "https://schema.org",
+          "{{ '@graph' }}": [
+            {
+              "{{ '@type' }}": "BlogPosting",
+              "{{ '@id' }}": "{{ route('blog.show', $blog->slug) }}/#post",
+              "headline": "{{ $blog->title }}",
+              "description": "{{ $blog->summary }}",
+              "datePublished": "{{ $blog->published_at->toIso8601String() }}",
+              "dateModified": "{{ $blog->updated_at->toIso8601String() }}",
+              "mainEntityOfPage": "{{ route('blog.show', $blog->slug) }}",
+              "image": "{{ $blog->image_path ? site_image($blog->image_path) : asset('assets/images/blog-default.jpg') }}",
+              "author": {
+                "{{ '@type' }}": "Organization",
+                "name": "MLG Finedge Advisory Team",
+                "url": "{{ route('home') }}"
+              },
+              "publisher": {
+                "{{ '@type' }}": "Organization",
+                "{{ '@id' }}": "{{ route('home') }}/#organization",
+                "name": "{{ $site['site_name'] ?? 'MLG Finedge' }}",
+                "url": "{{ route('home') }}"
+              }
+            }
+          ]
+        }
+        </script>
+    @endif
 @endsection
 
 @section('content')

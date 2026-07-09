@@ -79,6 +79,18 @@ class GenerateSitemap extends Command
             $xml[] = '  </url>';
         }
 
+        // Dynamic Landing Pages
+        $landingPages = \App\Models\LandingPage::all();
+        foreach ($landingPages as $lp) {
+            $lastMod = $lp->updated_at ? $lp->updated_at->toW3cString() : Carbon::now()->startOfDay()->toW3cString();
+            $xml[] = '  <url>';
+            $xml[] = '    <loc>' . $baseUrl . '/l/' . $lp->slug . '</loc>';
+            $xml[] = '    <lastmod>' . $lastMod . '</lastmod>';
+            $xml[] = '    <changefreq>weekly</changefreq>';
+            $xml[] = '    <priority>0.8</priority>';
+            $xml[] = '  </url>';
+        }
+
         $xml[] = '</urlset>';
 
         $sitemapContent = implode("\n", $xml);

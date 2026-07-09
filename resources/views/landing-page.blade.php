@@ -3,6 +3,12 @@
 @section('title', $landingPage->title . ' - ' . ($site['site_name'] ?? 'MLG Finedge'))
 @section('meta_desc', $landingPage->meta_description ?? 'Secure premium loan consultation in Jaipur with custom matching parameters.')
 
+@section('schema')
+    @if(!empty($landingPage->schema_markup))
+        {!! $landingPage->schema_markup !!}
+    @endif
+@endsection
+
 @section('content')
 <style>
     .landing-hero {
