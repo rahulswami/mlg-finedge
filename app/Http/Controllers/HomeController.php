@@ -102,11 +102,10 @@ class HomeController extends Controller
             $compiledMessage .= 'Details: ' . $request->message . "\n";
         }
 
-        // 2. Save Lead immediately to guarantee it is saved in the database
-        $lead = null;
-        try {
-            // Auto-create leads table if it doesn't exist
-            if (!\Illuminate\Support\Facades\Schema::hasTable('leads')) {
+        // 2. Save Lead immediately to guarantee it is saved in the database FIRST
+        // Auto-create leads table if it doesn't exist
+        if (!\Illuminate\Support\Facades\Schema::hasTable('leads')) {
+            try {
                 \Illuminate\Support\Facades\Schema::create('leads', function (\Illuminate\Database\Schema\Blueprint $table) {
                     $table->id();
                     $table->string('name');
@@ -118,28 +117,27 @@ class HomeController extends Controller
                     $table->text('notes')->nullable();
                     $table->timestamps();
                 });
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::error('Leads table creation failed: ' . $e->getMessage());
             }
-
-            $lead = \App\Models\Lead::create([
-                'name'    => $request->name,
-                'phone'   => $request->phone,
-                'email'   => $request->email,
-                'message' => $compiledMessage ?: 'Requesting a quick callback/consultation.',
-                'source'  => $request->input('source', 'Contact Form'),
-                'status'  => 'New',
-            ]);
-        } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::error('Foolproof Lead Save failed: ' . $e->getMessage());
         }
 
-        // 3. Google reCAPTCHA Verification (if enabled)
-        // We evaluate reCAPTCHA to flag spam, but we do NOT block the redirect to thank-you so conversion pixels can fire.
+        $lead = \App\Models\Lead::create([
+            'name'    => $request->name,
+            'phone'   => $request->phone,
+            'email'   => $request->email,
+            'message' => $compiledMessage ?: 'Requesting a quick callback/consultation.',
+            'source'  => $request->input('source', 'Contact Form'),
+            'status'  => 'New',
+        ]);
+
+        // 3. Google reCAPTCHA Verification (if enabled in settings)
         $isSpam = false;
         $spamReason = '';
         if (!empty($siteSettings['recaptcha_enabled']) && $siteSettings['recaptcha_enabled'] == '1' && !empty($siteSettings['recaptcha_site_key']) && !empty($siteSettings['recaptcha_secret_key'])) {
             try {
                 $recaptchaResponse = $request->input('g-recaptcha-response');
-                $secretKey = $siteSettings['recaptcha_secret_key'] ?? '';
+                $secretKey = $siteSettings['recaptcha_secret_key'];
                 
                 if (empty($recaptchaResponse)) {
                     $isSpam = true;
@@ -159,48 +157,51 @@ class HomeController extends Controller
             } catch (\Throwable $e) {
                 \Illuminate\Support\Facades\Log::warning('reCAPTCHA safety check encountered exception: ' . $e->getMessage());
             }
-        }
 
-        // Update lead status if it was flagged as spam
-        if ($isSpam && $lead) {
-            try {
-                $lead->update([
-                    'status' => 'Spam',
-                    'notes' => 'Flagged: ' . $spamReason
-                ]);
-            } catch (\Throwable $e) {
-                // Ignore silent update errors
+            // Update lead status if it was flagged as spam
+            if ($isSpam && $lead) {
+                try {
+                    $lead->update([
+                        'status' => 'Spam',
+                        'notes' => 'Flagged: ' . $spamReason
+                    ]);
+                } catch (\Throwable $e) {
+                    \Illuminate\Support\Facades\Log::warning('Failed to flag spam lead: ' . $e->getMessage());
+                }
             }
         }
 
-        // 4. Send Email Notification if SMTP is configured
-        if (!empty($siteSettings['smtp_host'])) {
+        // 4. Send Email Notification if SMTP settings are fully configured in the settings area
+        if (!empty($siteSettings['smtp_host']) && !empty($siteSettings['smtp_username']) && !empty($siteSettings['smtp_password']) && !empty($siteSettings['smtp_to_email'])) {
             try {
                 // Dynamically configure Laravel mailer settings
                 config([
                     'mail.mailers.smtp.transport' => 'smtp',
                     'mail.mailers.smtp.host' => $siteSettings['smtp_host'],
                     'mail.mailers.smtp.port' => (int)($siteSettings['smtp_port'] ?? 587),
-                    'mail.mailers.smtp.username' => $siteSettings['smtp_username'] ?? null,
-                    'mail.mailers.smtp.password' => $siteSettings['smtp_password'] ?? null,
+                    'mail.mailers.smtp.username' => $siteSettings['smtp_username'],
+                    'mail.mailers.smtp.password' => $siteSettings['smtp_password'],
                     'mail.mailers.smtp.encryption' => ($siteSettings['smtp_encryption'] ?? 'tls') === 'none' ? null : ($siteSettings['smtp_encryption'] ?? 'tls'),
                     'mail.from.address' => $siteSettings['smtp_from_address'] ?? 'no-reply@mlgfinedge.com',
                     'mail.from.name' => $siteSettings['smtp_from_name'] ?? 'MLG Finedge Alerts',
                     'mail.default' => 'smtp',
                 ]);
 
-                $toEmail = $siteSettings['smtp_to_email'] ?? 'admin@mlgfinedge.com';
+                // Purge SMTP mailer cache to force Laravel to re-read updated runtime configs
+                \Illuminate\Support\Facades\Mail::purge('smtp');
+
+                $toEmail = $siteSettings['smtp_to_email'];
                 $fromAddress = $siteSettings['smtp_from_address'] ?? 'no-reply@mlgfinedge.com';
                 $fromName = $siteSettings['smtp_from_name'] ?? 'MLG Finedge Alerts';
-                $leadName = $request->name;
+                $leadName = $lead->name;
 
                 \Illuminate\Support\Facades\Mail::raw(
                     "New Lead Inquiry Received" . ($isSpam ? " [Flagged Spam]" : "") . ":\n\n" .
-                    "Name: " . $request->name . "\n" .
-                    "Phone: " . $request->phone . "\n" .
-                    "Email: " . ($request->email ?: 'N/A') . "\n" .
-                    "Source: " . ($request->input('source', 'Contact Form')) . "\n\n" .
-                    "Details:\n" . ($compiledMessage ?: 'Requesting a quick callback/consultation.'),
+                    "Name: " . $lead->name . "\n" .
+                    "Phone: " . $lead->phone . "\n" .
+                    "Email: " . ($lead->email ?: 'N/A') . "\n" .
+                    "Source: " . ($lead->source) . "\n\n" .
+                    "Details:\n" . ($lead->message),
                     function ($message) use ($toEmail, $fromAddress, $fromName, $leadName) {
                         $message->to($toEmail)
                                 ->subject('New Lead Inquiry: ' . $leadName)
@@ -214,7 +215,7 @@ class HomeController extends Controller
             }
         }
 
-        // 5. Send WhatsApp Notification if WhatsApp API settings are configured
+        // 5. Send WhatsApp Notification if WhatsApp API settings are fully configured in the settings area
         if (!empty($siteSettings['whatsapp_api_url']) && !empty($siteSettings['whatsapp_admin_recipient'])) {
             try {
                 $apiUrl = $siteSettings['whatsapp_api_url'];
@@ -222,11 +223,11 @@ class HomeController extends Controller
                 $recipient = $siteSettings['whatsapp_admin_recipient'];
                 
                 $textMessage = "New Lead Alert!" . ($isSpam ? " [Flagged Spam]" : "") . "\n" .
-                              "Name: {$request->name}\n" .
-                              "Phone: {$request->phone}\n" .
-                              "Email: " . ($request->email ?: 'N/A') . "\n" .
-                              "Source: " . ($request->input('source', 'Contact Form')) . "\n" .
-                              "Message: " . ($compiledMessage ?: 'Requesting a quick callback/consultation.');
+                              "Name: {$lead->name}\n" .
+                              "Phone: {$lead->phone}\n" .
+                              "Email: " . ($lead->email ?: 'N/A') . "\n" .
+                              "Source: {$lead->source}\n" .
+                              "Message: " . ($lead->message);
                 
                 $response = \Illuminate\Support\Facades\Http::withHeaders([
                     'Authorization' => 'Bearer ' . $apiToken,
@@ -240,7 +241,7 @@ class HomeController extends Controller
                 ]);
                 
                 if ($response->successful()) {
-                    \Illuminate\Support\Facades\Log::info('WhatsApp notification sent successfully for lead: ' . $request->name);
+                    \Illuminate\Support\Facades\Log::info('WhatsApp notification sent successfully for lead: ' . $lead->name);
                 } else {
                     \Illuminate\Support\Facades\Log::warning('WhatsApp API returned error code: ' . $response->status() . ' | Response: ' . $response->body());
                 }
@@ -249,7 +250,7 @@ class HomeController extends Controller
             }
         }
 
-        return redirect()->route('thank-you');
+        return redirect()->route('thank-you')->with('success', 'Your inquiry has been submitted successfully.');
     }
 
     public function landingShow($slug)
