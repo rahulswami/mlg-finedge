@@ -6383,6 +6383,11 @@
                     showToast("AI Generation Failed", res.error || "Failed to generate picture in background.", "error", jobId);
                 }
             })
+            .catch(err => {
+                showToast("AI Generation Failed", "Network error during background image generation.", "error", jobId);
+            });
+        }
+
         // Toggle Gemini Key Visibility (Show/Hide Password)
         function toggleGeminiKeyVisibility() {
             const input = document.getElementById('gemini_api_key');
