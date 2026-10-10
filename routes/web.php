@@ -106,4 +106,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/admin/seo/landing/{id}', [AdminController::class, 'updateLandingSeo']);
     Route::post('/admin/seo/alts/update', [AdminController::class, 'updateImageAlts'])->name('admin.seo.alts.update');
     Route::post('/admin/ai/seo-generate', [AdminController::class, 'aiGenerateCompleteSeo'])->name('admin.ai.seo-generate');
+    Route::post('/admin/ai/test-key', [AdminController::class, 'testGeminiApiKey'])->name('admin.ai.test-key');
+    Route::post('/admin/ai/save-key', [AdminController::class, 'saveGeminiKeyAndModel'])->name('admin.ai.save-key');
 });

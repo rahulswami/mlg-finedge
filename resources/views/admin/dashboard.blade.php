@@ -1111,42 +1111,107 @@
                         </div>
                     </div>
 
-                    <div class="admin-card">
-                        <h2>Google Gemini AI & Business Settings</h2>
-                        <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem; margin-top: -1rem;">
-                            Provide a Google Gemini API Key and your Google My Business link to enable AI generation and reviews sync.
-                        </p>
-                        <div class="form-grid">
+                    <div class="admin-card" id="gemini-ai-settings-card" style="border-left: 4px solid var(--mint-green);">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px; margin-bottom: 1rem;">
+                            <div>
+                                <h2 style="margin: 0; display: flex; align-items: center; gap: 8px;">
+                                    <i data-lucide="sparkles" style="color: var(--mint-green);"></i> Google Gemini AI & Model Settings
+                                </h2>
+                                <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-top: 4px;">
+                                    Configure your Google Gemini API Key, select your active generative model, and run real-time multi-model diagnostic tests.
+                                </p>
+                            </div>
+                            <a href="https://aistudio.google.com/app/apikey" target="_blank" class="btn-submit" style="padding: 0.45rem 0.9rem; font-size: 0.8rem; width: auto; display: inline-flex; align-items: center; gap: 6px; background: rgba(92,203,179,0.15); color: var(--mint-green); border: 1px solid rgba(92,203,179,0.3);">
+                                <i data-lucide="external-link" style="width: 14px; height: 14px;"></i> Get Free Key from Google AI Studio
+                            </a>
+                        </div>
+
+                        <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+                            <!-- Gemini API Key with Show/Hide Toggle & Format Check -->
                             <div class="form-group" style="grid-column: span 2;">
-                                <label for="gemini_api_key">Gemini API Key</label>
-                                <input type="password" id="gemini_api_key" name="gemini_api_key" class="form-control" value="{{ $site['gemini_api_key'] ?? '' }}" placeholder="Paste your Gemini API Key here...">
-                                <span style="font-size: 0.75rem; color: var(--admin-text-muted); display: block; margin-top: 5px;">
-                                    Get an API Key from the <a href="https://aistudio.google.com/" target="_blank" style="color: var(--mint-green); text-decoration: underline;">Google AI Studio Console</a>.
-                                </span>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                    <label for="gemini_api_key" style="margin-bottom: 0; font-weight: 600;">Google Gemini API Key</label>
+                                    <span id="gemini-key-format-badge" style="font-size: 0.75rem; padding: 2px 8px; border-radius: 4px; display: none;"></span>
+                                </div>
+                                <div style="position: relative; display: flex; align-items: center;">
+                                    <input type="password" id="gemini_api_key" name="gemini_api_key" class="form-control" value="{{ $site['gemini_api_key'] ?? '' }}" placeholder="AIzaSy..." oninput="checkGeminiKeyFormat()" style="padding-right: 45px; font-family: monospace;">
+                                    <button type="button" onclick="toggleGeminiKeyVisibility()" style="position: absolute; right: 10px; background: transparent; border: none; color: var(--admin-text-muted); cursor: pointer; padding: 4px;">
+                                        <i data-lucide="eye" id="gemini-eye-icon" style="width: 18px; height: 18px;"></i>
+                                    </button>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 5px; flex-wrap: wrap; gap: 5px;">
+                                    <span style="font-size: 0.75rem; color: var(--admin-text-muted);">
+                                        Valid Google AI Studio keys start with <code>AIzaSy...</code> (~39 characters).
+                                    </span>
+                                </div>
                             </div>
-                            
-                            <div class="form-group" style="grid-column: span 2; margin-top: 1rem;">
-                                <label for="google_my_business_link">Google My Business Reviews Link</label>
-                                <input type="text" id="google_my_business_link" name="google_my_business_link" class="form-control" value="{{ $site['google_my_business_link'] ?? '' }}" placeholder="Paste your Google My Business reviews link here...">
-                                <span style="font-size: 0.75rem; color: var(--admin-text-muted); display: block; margin-top: 5px;">
-                                    This link will be used to sync/generate authentic testimonials using AI.
+
+                            <!-- Active Gemini Model Selector -->
+                            <div class="form-group">
+                                <label for="gemini_model" style="font-weight: 600;">Active AI Engine Model</label>
+                                @php
+                                    $activeModel = $site['gemini_model'] ?? 'gemini-2.0-flash';
+                                @endphp
+                                <select id="gemini_model" name="gemini_model" class="form-control">
+                                    <option value="gemini-2.0-flash" @selected($activeModel === 'gemini-2.0-flash')>gemini-2.0-flash (Recommended - Next-Gen Ultra Fast)</option>
+                                    <option value="gemini-1.5-flash" @selected($activeModel === 'gemini-1.5-flash')>gemini-1.5-flash (High Quota & Production Stable)</option>
+                                    <option value="gemini-1.5-pro" @selected($activeModel === 'gemini-1.5-pro')>gemini-1.5-pro (Deep Reasoning & Advanced SEO)</option>
+                                    <option value="gemini-2.5-flash" @selected($activeModel === 'gemini-2.5-flash')>gemini-2.5-flash (Experimental / Preview)</option>
+                                    <option value="gemini-1.0-pro" @selected($activeModel === 'gemini-1.0-pro')>gemini-1.0-pro (Legacy Compatibility)</option>
+                                </select>
+                                <span style="font-size: 0.75rem; color: var(--admin-text-muted); margin-top: 4px; display: block;">
+                                    The system automatically cascades to fallback models if the selected model is unavailable.
                                 </span>
                             </div>
 
-                            <div class="form-group">
-                                <label for="gmb_location_id">Google Business Profile Location ID (Optional)</label>
-                                <input type="text" id="gmb_location_id" name="gmb_location_id" class="form-control" value="{{ $site['gmb_location_id'] ?? '' }}" placeholder="e.g. locations/1234567890">
-                                <span style="font-size: 0.75rem; color: var(--admin-text-muted); display: block; margin-top: 5px;">
-                                    Required for direct API publishing. Format: <code>locations/YOUR_LOCATION_ID</code>
-                                </span>
+                            <!-- Interactive Diagnostics Action Bar -->
+                            <div class="form-group" style="display: flex; flex-direction: column; justify-content: flex-end;">
+                                <label style="font-weight: 600; margin-bottom: 0.5rem;">Key & Model Live Diagnostics</label>
+                                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                    <button type="button" class="btn-submit" onclick="runGeminiModelTest('selected')" style="padding: 0.65rem 1rem; font-size: 0.82rem; width: auto; background: var(--mint-green); color: var(--primary-teal-dark); font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
+                                        <i data-lucide="zap" style="width: 14px; height: 14px;"></i> Test Selected Model
+                                    </button>
+                                    <button type="button" class="btn-submit" onclick="runGeminiModelTest('all')" style="padding: 0.65rem 1rem; font-size: 0.82rem; width: auto; background: var(--admin-input-bg); color: #fff; display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--admin-border);">
+                                        <i data-lucide="activity" style="width: 14px; height: 14px;"></i> Test All 5 Models
+                                    </button>
+                                </div>
                             </div>
+                        </div>
 
-                            <div class="form-group">
-                                <label for="gmb_access_token">Google Business Profile Access Token (Optional)</label>
-                                <input type="password" id="gmb_access_token" name="gmb_access_token" class="form-control" value="{{ $site['gmb_access_token'] ?? '' }}" placeholder="Paste your OAuth access token here...">
-                                <span style="font-size: 0.75rem; color: var(--admin-text-muted); display: block; margin-top: 5px;">
-                                    OAuth 2.0 Bearer Access Token with <code>https://www.googleapis.com/auth/business.manage</code> scope.
-                                </span>
+                        <!-- Live Diagnostic Test Results Container -->
+                        <div id="ai-test-results-box" style="display: none; margin-top: 1.5rem; background: #070c0d; border: 1px solid var(--admin-border); border-radius: var(--radius-md); padding: 1.25rem;">
+                            <!-- Dynamically populated via JS -->
+                        </div>
+
+                        <!-- Google Business Profile Settings -->
+                        <div style="border-top: 1px solid var(--admin-border); margin-top: 1.5rem; padding-top: 1.25rem;">
+                            <h3 style="font-size: 1rem; margin: 0 0 1rem 0; color: #fff; display: flex; align-items: center; gap: 8px;">
+                                <i data-lucide="map-pin" style="color: var(--accent-orange);"></i> Google My Business & Reviews Integration
+                            </h3>
+                            <div class="form-grid">
+                                <div class="form-group" style="grid-column: span 2;">
+                                    <label for="google_my_business_link">Google My Business Reviews Link</label>
+                                    <input type="text" id="google_my_business_link" name="google_my_business_link" class="form-control" value="{{ $site['google_my_business_link'] ?? '' }}" placeholder="https://maps.app.goo.gl/... or https://g.page/r/...">
+                                    <span style="font-size: 0.75rem; color: var(--admin-text-muted); display: block; margin-top: 5px;">
+                                        Used by AI to sync/generate authentic testimonials matching your business reviews.
+                                    </span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="gmb_location_id">Google Business Profile Location ID (Optional)</label>
+                                    <input type="text" id="gmb_location_id" name="gmb_location_id" class="form-control" value="{{ $site['gmb_location_id'] ?? '' }}" placeholder="locations/1234567890">
+                                    <span style="font-size: 0.75rem; color: var(--admin-text-muted); display: block; margin-top: 5px;">
+                                        Required for direct API publishing. Format: <code>locations/YOUR_LOCATION_ID</code>
+                                    </span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="gmb_access_token">Google Business Profile Access Token (Optional)</label>
+                                    <input type="password" id="gmb_access_token" name="gmb_access_token" class="form-control" value="{{ $site['gmb_access_token'] ?? '' }}" placeholder="OAuth Access Token">
+                                    <span style="font-size: 0.75rem; color: var(--admin-text-muted); display: block; margin-top: 5px;">
+                                        OAuth 2.0 Bearer Access Token with <code>business.manage</code> scope.
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -6318,10 +6383,234 @@
                     showToast("AI Generation Failed", res.error || "Failed to generate picture in background.", "error", jobId);
                 }
             })
+        // Toggle Gemini Key Visibility (Show/Hide Password)
+        function toggleGeminiKeyVisibility() {
+            const input = document.getElementById('gemini_api_key');
+            const icon = document.getElementById('gemini-eye-icon');
+            if (!input) return;
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                if (icon) icon.setAttribute('data-lucide', 'eye-off');
+            } else {
+                input.type = 'password';
+                if (icon) icon.setAttribute('data-lucide', 'eye');
+            }
+            if (window.lucide) lucide.createIcons();
+        }
+
+        // Live Key Format Check
+        function checkGeminiKeyFormat() {
+            const input = document.getElementById('gemini_api_key');
+            const badge = document.getElementById('gemini-key-format-badge');
+            if (!input || !badge) return;
+
+            const val = input.value.trim();
+            if (val.length === 0) {
+                badge.style.display = 'none';
+                return;
+            }
+
+            badge.style.display = 'inline-block';
+            if (val.startsWith('AIzaSy') && val.length >= 35) {
+                badge.style.backgroundColor = 'rgba(92, 203, 179, 0.15)';
+                badge.style.color = 'var(--mint-green)';
+                badge.style.border = '1px solid rgba(92, 203, 179, 0.3)';
+                badge.textContent = '✓ Valid Google AI Studio Format (AIzaSy...)';
+            } else {
+                badge.style.backgroundColor = 'rgba(232, 92, 36, 0.15)';
+                badge.style.color = 'var(--accent-orange)';
+                badge.style.border = '1px solid rgba(232, 92, 36, 0.3)';
+                badge.textContent = '⚠️ Caution: Key should start with AIzaSy...';
+            }
+        }
+
+        // Run Multi-Model Diagnostic Test
+        function runGeminiModelTest(mode) {
+            const keyInput = document.getElementById('gemini_api_key');
+            const modelSelect = document.getElementById('gemini_model');
+            const resultsBox = document.getElementById('ai-test-results-box');
+
+            const key = keyInput ? keyInput.value.trim() : '';
+            const selectedModel = (modelSelect && mode === 'selected') ? modelSelect.value : 'all';
+
+            if (!key) {
+                alert("Please paste your Gemini API Key in the input field first.");
+                if (keyInput) keyInput.focus();
+                return;
+            }
+
+            if (!resultsBox) return;
+
+            // Render Loader State
+            resultsBox.style.display = 'block';
+            resultsBox.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 12px; padding: 0.5rem 0;">
+                    <div class="spinner" style="width: 20px; height: 20px; border-width: 2px; margin: 0;"></div>
+                    <div>
+                        <div style="color: #fff; font-weight: 600; font-size: 0.9rem;">
+                            Testing API Key with ${mode === 'selected' ? selectedModel : 'all Google Gemini models'}...
+                        </div>
+                        <div style="color: var(--admin-text-muted); font-size: 0.75rem;">
+                            Sending live verification prompt to Google Generative Language API...
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            fetch("{{ route('admin.ai.test-key') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                body: JSON.stringify({
+                    api_key: key,
+                    model: selectedModel
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                renderGeminiTestResults(data, key, mode);
+            })
             .catch(err => {
-                showToast("AI Generation Failed", "Network error during background image generation.", "error", jobId);
+                resultsBox.innerHTML = `
+                    <div style="color: #ef4444; font-size: 0.85rem; padding: 0.5rem 0;">
+                        <strong>Network Test Error:</strong> ${err.message}
+                    </div>
+                `;
             });
         }
+
+        // Render Test Results UI
+        function renderGeminiTestResults(data, testedKey, mode) {
+            const resultsBox = document.getElementById('ai-test-results-box');
+            if (!resultsBox) return;
+
+            let html = '';
+
+            if (data.success) {
+                html += `
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--admin-border); padding-bottom: 0.75rem; margin-bottom: 1rem; flex-wrap: wrap; gap: 10px;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="background: rgba(92,203,179,0.2); color: var(--mint-green); border: 1px solid rgba(92,203,179,0.4); padding: 3px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 700;">
+                                ✓ API Key Verified & Working!
+                            </span>
+                            ${data.recommended_model ? `<span style="font-size: 0.8rem; color: var(--admin-text-muted);">Recommended: <strong style="color: #fff;">${data.recommended_model}</strong></span>` : ''}
+                        </div>
+                        <button type="button" class="btn-submit" onclick="saveGeminiConfigFromTester('${testedKey}', '${data.recommended_model || 'gemini-2.0-flash'}')" style="padding: 0.4rem 0.9rem; font-size: 0.8rem; width: auto; background: var(--mint-green); color: var(--primary-teal-dark); font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">
+                            <i data-lucide="check" style="width: 13px; height: 13px;"></i> Apply & Save to System
+                        </button>
+                    </div>
+                `;
+            } else {
+                html += `
+                    <div style="border-bottom: 1px solid var(--admin-border); padding-bottom: 0.75rem; margin-bottom: 1rem;">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                            <span style="background: rgba(239,68,68,0.2); color: #ef4444; border: 1px solid rgba(239,68,68,0.4); padding: 3px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 700;">
+                                ✕ Key Authentication Failed
+                            </span>
+                        </div>
+                        ${data.advice ? `<div style="font-size: 0.82rem; color: #fca5a5; line-height: 1.4; margin-top: 4px;">${data.advice}</div>` : ''}
+                    </div>
+                `;
+            }
+
+            if (data.format_warning) {
+                html += `
+                    <div style="background: rgba(232,92,36,0.1); border: 1px dashed rgba(232,92,36,0.4); border-radius: 6px; padding: 0.6rem 0.8rem; font-size: 0.8rem; color: #fed7aa; margin-bottom: 1rem;">
+                        ${data.format_warning}
+                    </div>
+                `;
+            }
+
+            // Render Model Results Matrix
+            html += `<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-bottom: 1rem;">`;
+            
+            for (const [modelName, mRes] of Object.entries(data.results || {})) {
+                const isOk = mRes.working;
+                const statusColor = isOk ? 'var(--mint-green)' : '#ef4444';
+                const statusBg = isOk ? 'rgba(92,203,179,0.08)' : 'rgba(239,68,68,0.08)';
+                const borderC = isOk ? 'rgba(92,203,179,0.25)' : 'rgba(239,68,68,0.25)';
+
+                html += `
+                    <div style="background: ${statusBg}; border: 1px solid ${borderC}; border-radius: 6px; padding: 0.75rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                            <strong style="font-size: 0.85rem; color: #fff;">${modelName}</strong>
+                            <span style="font-size: 0.72rem; color: ${statusColor}; font-weight: 700;">
+                                ${isOk ? `✓ 200 OK (${mRes.latency_ms}ms)` : `✕ ${mRes.http_code || 'Err'}`}
+                            </span>
+                        </div>
+                        ${isOk ? `
+                            <div style="font-size: 0.75rem; color: #94a3b8; font-style: italic; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                "${mRes.reply}"
+                            </div>
+                        ` : `
+                            <div style="font-size: 0.72rem; color: #f87171; line-height: 1.3;">
+                                ${mRes.error ? mRes.error.substring(0, 90) + '...' : 'Unavailable'}
+                            </div>
+                        `}
+                    </div>
+                `;
+            }
+            html += `</div>`;
+
+            // How to fix guide if failed
+            if (!data.success) {
+                html += `
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--admin-border); border-radius: 6px; padding: 0.8rem; font-size: 0.8rem; color: var(--admin-text-muted);">
+                        <strong style="color: #fff;">How to generate a free working key:</strong>
+                        <ol style="margin: 6px 0 0 1.25rem; padding: 0; line-height: 1.6;">
+                            <li>Visit <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color: var(--mint-green); text-decoration: underline;">Google AI Studio (aistudio.google.com/app/apikey)</a>.</li>
+                            <li>Sign in with your Google account and click <strong>Create API key</strong>.</li>
+                            <li>Copy the key (starts with <code>AIzaSy...</code>) and paste it into the field above.</li>
+                            <li>Click <strong>Test Selected Model</strong> to verify, then click <strong>Apply & Save</strong>.</li>
+                        </ol>
+                    </div>
+                `;
+            }
+
+            resultsBox.innerHTML = html;
+            if (window.lucide) lucide.createIcons();
+        }
+
+        // One-Click Apply & Save from Tester
+        function saveGeminiConfigFromTester(key, model) {
+            const jobId = 'save-ai-key-' + Date.now();
+            showToast("Saving AI Configuration", "Applying verified key and active model to database...", "info", jobId);
+
+            fetch("{{ route('admin.ai.save-key') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                body: JSON.stringify({
+                    gemini_api_key: key,
+                    gemini_model: model
+                })
+            })
+            .then(res => res.json())
+            .then(res => {
+                if (res.success) {
+                    showToast("AI Configuration Saved!", res.message, "success", jobId);
+                    const modelSelect = document.getElementById('gemini_model');
+                    if (modelSelect && model) modelSelect.value = model;
+                    checkGeminiKeyFormat();
+                } else {
+                    showToast("Save Failed", res.error || "Could not save key.", "error", jobId);
+                }
+            })
+            .catch(err => {
+                showToast("Save Failed", err.message, "error", jobId);
+            });
+        }
+
+        // Initialize Gemini Key format badge on load
+        window.addEventListener('DOMContentLoaded', () => {
+            checkGeminiKeyFormat();
+        });
     </script>
 </body>
 </html>
+

@@ -826,18 +826,239 @@ class AdminController extends Controller
         return 'other';
     }
 
-    /* AI Generation Methods */
+    /* AI Generation & Model Management Methods */
+    public function getGeminiApiKey(): ?string
+    {
+        $key = SiteParameter::where('id', 'gemini_api_key')->value('value');
+        if (empty($key)) {
+            $key = env('GEMINI_API_KEY');
+        }
+        return !empty($key) ? trim($key) : null;
+    }
+
+    public function getGeminiModel(): string
+    {
+        $model = SiteParameter::where('id', 'gemini_model')->value('value');
+        if (empty($model)) {
+            $model = env('GEMINI_MODEL', 'gemini-2.0-flash');
+        }
+        return !empty($model) ? trim($model) : 'gemini-2.0-flash';
+    }
+
+    /**
+     * Centralized Gemini API execution with automatic model fallback cascade
+     */
+    public function executeGeminiPrompt(string $prompt, array $generationConfig = [], ?string $overrideApiKey = null, ?string $overrideModel = null): array
+    {
+        $apiKey = $overrideApiKey ?: $this->getGeminiApiKey();
+        if (empty($apiKey)) {
+            return [
+                'success' => false,
+                'error' => 'Gemini API Key is not set. Please configure and test your key in General Settings -> Google Gemini AI Settings.',
+                'code' => 400
+            ];
+        }
+
+        $primaryModel = $overrideModel ?: $this->getGeminiModel();
+        // Fallback sequence if primary model encounters 404/not supported
+        $modelsToTry = array_values(array_unique([$primaryModel, 'gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-2.5-flash']));
+        
+        $lastError = 'Unknown error';
+        $lastCode = 500;
+
+        foreach ($modelsToTry as $model) {
+            $startTime = microtime(true);
+            try {
+                $payload = [
+                    'contents' => [
+                        ['parts' => [['text' => $prompt]]]
+                    ]
+                ];
+                if (!empty($generationConfig)) {
+                    $payload['generationConfig'] = $generationConfig;
+                }
+
+                $response = \Illuminate\Support\Facades\Http::timeout(35)->withHeaders([
+                    'Content-Type' => 'application/json',
+                ])->post("https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent?key={$apiKey}", $payload);
+
+                $durationMs = round((microtime(true) - $startTime) * 1000);
+
+                if ($response->successful()) {
+                    $resData = $response->json();
+                    $text = $resData['candidates'][0]['content']['parts'][0]['text'] ?? '';
+                    return [
+                        'success' => true,
+                        'text' => trim($text),
+                        'model' => $model,
+                        'latency_ms' => $durationMs,
+                        'raw' => $resData
+                    ];
+                }
+
+                $status = $response->status();
+                $errBody = $response->json();
+                $msg = $errBody['error']['message'] ?? $response->body();
+                $lastCode = $status;
+                $lastError = "Model [{$model}] HTTP {$status}: {$msg}";
+
+                // If authentication error (401/403), stop trying other models - key is invalid!
+                if ($status === 401 || $status === 403) {
+                    return [
+                        'success' => false,
+                        'error' => "Google Gemini Authentication Failed (HTTP {$status}): {$msg}. Please check your Gemini API key in Settings.",
+                        'code' => $status,
+                        'model' => $model
+                    ];
+                }
+
+                // If 404 (Model not found), continue loop to next fallback model
+            } catch (\Exception $e) {
+                $lastError = $e->getMessage();
+            }
+        }
+
+        return [
+            'success' => false,
+            'error' => "Gemini API call failed: {$lastError}",
+            'code' => $lastCode
+        ];
+    }
+
+    public function testGeminiApiKey(Request $request)
+    {
+        $apiKey = trim($request->input('api_key') ?: $this->getGeminiApiKey() ?: '');
+        $testModel = trim($request->input('model') ?: 'all');
+        $customPrompt = trim($request->input('prompt') ?: 'Respond in 1 sentence: Confirm that Gemini AI is connected and ready for MLG Finedge.');
+
+        if (empty($apiKey)) {
+            return response()->json([
+                'success' => false,
+                'error' => 'API Key is empty. Please enter your Google Gemini API Key to test.',
+                'advice' => 'You can obtain a free API key at https://aistudio.google.com/'
+            ], 400);
+        }
+
+        // Format checks
+        $formatWarning = null;
+        if (!str_starts_with($apiKey, 'AIzaSy')) {
+            $formatWarning = "Note: Standard Google AI Studio keys begin with 'AIzaSy' (length ~39 chars). Your key starts with '" . substr($apiKey, 0, 7) . "...'.";
+        }
+
+        $modelsToCheck = ($testModel === 'all') 
+            ? ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-2.5-flash', 'gemini-1.0-pro']
+            : [$testModel];
+
+        $results = [];
+        $overallSuccess = false;
+        $recommendedModel = null;
+
+        foreach ($modelsToCheck as $m) {
+            $startTime = microtime(true);
+            try {
+                $response = \Illuminate\Support\Facades\Http::timeout(15)->withHeaders([
+                    'Content-Type' => 'application/json'
+                ])->post("https://generativelanguage.googleapis.com/v1beta/models/{$m}:generateContent?key={$apiKey}", [
+                    'contents' => [
+                        ['parts' => [['text' => $customPrompt]]]
+                    ]
+                ]);
+
+                $latency = round((microtime(true) - $startTime) * 1000);
+                $status = $response->status();
+
+                if ($response->successful()) {
+                    $resData = $response->json();
+                    $reply = $resData['candidates'][0]['content']['parts'][0]['text'] ?? 'Connected successfully.';
+                    $results[$m] = [
+                        'status' => 'success',
+                        'http_code' => 200,
+                        'latency_ms' => $latency,
+                        'reply' => trim($reply),
+                        'working' => true,
+                    ];
+                    $overallSuccess = true;
+                    if (!$recommendedModel) {
+                        $recommendedModel = $m;
+                    }
+                } else {
+                    $errData = $response->json();
+                    $msg = $errData['error']['message'] ?? $response->body();
+                    $results[$m] = [
+                        'status' => 'failed',
+                        'http_code' => $status,
+                        'latency_ms' => $latency,
+                        'error' => $msg,
+                        'working' => false,
+                    ];
+                }
+            } catch (\Exception $e) {
+                $results[$m] = [
+                    'status' => 'error',
+                    'http_code' => 500,
+                    'latency_ms' => 0,
+                    'error' => $e->getMessage(),
+                    'working' => false,
+                ];
+            }
+        }
+
+        // Generate advice based on results
+        $advice = null;
+        if (!$overallSuccess) {
+            $firstResult = reset($results);
+            $code = $firstResult['http_code'] ?? 500;
+            if ($code === 401 || $code === 403) {
+                $advice = "Authentication failed (HTTP {$code}). The key provided is invalid or lacks Generative Language API permissions. Please generate a new key at https://aistudio.google.com/app/apikey.";
+            } elseif ($code === 404) {
+                $advice = "The specified model was not found for this API key. Try testing other models or check available models in Google AI Studio.";
+            } elseif ($code === 429) {
+                $advice = "Rate limit or quota reached (HTTP 429). Please wait a moment or check your Google Cloud project quota limits.";
+            }
+        }
+
+        return response()->json([
+            'success' => $overallSuccess,
+            'format_warning' => $formatWarning,
+            'recommended_model' => $recommendedModel,
+            'results' => $results,
+            'advice' => $advice,
+            'tested_at' => now()->toDateTimeString()
+        ]);
+    }
+
+    public function saveGeminiKeyAndModel(Request $request)
+    {
+        $request->validate([
+            'gemini_api_key' => 'required|string',
+            'gemini_model' => 'nullable|string'
+        ]);
+
+        $key = trim($request->gemini_api_key);
+        $model = trim($request->gemini_model ?: 'gemini-2.0-flash');
+
+        SiteParameter::updateOrCreate(
+            ['id' => 'gemini_api_key'],
+            ['value' => $key, 'label' => 'Gemini API Key', 'category' => 'AI']
+        );
+
+        SiteParameter::updateOrCreate(
+            ['id' => 'gemini_model'],
+            ['value' => $model, 'label' => 'Active Gemini AI Model', 'category' => 'AI']
+        );
+
+        return response()->json([
+            'success' => true,
+            'message' => "Gemini API key and active model ({$model}) saved successfully!"
+        ]);
+    }
+
     public function aiGenerateBlog(Request $request)
     {
         $request->validate([
             'prompt' => 'required|string',
             'tone' => 'required|string',
         ]);
-
-        $apiKey = SiteParameter::where('id', 'gemini_api_key')->value('value');
-        if (empty($apiKey)) {
-            return response()->json(['error' => 'Gemini API Key is not set. Please save it in General Settings first.'], 400);
-        }
 
         $prompt = $request->input('prompt');
         $tone = $request->input('tone');
@@ -860,24 +1081,12 @@ JSON Schema:
 User prompt: {$prompt}";
 
         try {
-            $response = \Illuminate\Support\Facades\Http::withHeaders([
-                'Content-Type' => 'application/json',
-            ])->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={$apiKey}", [
-                'contents' => [
-                    ['parts' => [['text' => $systemPrompt]]]
-                ],
-                'generationConfig' => [
-                    'responseMimeType' => 'application/json',
-                ]
-            ]);
-
-            if ($response->failed()) {
-                return response()->json(['error' => 'Gemini API call failed: ' . $response->body()], 500);
+            $res = $this->executeGeminiPrompt($systemPrompt, ['responseMimeType' => 'application/json']);
+            if (!$res['success']) {
+                return response()->json(['error' => $res['error']], $res['code'] ?? 500);
             }
 
-            $resData = $response->json();
-            $text = $resData['candidates'][0]['content']['parts'][0]['text'] ?? '';
-            $text = trim($text);
+            $text = $res['text'];
             
             // Handle raw markdown wrapping if any
             if (str_starts_with($text, '```')) {
@@ -916,11 +1125,6 @@ User prompt: {$prompt}";
             'prompt' => 'required|string',
             'tone' => 'required|string',
         ]);
-
-        $apiKey = SiteParameter::where('id', 'gemini_api_key')->value('value');
-        if (empty($apiKey)) {
-            return response()->json(['error' => 'Gemini API Key is not set. Please save it in General Settings first.'], 400);
-        }
 
         $prompt = $request->input('prompt');
         $tone = $request->input('tone');
@@ -966,24 +1170,12 @@ JSON Schema:
 User prompt: {$prompt}";
 
         try {
-            $response = \Illuminate\Support\Facades\Http::withHeaders([
-                'Content-Type' => 'application/json',
-            ])->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={$apiKey}", [
-                'contents' => [
-                    ['parts' => [['text' => $systemPrompt]]]
-                ],
-                'generationConfig' => [
-                    'responseMimeType' => 'application/json',
-                ]
-            ]);
-
-            if ($response->failed()) {
-                return response()->json(['error' => 'Gemini API call failed: ' . $response->body()], 500);
+            $res = $this->executeGeminiPrompt($systemPrompt, ['responseMimeType' => 'application/json']);
+            if (!$res['success']) {
+                return response()->json(['error' => $res['error']], $res['code'] ?? 500);
             }
 
-            $resData = $response->json();
-            $text = $resData['candidates'][0]['content']['parts'][0]['text'] ?? '';
-            $text = trim($text);
+            $text = $res['text'];
             
             if (str_starts_with($text, '```')) {
                 $text = preg_replace('/^```(?:json)?/i', '', $text);
@@ -1005,6 +1197,7 @@ User prompt: {$prompt}";
             return response()->json(['error' => 'AI generation failed: ' . $e->getMessage()], 500);
         }
     }
+
 
     public function aiGenerateImage(Request $request)
     {
@@ -1737,24 +1930,12 @@ JSON Schema:
 {$schemaDesc}";
 
         try {
-            $response = \Illuminate\Support\Facades\Http::withHeaders([
-                'Content-Type' => 'application/json',
-            ])->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={$apiKey}", [
-                'contents' => [
-                    ['parts' => [['text' => $systemPrompt]]]
-                ],
-                'generationConfig' => [
-                    'responseMimeType' => 'application/json',
-                ]
-            ]);
-
-            if ($response->failed()) {
-                return response()->json(['error' => 'Gemini API call failed: ' . $response->body()], 500);
+            $res = $this->executeGeminiPrompt($systemPrompt, ['responseMimeType' => 'application/json']);
+            if (!$res['success']) {
+                return response()->json(['error' => $res['error']], $res['code'] ?? 500);
             }
 
-            $resData = $response->json();
-            $text = $resData['candidates'][0]['content']['parts'][0]['text'] ?? '';
-            $text = trim($text);
+            $text = $res['text'];
             
             if (str_starts_with($text, '```')) {
                 $text = preg_replace('/^```(?:json)?/i', '', $text);
@@ -1813,24 +1994,12 @@ JSON Schema:
 ]";
 
         try {
-            $response = \Illuminate\Support\Facades\Http::withHeaders([
-                'Content-Type' => 'application/json',
-            ])->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={$apiKey}", [
-                'contents' => [
-                    ['parts' => [['text' => $systemPrompt]]]
-                ],
-                'generationConfig' => [
-                    'responseMimeType' => 'application/json',
-                ]
-            ]);
-
-            if ($response->failed()) {
-                return response()->json(['error' => 'Gemini API call failed: ' . $response->body()], 500);
+            $res = $this->executeGeminiPrompt($systemPrompt, ['responseMimeType' => 'application/json']);
+            if (!$res['success']) {
+                return response()->json(['error' => $res['error']], $res['code'] ?? 500);
             }
 
-            $resData = $response->json();
-            $text = $resData['candidates'][0]['content']['parts'][0]['text'] ?? '';
-            $text = trim($text);
+            $text = $res['text'];
             
             if (str_starts_with($text, '```')) {
                 $text = preg_replace('/^```(?:json)?/i', '', $text);
@@ -1947,24 +2116,12 @@ JSON Schema:
 }";
 
         try {
-            $response = \Illuminate\Support\Facades\Http::withHeaders([
-                'Content-Type' => 'application/json',
-            ])->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={$apiKey}", [
-                'contents' => [
-                    ['parts' => [['text' => $systemPrompt]]]
-                ],
-                'generationConfig' => [
-                    'responseMimeType' => 'application/json',
-                ]
-            ]);
-
-            if ($response->failed()) {
-                return response()->json(['error' => 'Gemini API call failed: ' . $response->body()], 500);
+            $res = $this->executeGeminiPrompt($systemPrompt, ['responseMimeType' => 'application/json']);
+            if (!$res['success']) {
+                return response()->json(['error' => $res['error']], $res['code'] ?? 500);
             }
 
-            $resData = $response->json();
-            $text = $resData['candidates'][0]['content']['parts'][0]['text'] ?? '';
-            $text = trim($text);
+            $text = $res['text'];
             
             if (str_starts_with($text, '```')) {
                 $text = preg_replace('/^```(?:json)?/i', '', $text);
@@ -2046,20 +2203,12 @@ Strict Instructions:
 5. Output ONLY the drafted post text directly without markdown quotes, backticks, or introduction.";
 
         try {
-            $response = \Illuminate\Support\Facades\Http::withHeaders([
-                'Content-Type' => 'application/json',
-            ])->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={$apiKey}", [
-                'contents' => [
-                    ['parts' => [['text' => $prompt]]]
-                ]
-            ]);
-
-            if ($response->failed()) {
-                return response()->json(['error' => 'Gemini API call failed: ' . $response->body()], 500);
+            $res = $this->executeGeminiPrompt($prompt);
+            if (!$res['success']) {
+                return response()->json(['error' => $res['error']], $res['code'] ?? 500);
             }
 
-            $resData = $response->json();
-            $draft = $resData['candidates'][0]['content']['parts'][0]['text'] ?? '';
+            $draft = $res['text'];
             
             return response()->json([
                 'success' => true,
@@ -2206,22 +2355,12 @@ Page Details:
 Direct JSON-LD Script Output:";
 
         try {
-            $response = \Illuminate\Support\Facades\Http::withHeaders([
-                'Content-Type' => 'application/json',
-            ])->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={$apiKey}", [
-                'contents' => [
-                    ['parts' => [['text' => $systemPrompt]]]
-                ]
-            ]);
-
-            if ($response->failed()) {
-                return response()->json(['error' => 'Gemini API Error: ' . $response->body()], 500);
+            $res = $this->executeGeminiPrompt($systemPrompt);
+            if (!$res['success']) {
+                return response()->json(['error' => $res['error']], $res['code'] ?? 500);
             }
 
-            $resultText = $response->json('candidates.0.content.parts.0.text');
-            if (empty($resultText)) {
-                return response()->json(['error' => 'No content received from Gemini.'], 500);
-            }
+            $resultText = $res['text'];
 
             // Clean up any accidental markdown blocks returned by AI
             $cleanMarkup = trim($resultText);
@@ -2621,22 +2760,12 @@ Output strictly valid JSON with this exact schema (no markdown enclosing, no cod
 }";
 
         try {
-            $response = \Illuminate\Support\Facades\Http::withHeaders([
-                'Content-Type' => 'application/json',
-            ])->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={$apiKey}", [
-                'contents' => [
-                    ['parts' => [['text' => $systemPrompt]]]
-                ]
-            ]);
-
-            if ($response->failed()) {
-                return response()->json(['error' => 'Gemini API Error: ' . $response->body()], 500);
+            $res = $this->executeGeminiPrompt($systemPrompt, ['responseMimeType' => 'application/json']);
+            if (!$res['success']) {
+                return response()->json(['error' => $res['error']], $res['code'] ?? 500);
             }
 
-            $resultText = $response->json('candidates.0.content.parts.0.text');
-            if (empty($resultText)) {
-                return response()->json(['error' => 'No content received from Gemini.'], 500);
-            }
+            $resultText = $res['text'];
 
             // Clean up code fences if returned
             $cleanJson = trim($resultText);
