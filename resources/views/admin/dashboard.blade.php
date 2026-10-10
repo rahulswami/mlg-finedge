@@ -2938,28 +2938,28 @@
 
                 <!-- SEO Sub-Navigation Bar -->
                 <div style="display: flex; gap: 8px; overflow-x: auto; margin-bottom: 1.5rem; padding-bottom: 5px; border-bottom: 1px solid var(--admin-border);">
-                    <button type="button" class="btn-submit active" id="btn-seo-sub-pages" onclick="switchSeoSubTab('pages')" style="padding: 0.6rem 1.2rem; font-size: 0.85rem; width: auto; display: inline-flex; align-items: center; gap: 6px;">
+                    <button type="button" class="btn-submit seo-subtab-btn active" id="btn-seo-sub-pages" onclick="switchSeoSubTab('pages')" style="padding: 0.6rem 1.2rem; font-size: 0.85rem; width: auto; display: inline-flex; align-items: center; gap: 6px;">
                         <i data-lucide="file-text" style="width: 15px; height: 15px;"></i> Core Pages SEO
                     </button>
-                    <button type="button" class="btn-submit" id="btn-seo-sub-services" onclick="switchSeoSubTab('services')" style="padding: 0.6rem 1.2rem; font-size: 0.85rem; width: auto; background-color: var(--admin-input-bg); color: #fff; display: inline-flex; align-items: center; gap: 6px;">
+                    <button type="button" class="btn-submit seo-subtab-btn" id="btn-seo-sub-services" onclick="switchSeoSubTab('services')" style="padding: 0.6rem 1.2rem; font-size: 0.85rem; width: auto; background-color: var(--admin-input-bg); color: #fff; display: inline-flex; align-items: center; gap: 6px;">
                         <i data-lucide="layers" style="width: 15px; height: 15px;"></i> Services SEO ({{ count($services) }})
                     </button>
-                    <button type="button" class="btn-submit" id="btn-seo-sub-blogs" onclick="switchSeoSubTab('blogs')" style="padding: 0.6rem 1.2rem; font-size: 0.85rem; width: auto; background-color: var(--admin-input-bg); color: #fff; display: inline-flex; align-items: center; gap: 6px;">
+                    <button type="button" class="btn-submit seo-subtab-btn" id="btn-seo-sub-blogs" onclick="switchSeoSubTab('blogs')" style="padding: 0.6rem 1.2rem; font-size: 0.85rem; width: auto; background-color: var(--admin-input-bg); color: #fff; display: inline-flex; align-items: center; gap: 6px;">
                         <i data-lucide="book-open" style="width: 15px; height: 15px;"></i> Blog Posts SEO ({{ count($blogs) }})
                     </button>
-                    <button type="button" class="btn-submit" id="btn-seo-sub-landing" onclick="switchSeoSubTab('landing')" style="padding: 0.6rem 1.2rem; font-size: 0.85rem; width: auto; background-color: var(--admin-input-bg); color: #fff; display: inline-flex; align-items: center; gap: 6px;">
+                    <button type="button" class="btn-submit seo-subtab-btn" id="btn-seo-sub-landing" onclick="switchSeoSubTab('landing')" style="padding: 0.6rem 1.2rem; font-size: 0.85rem; width: auto; background-color: var(--admin-input-bg); color: #fff; display: inline-flex; align-items: center; gap: 6px;">
                         <i data-lucide="layout" style="width: 15px; height: 15px;"></i> Landing Pages SEO ({{ count($landingPages) }})
                     </button>
-                    <button type="button" class="btn-submit" id="btn-seo-sub-alts" onclick="switchSeoSubTab('alts')" style="padding: 0.6rem 1.2rem; font-size: 0.85rem; width: auto; background-color: var(--admin-input-bg); color: #fff; display: inline-flex; align-items: center; gap: 6px;">
+                    <button type="button" class="btn-submit seo-subtab-btn" id="btn-seo-sub-alts" onclick="switchSeoSubTab('alts')" style="padding: 0.6rem 1.2rem; font-size: 0.85rem; width: auto; background-color: var(--admin-input-bg); color: #fff; display: inline-flex; align-items: center; gap: 6px;">
                         <i data-lucide="image" style="width: 15px; height: 15px;"></i> Image Alt Tags Auditor
                     </button>
-                    <button type="button" class="btn-submit" id="btn-seo-sub-global" onclick="switchSeoSubTab('global')" style="padding: 0.6rem 1.2rem; font-size: 0.85rem; width: auto; background-color: var(--admin-input-bg); color: #fff; display: inline-flex; align-items: center; gap: 6px;">
+                    <button type="button" class="btn-submit seo-subtab-btn" id="btn-seo-sub-global" onclick="switchSeoSubTab('global')" style="padding: 0.6rem 1.2rem; font-size: 0.85rem; width: auto; background-color: var(--admin-input-bg); color: #fff; display: inline-flex; align-items: center; gap: 6px;">
                         <i data-lucide="globe" style="width: 15px; height: 15px;"></i> Global & Social Defaults
                     </button>
-                    <button type="button" class="btn-submit" id="btn-seo-sub-blueprints" onclick="switchSeoSubTab('blueprints')" style="padding: 0.6rem 1.2rem; font-size: 0.85rem; width: auto; background-color: var(--admin-input-bg); color: #fff; display: inline-flex; align-items: center; gap: 6px;">
+                    <button type="button" class="btn-submit seo-subtab-btn" id="btn-seo-sub-blueprints" onclick="switchSeoSubTab('blueprints')" style="padding: 0.6rem 1.2rem; font-size: 0.85rem; width: auto; background-color: var(--admin-input-bg); color: #fff; display: inline-flex; align-items: center; gap: 6px;">
                         <i data-lucide="trending-up" style="width: 15px; height: 15px;"></i> AI Blueprints & Backlinks
                     </button>
-                    <button type="button" class="btn-submit" id="btn-seo-sub-sitemap" onclick="switchSeoSubTab('sitemap')" style="padding: 0.6rem 1.2rem; font-size: 0.85rem; width: auto; background-color: var(--admin-input-bg); color: #fff; display: inline-flex; align-items: center; gap: 6px;">
+                    <button type="button" class="btn-submit seo-subtab-btn" id="btn-seo-sub-sitemap" onclick="switchSeoSubTab('sitemap')" style="padding: 0.6rem 1.2rem; font-size: 0.85rem; width: auto; background-color: var(--admin-input-bg); color: #fff; display: inline-flex; align-items: center; gap: 6px;">
                         <i data-lucide="map" style="width: 15px; height: 15px;"></i> XML Sitemap & Indexing
                     </button>
                 </div>
@@ -4596,21 +4596,29 @@
         function switchSeoSubTab(subTabId) {
             document.querySelectorAll('.seo-subtab-btn').forEach(btn => {
                 btn.classList.remove('active');
+                btn.style.backgroundColor = 'var(--admin-input-bg)';
+                btn.style.color = '#fff';
             });
             document.querySelectorAll('.seo-subpanel').forEach(panel => {
                 panel.style.display = 'none';
             });
 
-            const activeBtn = document.getElementById('seo-subtab-btn-' + subTabId);
+            const activeBtn = document.getElementById('btn-seo-sub-' + subTabId);
             const activePanel = document.getElementById('seo-subpanel-' + subTabId);
 
-            if (activeBtn) activeBtn.classList.add('active');
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+                activeBtn.style.backgroundColor = '';
+                activeBtn.style.color = '';
+            }
             if (activePanel) {
                 activePanel.style.display = 'block';
             }
 
             localStorage.setItem('active_seo_subtab', subTabId);
-            setTimeout(() => lucide.createIcons(), 50);
+            if (window.lucide) {
+                setTimeout(() => lucide.createIcons(), 50);
+            }
         }
 
         function restoreSeoSubTab() {
@@ -4620,59 +4628,63 @@
 
         // Select which Core Page to Edit in Subpanel 1
         function selectPageSeoEditor(pageKey) {
-            document.querySelectorAll('.page-seo-item').forEach(item => {
-                item.classList.remove('active');
+            document.querySelectorAll('.page-selector-btn').forEach(btn => {
+                btn.classList.remove('active');
+                btn.style.backgroundColor = 'var(--admin-input-bg)';
+                btn.style.color = '#fff';
             });
-            document.querySelectorAll('.page-seo-editor-card').forEach(card => {
-                card.style.display = 'none';
+            document.querySelectorAll('.page-seo-form-container').forEach(box => {
+                box.style.display = 'none';
             });
 
-            const targetItem = document.querySelector(`.page-seo-item[data-page-key="${pageKey}"]`);
-            const targetCard = document.getElementById(`page-seo-card-${pageKey}`);
+            const targetBtn = document.getElementById('btn-page-sel-' + pageKey);
+            const targetBox = document.getElementById('page-seo-box-' + pageKey);
 
-            if (targetItem) targetItem.classList.add('active');
-            if (targetCard) targetCard.style.display = 'block';
+            if (targetBtn) {
+                targetBtn.classList.add('active');
+                targetBtn.style.backgroundColor = '';
+                targetBtn.style.color = '';
+            }
+            if (targetBox) {
+                targetBox.style.display = 'block';
+            }
 
             updateSerpPreview(pageKey);
+            if (window.lucide) {
+                setTimeout(() => lucide.createIcons(), 50);
+            }
         }
 
         // Live Google SERP Previewer
         function updateSerpPreview(pageKey) {
-            const titleInput = document.getElementById(`seo_title_${pageKey}`);
-            const descInput = document.getElementById(`seo_desc_${pageKey}`);
+            const titleInput = document.getElementById(`meta_title_${pageKey}`);
+            const descInput = document.getElementById(`meta_desc_${pageKey}`);
             
-            const previewTitle = document.getElementById(`serp_preview_title_${pageKey}`);
-            const previewDesc = document.getElementById(`serp_preview_desc_${pageKey}`);
+            const previewTitle = document.getElementById(`serp_title_${pageKey}`);
+            const previewDesc = document.getElementById(`serp_desc_${pageKey}`);
             
-            const titleCount = document.getElementById(`title_count_${pageKey}`);
-            const descCount = document.getElementById(`desc_count_${pageKey}`);
-            
-            const titleProgress = document.getElementById(`title_progress_${pageKey}`);
-            const descProgress = document.getElementById(`desc_progress_${pageKey}`);
+            const titleCount = document.getElementById(`cnt_title_${pageKey}`);
+            const descCount = document.getElementById(`cnt_desc_${pageKey}`);
 
-            if (titleInput && previewTitle) {
-                const titleVal = titleInput.value.trim() || previewTitle.getAttribute('data-default') || 'Page Title';
-                previewTitle.textContent = titleVal;
-                
+            if (titleInput) {
                 const len = titleInput.value.length;
-                if (titleCount) titleCount.textContent = `${len} / 60 chars`;
-                if (titleProgress) {
-                    const pct = Math.min(100, Math.round((len / 60) * 100));
-                    titleProgress.style.width = `${pct}%`;
-                    titleProgress.style.backgroundColor = len > 60 ? '#ef4444' : (len >= 45 ? '#5ccbb3' : '#e85c24');
+                if (titleCount) {
+                    titleCount.textContent = `${len} / 60 chars`;
+                    titleCount.style.color = len > 60 ? '#ef4444' : (len >= 40 ? 'var(--mint-green)' : 'var(--accent-orange)');
+                }
+                if (previewTitle) {
+                    previewTitle.textContent = titleInput.value.trim() || 'Page Title | MLG Finedge';
                 }
             }
 
-            if (descInput && previewDesc) {
-                const descVal = descInput.value.trim() || previewDesc.getAttribute('data-default') || 'Page meta description snippet.';
-                previewDesc.textContent = descVal;
-                
+            if (descInput) {
                 const len = descInput.value.length;
-                if (descCount) descCount.textContent = `${len} / 160 chars`;
-                if (descProgress) {
-                    const pct = Math.min(100, Math.round((len / 160) * 100));
-                    descProgress.style.width = `${pct}%`;
-                    descProgress.style.backgroundColor = len > 160 ? '#ef4444' : (len >= 130 ? '#5ccbb3' : '#e85c24');
+                if (descCount) {
+                    descCount.textContent = `${len} / 160 chars`;
+                    descCount.style.color = len > 160 ? '#ef4444' : (len >= 100 ? 'var(--mint-green)' : 'var(--accent-orange)');
+                }
+                if (previewDesc) {
+                    previewDesc.textContent = descInput.value.trim() || 'Page meta description snippet preview...';
                 }
             }
         }
@@ -4840,12 +4852,12 @@
 
                     if (type === 'page' && pageKey) {
                         // Populate page form fields
-                        const tIn = document.getElementById(`seo_title_${pageKey}`);
-                        const dIn = document.getElementById(`seo_desc_${pageKey}`);
-                        const kIn = document.getElementById(`seo_keywords_${pageKey}`);
-                        const hIn = document.getElementById(`seo_h1_${pageKey}`);
-                        const aIn = document.getElementById(`seo_alt_${pageKey}`);
-                        const sIn = document.getElementById(`seo_schema_${pageKey}`);
+                        const tIn = document.getElementById(`meta_title_${pageKey}`);
+                        const dIn = document.getElementById(`meta_desc_${pageKey}`);
+                        const kIn = document.getElementById(`meta_keywords_${pageKey}`);
+                        const hIn = document.getElementById(`h1_tag_${pageKey}`);
+                        const aIn = document.getElementById(`hero_alt_${pageKey}`);
+                        const sIn = document.getElementById(`schema_${pageKey}`);
 
                         if (tIn && d.meta_title) tIn.value = d.meta_title;
                         if (dIn && d.meta_description) dIn.value = d.meta_description;
