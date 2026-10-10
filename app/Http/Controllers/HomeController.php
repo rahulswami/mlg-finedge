@@ -11,20 +11,23 @@ class HomeController extends Controller
 {
     public function index()
     {
+        $pageSeo = \App\Models\PageSeo::getForPage('home');
         $slides = HomeSlide::orderBy('sort_order')->orderBy('id')->get();
         $testimonials = Testimonial::orderBy('sort_order')->orderBy('id')->get();
-        return view('index', compact('slides', 'testimonials'));
+        return view('index', compact('slides', 'testimonials', 'pageSeo'));
     }
 
     public function about()
     {
-        return view('about');
+        $pageSeo = \App\Models\PageSeo::getForPage('about');
+        return view('about', compact('pageSeo'));
     }
 
     public function services()
     {
+        $pageSeo = \App\Models\PageSeo::getForPage('services');
         $services = \App\Models\Service::where('is_active', true)->orderBy('sort_order')->orderBy('id')->get();
-        return view('services', compact('services'));
+        return view('services', compact('services', 'pageSeo'));
     }
 
     public function servicesShow($slug)
@@ -38,26 +41,30 @@ class HomeController extends Controller
 
     public function compare()
     {
+        $pageSeo = \App\Models\PageSeo::getForPage('compare');
         $banks = \App\Models\ComparisonBank::orderBy('sort_order')->orderBy('id')->get();
-        return view('compare-loans', compact('banks'));
+        return view('compare-loans', compact('banks', 'pageSeo'));
     }
 
     public function testimonials()
     {
+        $pageSeo = \App\Models\PageSeo::getForPage('testimonials');
         $testimonials = Testimonial::orderBy('sort_order')->orderBy('id')->get();
-        return view('testimonials', compact('testimonials'));
+        return view('testimonials', compact('testimonials', 'pageSeo'));
     }
 
     public function faq()
     {
+        $pageSeo = \App\Models\PageSeo::getForPage('faq');
         $services = \App\Models\Service::where('is_active', true)->orderBy('sort_order')->orderBy('id')->get();
-        return view('faq', compact('services'));
+        return view('faq', compact('services', 'pageSeo'));
     }
 
     public function blog()
     {
+        $pageSeo = \App\Models\PageSeo::getForPage('blog');
         $blogs = \App\Models\Blog::orderBy('published_at', 'desc')->orderBy('id', 'desc')->get();
-        return view('blog.index', compact('blogs'));
+        return view('blog.index', compact('blogs', 'pageSeo'));
     }
 
     public function blogShow($slug)
@@ -74,7 +81,14 @@ class HomeController extends Controller
 
     public function contact()
     {
-        return view('contact');
+        $pageSeo = \App\Models\PageSeo::getForPage('contact');
+        return view('contact', compact('pageSeo'));
+    }
+
+    public function thankYou()
+    {
+        $pageSeo = \App\Models\PageSeo::getForPage('thank_you');
+        return view('thank-you', compact('pageSeo'));
     }
 
     public function contactSubmit(Request $request)
@@ -260,10 +274,5 @@ class HomeController extends Controller
             return view('landing-page', compact('landingPage'));
         }
         abort(404);
-    }
-
-    public function thankYou()
-    {
-        return view('thank-you');
     }
 }

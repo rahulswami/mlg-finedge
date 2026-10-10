@@ -1,7 +1,19 @@
 @extends('layouts.app')
 
-@section('title', ($service->seo_title ?? ($service->service_name . ' - MLG Finedge')))
-@section('meta_description', ($service->seo_meta_description ?? $service->summary))
+@section('title', (!empty($service->meta_title) ? $service->meta_title : ($service->service_name . ' | ' . ($site['site_name'] ?? 'MLG Finedge'))))
+@section('meta_description', (!empty($service->meta_description) ? $service->meta_description : $service->summary))
+@if(!empty($service->meta_keywords))
+@section('meta_keywords', $service->meta_keywords)
+@endif
+@if(!empty($service->canonical_url))
+@section('canonical', $service->canonical_url)
+@endif
+@if(!empty($service->meta_robots))
+@section('meta_robots', $service->meta_robots)
+@endif
+@if(!empty($service->og_image))
+@section('og_image', seo_image($service->og_image))
+@endif
 
 @section('schema')
     @if(!empty($service->schema_markup))
@@ -64,7 +76,7 @@
     <section class="details-hero">
         <div class="container">
             <span class="color-mint font-semibold" style="text-transform: uppercase; letter-spacing: 1.5px; font-size: 0.9rem;">{{ $service->hero_category }}</span>
-            <h1>{{ $service->hero_title }}</h1>
+            <h1>{{ $service->h1_tag ?: $service->hero_title }}</h1>
             <p style="color: var(--text-light-muted); max-width: 600px; margin-top: 10px;">{{ $service->hero_subtitle }}</p>
             <div class="details-hero-meta" style="margin-top: 20px;">
                 @if($service->rate_value)

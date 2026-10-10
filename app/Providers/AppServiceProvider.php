@@ -55,5 +55,16 @@ class AppServiceProvider extends ServiceProvider
         } else {
             \Illuminate\Support\Facades\View::share('globalServices', collect());
         }
+
+        if (\Illuminate\Support\Facades\Schema::hasTable('page_seos')) {
+            try {
+                $pageSeos = \App\Models\PageSeo::all()->keyBy('page_key');
+                \Illuminate\Support\Facades\View::share('pageSeos', $pageSeos);
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\View::share('pageSeos', collect());
+            }
+        } else {
+            \Illuminate\Support\Facades\View::share('pageSeos', collect());
+        }
     }
 }

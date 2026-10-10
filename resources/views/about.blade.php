@@ -1,9 +1,24 @@
 @extends('layouts.app')
 
-@section('title', 'About Us | Loan Advisory Specialists in Jaipur | ' . ($site['site_name'] ?? 'MLG Finedge'))
-@section('meta_description', 'Read about MLG Finedge, a premium loan advisory and consultation firm based in Gopalpura Jaipur. Learn about our vision, mission, and banking partnerships.')
+@section('title', (!empty($pageSeo->meta_title) ? $pageSeo->meta_title : ('About Us | Loan Advisory Specialists in Jaipur | ' . ($site['site_name'] ?? 'MLG Finedge'))))
+@section('meta_description', (!empty($pageSeo->meta_description) ? $pageSeo->meta_description : 'Read about MLG Finedge, a premium loan advisory and consultation firm based in Gopalpura Jaipur. Learn about our vision, mission, and banking partnerships.'))
+@if(!empty($pageSeo->meta_keywords))
+@section('meta_keywords', $pageSeo->meta_keywords)
+@endif
+@if(!empty($pageSeo->canonical_url))
+@section('canonical', $pageSeo->canonical_url)
+@endif
+@if(!empty($pageSeo->meta_robots))
+@section('meta_robots', $pageSeo->meta_robots)
+@endif
+@if(!empty($pageSeo->og_image))
+@section('og_image', seo_image($pageSeo->og_image))
+@endif
 
 @section('schema')
+@if(!empty($pageSeo->schema_markup))
+{!! $pageSeo->schema_markup !!}
+@else
 <script type="application/ld+json">
 {
   "{{ '@' }}context": "https://schema.org",
@@ -12,8 +27,8 @@
       "{{ '@type' }}": "AboutPage",
       "{{ '@id' }}": "{{ route('about') }}/#webpage",
       "url": "{{ route('about') }}",
-      "name": "About Us | Loan Advisory Specialists in Jaipur | {{ $site['site_name'] ?? 'MLG Finedge' }}",
-      "description": "Read about MLG Finedge, a premium loan advisory and consultation firm based in Gopalpura Jaipur. Learn about our vision, mission, and banking partnerships.",
+      "name": "{{ $pageSeo->meta_title ?? ('About Us | Loan Advisory Specialists in Jaipur | ' . ($site['site_name'] ?? 'MLG Finedge')) }}",
+      "description": "{{ $pageSeo->meta_description ?? 'Read about MLG Finedge, a premium loan advisory and consultation firm based in Gopalpura Jaipur.' }}",
       "isPartOf": {
         "{{ '@type' }}": "WebSite",
         "{{ '@id' }}": "{{ route('home') }}/#website"
@@ -28,6 +43,7 @@
   ]
 }
 </script>
+@endif
 @endsection
 
 @section('content')
@@ -36,7 +52,7 @@
     <section class="details-hero">
         <div class="container text-center">
             <span class="color-mint font-semibold" style="text-transform: uppercase; letter-spacing: 1.5px; font-size: 0.9rem;">{{ $pageContents['about']['hero']['pre_title'] ?? 'WHO WE ARE' }}</span>
-            <h1 style="margin-top: 10px;">{{ $pageContents['about']['hero']['title'] ?? ('About ' . ($site['site_name'] ?? 'MLG Finedge')) }}</h1>
+            <h1 style="margin-top: 10px;">{{ $pageSeo->h1_tag ?? ($pageContents['about']['hero']['title'] ?? ('About ' . ($site['site_name'] ?? 'MLG Finedge'))) }}</h1>
             <p style="color: var(--text-light-muted); max-width: 600px; margin: 0 auto;">{{ $pageContents['about']['hero']['subtitle'] ?? 'Jaipur\'s leading credit advisory firm assisting individuals and commercial ventures in obtaining tailored financial matches.' }}</p>
         </div>
     </section>

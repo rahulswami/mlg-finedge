@@ -99,7 +99,10 @@ class AdminController extends Controller
         // Fetch all landing pages
         $landingPages = \App\Models\LandingPage::orderBy('id', 'desc')->get();
         
-        return view('admin.dashboard', compact('parameters', 'slides', 'testimonials', 'blogs', 'mediaFiles', 'pageContents', 'services', 'banks', 'leads', 'landingPages'));
+        // Fetch all PageSeo records
+        $pageSeos = \App\Models\PageSeo::all()->keyBy('page_key');
+        
+        return view('admin.dashboard', compact('parameters', 'slides', 'testimonials', 'blogs', 'mediaFiles', 'pageContents', 'services', 'banks', 'leads', 'landingPages', 'pageSeos'));
     }
 
     public function updateParameters(Request $request)
@@ -2109,5 +2112,565 @@ Strict Instructions:
             return response()->json(['error' => 'Publishing failed: ' . $e->getMessage()], 500);
         }
     }
+
+    public function aiGenerateSchema(Request $request)
+    {
+        $request->validate([
+            'type' => 'required|in:home,service,blog,landing',
+            'id' => 'nullable|integer',
+            'schema_types' => 'required|array',
+            'schema_types.*' => 'string'
+        ]);
+
+        $apiKey = SiteParameter::where('id', 'gemini_api_key')->value('value');
+        if (empty($apiKey)) {
+            return response()->json(['error' => 'Gemini API Key is not set. Please save it in General Settings first.'], 400);
+        }
+
+        $type = $request->type;
+        $id = $request->id;
+        $schemaTypes = $request->schema_types;
+
+        // Gather page context
+        $pageTitle = '';
+        $pageUrl = '';
+        $pageDescription = '';
+        $extraContext = '';
+
+        $baseUrl = 'https://www.mlgfinedge.com';
+
+        if ($type === 'home') {
+            $pageTitle = 'Home Page | MLG Finedge';
+            $pageUrl = $baseUrl . '/';
+            $pageDescription = 'MLG Finedge is Jaipur\'s premier credit advisory firm helping clients secure home loans, personal loans, business loans, and LAP.';
+            
+            // Fetch branding parameters
+            $siteParams = SiteParameter::all()->pluck('value', 'id')->toArray();
+            $extraContext = "Company Name: " . ($siteParams['site_name'] ?? 'MLG Finedge') . "\n" .
+                            "Phone: " . ($siteParams['phone'] ?? '+919672777749') . "\n" .
+                            "Email: " . ($siteParams['email'] ?? 'info@mlgfinedge.com') . "\n" .
+                            "Address: " . ($siteParams['address'] ?? 'Jaipur, Rajasthan');
+        } elseif ($type === 'service') {
+            $service = \App\Models\Service::find($id);
+            if (!$service) {
+                return response()->json(['error' => 'Service not found'], 404);
+            }
+            $pageTitle = $service->service_name;
+            $pageUrl = $baseUrl . '/services/' . $service->slug;
+            $pageDescription = $service->summary ?: '';
+            $extraContext = "Interest Rate: " . ($service->rate_value ?? 'Competitive') . "\n" .
+                            "Max Loan Amount: " . ($service->max_loan ?? 'High Limit') . "\n" .
+                            "Tenure: " . ($service->tenure ?? 'Flexible') . "\n" .
+                            "Intro: " . ($service->intro_content ?? '') . "\n" .
+                            "Eligibility: " . ($service->eligibility_criteria ?? '') . "\n" .
+                            "Documents Required: " . ($service->documents_required ?? '');
+        } elseif ($type === 'blog') {
+            $blog = \App\Models\Blog::find($id);
+            if (!$blog) {
+                return response()->json(['error' => 'Blog not found'], 404);
+            }
+            $pageTitle = $blog->title;
+            $pageUrl = $baseUrl . '/blog/' . $blog->slug;
+            $pageDescription = $blog->summary ?: '';
+            $extraContext = "Category: " . $blog->category . "\n" .
+                            "Published Date: " . ($blog->published_at ? $blog->published_at->toDateString() : '') . "\n" .
+                            "Content: " . strip_tags($blog->content);
+        } elseif ($type === 'landing') {
+            $lp = \App\Models\LandingPage::find($id);
+            if (!$lp) {
+                return response()->json(['error' => 'Landing page not found'], 404);
+            }
+            $pageTitle = $lp->title;
+            $pageUrl = $baseUrl . '/l/' . $lp->slug;
+            $pageDescription = $lp->meta_description ?: '';
+            $extraContext = "Layout: " . $lp->layout_type;
+        }
+
+        $schemaTypesList = implode(', ', $schemaTypes);
+
+        $systemPrompt = "You are a professional SEO expert and web structured data specialist.
+Generate a single, comprehensive and perfectly valid JSON-LD script for the page details provided below.
+The user wants to apply and combine the following schema types in a single graph or block: {$schemaTypesList}.
+
+Provide EXACTLY the JSON-LD script starting with '<script type=\"application/ld+json\">' and ending with '</script>'.
+Generate no other conversational text, explanations, or markdown code blocks (do not wrap with ```html or ```json). Return ONLY the direct raw HTML string containing the JSON-LD script block.
+Ensure all URLs are fully qualified HTTPS URLs, all JSON keys are properly quoted, special characters are properly escaped, and structural fields ('@context', '@type', etc.) are correct.
+
+Page Details:
+- Title: {$pageTitle}
+- URL: {$pageUrl}
+- Description: {$pageDescription}
+- Additional Context:
+{$extraContext}
+
+Direct JSON-LD Script Output:";
+
+        try {
+            $response = \Illuminate\Support\Facades\Http::withHeaders([
+                'Content-Type' => 'application/json',
+            ])->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={$apiKey}", [
+                'contents' => [
+                    ['parts' => [['text' => $systemPrompt]]]
+                ]
+            ]);
+
+            if ($response->failed()) {
+                return response()->json(['error' => 'Gemini API Error: ' . $response->body()], 500);
+            }
+
+            $resultText = $response->json('candidates.0.content.parts.0.text');
+            if (empty($resultText)) {
+                return response()->json(['error' => 'No content received from Gemini.'], 500);
+            }
+
+            // Clean up any accidental markdown blocks returned by AI
+            $cleanMarkup = trim($resultText);
+            if (preg_match('/<script[\s\S]*?>[\s\S]*?<\/script>/i', $cleanMarkup, $matches)) {
+                $cleanMarkup = $matches[0];
+            } else {
+                // If it outputted raw JSON without script tag, wrap it
+                if (str_starts_with($cleanMarkup, '```json')) {
+                    $cleanMarkup = trim(str_replace(['```json', '```'], '', $cleanMarkup));
+                }
+                if (str_starts_with($cleanMarkup, '```html')) {
+                    $cleanMarkup = trim(str_replace(['```html', '```'], '', $cleanMarkup));
+                }
+                if (str_starts_with($cleanMarkup, '{')) {
+                    $cleanMarkup = '<script type="application/ld+json">' . "\n" . $cleanMarkup . "\n" . '</script>';
+                }
+            }
+
+            return response()->json(['success' => true, 'schema' => $cleanMarkup]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Schema generation failed: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function saveSchemaMarkup(Request $request)
+    {
+        $request->validate([
+            'type' => 'required|in:home,service,blog,landing',
+            'id' => 'nullable|integer',
+            'schema_markup' => 'nullable|string'
+        ]);
+
+        $type = $request->type;
+        $id = $request->id;
+        $markup = $request->schema_markup;
+
+        try {
+            if ($type === 'home') {
+                SiteParameter::updateOrCreate(
+                    ['id' => 'home_schema_markup'],
+                    [
+                        'value' => $markup,
+                        'label' => 'Home Page Custom Schema Markup',
+                        'category' => 'SEO'
+                    ]
+                );
+            } elseif ($type === 'service') {
+                $service = \App\Models\Service::findOrFail($id);
+                $service->update(['schema_markup' => $markup]);
+            } elseif ($type === 'blog') {
+                $blog = \App\Models\Blog::findOrFail($id);
+                $blog->update(['schema_markup' => $markup]);
+            } elseif ($type === 'landing') {
+                $lp = \App\Models\LandingPage::findOrFail($id);
+                $lp->update(['schema_markup' => $markup]);
+            }
+
+            return response()->json(['success' => true, 'message' => 'Schema markup successfully saved and applied!']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to save schema: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function updateGlobalSeo(Request $request)
+    {
+        $fields = [
+            'seo_title_suffix',
+            'seo_default_description',
+            'seo_default_keywords',
+            'seo_default_robots',
+            'seo_twitter_handle',
+            'seo_google_verification',
+            'seo_bing_verification',
+            'seo_global_schema',
+            'seo_logo_alt',
+            'seo_about_img_alt',
+        ];
+
+        foreach ($fields as $field) {
+            if ($request->has($field)) {
+                SiteParameter::updateOrCreate(
+                    ['id' => $field],
+                    [
+                        'value' => $request->input($field),
+                        'label' => ucwords(str_replace('_', ' ', $field)),
+                        'category' => 'SEO'
+                    ]
+                );
+            }
+        }
+
+        if ($request->hasFile('seo_default_og_image')) {
+            $path = $request->file('seo_default_og_image')->store('seo', 'public');
+            SiteParameter::updateOrCreate(
+                ['id' => 'seo_default_og_image'],
+                [
+                    'value' => $path,
+                    'label' => 'Default OG Social Sharing Image',
+                    'category' => 'SEO'
+                ]
+            );
+        } elseif ($request->filled('seo_default_og_image_url')) {
+            SiteParameter::updateOrCreate(
+                ['id' => 'seo_default_og_image'],
+                [
+                    'value' => $request->input('seo_default_og_image_url'),
+                    'label' => 'Default OG Social Sharing Image',
+                    'category' => 'SEO'
+                ]
+            );
+        }
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json(['success' => true, 'message' => 'Global SEO settings successfully updated!']);
+        }
+
+        return redirect()->route('admin.dashboard')->with('success', 'Global SEO settings updated successfully!')->with('active_tab', 'seo');
+    }
+
+    public function updatePageSeo(Request $request, $page_key = null)
+    {
+        $targetKey = $page_key ?: $request->input('page_key');
+        if (empty($targetKey)) {
+            return redirect()->back()->with('error', 'Page key is required.');
+        }
+
+        $data = $request->only([
+            'page_name',
+            'meta_title',
+            'meta_description',
+            'meta_keywords',
+            'canonical_url',
+            'meta_robots',
+            'og_title',
+            'og_description',
+            'og_type',
+            'twitter_card',
+            'twitter_title',
+            'twitter_description',
+            'h1_tag',
+            'image_alt',
+            'hero_image_alt',
+            'schema_markup',
+        ]);
+
+        if (empty($data['page_name'])) {
+            $existingName = \App\Models\PageSeo::where('page_key', $targetKey)->value('page_name');
+            $data['page_name'] = $existingName ?: ucwords(str_replace('_', ' ', $targetKey));
+        }
+
+        if (isset($data['image_alt']) && empty($data['hero_image_alt'])) {
+            $data['hero_image_alt'] = $data['image_alt'];
+        }
+        unset($data['image_alt']);
+
+        if ($request->hasFile('og_image_file')) {
+            $data['og_image'] = $request->file('og_image_file')->store('seo', 'public');
+        } elseif ($request->filled('og_image')) {
+            $data['og_image'] = $request->input('og_image');
+        }
+
+        if ($request->hasFile('twitter_image_file')) {
+            $data['twitter_image'] = $request->file('twitter_image_file')->store('seo', 'public');
+        } elseif ($request->filled('twitter_image')) {
+            $data['twitter_image'] = $request->input('twitter_image');
+        }
+
+        $pageSeo = \App\Models\PageSeo::updateOrCreate(
+            ['page_key' => $targetKey],
+            $data
+        );
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json(['success' => true, 'message' => "SEO for '{$pageSeo->page_name}' updated successfully!", 'seo' => $pageSeo]);
+        }
+
+        return redirect()->route('admin.dashboard')->with('success', "SEO for '{$pageSeo->page_name}' updated successfully!")->with('active_tab', 'seo');
+    }
+
+    public function updateServiceSeo(Request $request, $id = null)
+    {
+        $serviceId = $id ?: $request->input('id');
+        $service = \App\Models\Service::findOrFail($serviceId);
+
+        $data = $request->only([
+            'meta_title',
+            'meta_description',
+            'meta_keywords',
+            'canonical_url',
+            'meta_robots',
+            'h1_tag',
+            'image_alt',
+            'schema_markup',
+        ]);
+
+        if ($request->hasFile('og_image_file')) {
+            $data['og_image'] = $request->file('og_image_file')->store('seo', 'public');
+        } elseif ($request->filled('og_image')) {
+            $data['og_image'] = $request->input('og_image');
+        }
+
+        $service->update($data);
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json(['success' => true, 'message' => "SEO for service '{$service->service_name}' updated successfully!"]);
+        }
+
+        return redirect()->route('admin.dashboard')->with('success', "SEO for service '{$service->service_name}' updated successfully!")->with('active_tab', 'seo');
+    }
+
+    public function updateBlogSeo(Request $request, $id = null)
+    {
+        $blogId = $id ?: $request->input('id');
+        $blog = \App\Models\Blog::findOrFail($blogId);
+
+        $data = $request->only([
+            'meta_title',
+            'meta_description',
+            'meta_keywords',
+            'canonical_url',
+            'meta_robots',
+            'h1_tag',
+            'image_alt',
+            'schema_markup',
+        ]);
+
+        if ($request->hasFile('og_image_file')) {
+            $data['og_image'] = $request->file('og_image_file')->store('seo', 'public');
+        } elseif ($request->filled('og_image')) {
+            $data['og_image'] = $request->input('og_image');
+        }
+
+        $blog->update($data);
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json(['success' => true, 'message' => "SEO for blog '{$blog->title}' updated successfully!"]);
+        }
+
+        return redirect()->route('admin.dashboard')->with('success', "SEO for blog '{$blog->title}' updated successfully!")->with('active_tab', 'seo');
+    }
+
+    public function updateLandingSeo(Request $request, $id = null)
+    {
+        $lpId = $id ?: $request->input('id');
+        $lp = \App\Models\LandingPage::findOrFail($lpId);
+
+        $data = $request->only([
+            'meta_title',
+            'meta_description',
+            'meta_keywords',
+            'canonical_url',
+            'meta_robots',
+            'h1_tag',
+            'image_alt',
+            'schema_markup',
+        ]);
+
+        if ($request->hasFile('og_image_file')) {
+            $data['og_image'] = $request->file('og_image_file')->store('seo', 'public');
+        } elseif ($request->filled('og_image')) {
+            $data['og_image'] = $request->input('og_image');
+        }
+
+        $lp->update($data);
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json(['success' => true, 'message' => "SEO for landing page '{$lp->title}' updated successfully!"]);
+        }
+
+        return redirect()->route('admin.dashboard')->with('success', "SEO for landing page '{$lp->title}' updated successfully!")->with('active_tab', 'seo');
+    }
+
+    public function updateImageAlts(Request $request)
+    {
+        // Update Slides Alt
+        if ($request->has('slides') && is_array($request->slides)) {
+            foreach ($request->slides as $slideId => $alt) {
+                \App\Models\HomeSlide::where('id', $slideId)->update(['alt_text' => $alt]);
+            }
+        }
+
+        // Update Services Alt
+        if ($request->has('services') && is_array($request->services)) {
+            foreach ($request->services as $serviceId => $alt) {
+                \App\Models\Service::where('id', $serviceId)->update(['image_alt' => $alt]);
+            }
+        }
+
+        // Update Blogs Alt
+        if ($request->has('blogs') && is_array($request->blogs)) {
+            foreach ($request->blogs as $blogId => $alt) {
+                \App\Models\Blog::where('id', $blogId)->update(['image_alt' => $alt]);
+            }
+        }
+
+        // Update Global Alts
+        if ($request->filled('seo_logo_alt')) {
+            SiteParameter::updateOrCreate(['id' => 'seo_logo_alt'], ['value' => $request->seo_logo_alt, 'label' => 'Logo Alt Text', 'category' => 'SEO']);
+        }
+        if ($request->filled('seo_about_img_alt')) {
+            SiteParameter::updateOrCreate(['id' => 'seo_about_img_alt'], ['value' => $request->seo_about_img_alt, 'label' => 'About Image Alt Text', 'category' => 'SEO']);
+        }
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json(['success' => true, 'message' => 'All Image Alt tags successfully updated across the website!']);
+        }
+
+        return redirect()->route('admin.dashboard')->with('success', 'All Image Alt tags updated successfully!')->with('active_tab', 'seo');
+    }
+
+    public function aiGenerateCompleteSeo(Request $request)
+    {
+        $request->validate([
+            'type' => 'required|in:page,service,blog,landing',
+            'key' => 'nullable|string',
+            'id' => 'nullable|integer',
+            'keywords' => 'nullable|string',
+        ]);
+
+        $apiKey = trim(SiteParameter::where('id', 'gemini_api_key')->value('value') ?? '');
+        if (empty($apiKey)) {
+            $apiKey = env('GEMINI_API_KEY');
+        }
+
+        if (empty($apiKey)) {
+            return response()->json(['error' => 'Gemini API Key is missing. Please set it in General Settings.'], 400);
+        }
+
+        $type = $request->type;
+        $baseUrl = url('/');
+        $pageTitle = '';
+        $pageUrl = '';
+        $pageDescription = '';
+        $extraContext = '';
+
+        if ($type === 'page') {
+            $key = $request->key ?? 'home';
+            $pageSeo = \App\Models\PageSeo::where('page_key', $key)->first();
+            $pageName = $pageSeo ? $pageSeo->page_name : ucwords(str_replace('_', ' ', $key));
+            $pageTitle = $pageSeo && $pageSeo->meta_title ? $pageSeo->meta_title : ($pageName . ' | MLG Finedge Jaipur');
+            $pageUrl = $key === 'home' ? $baseUrl : $baseUrl . '/' . str_replace('_', '-', $key);
+            $pageDescription = $pageSeo ? ($pageSeo->meta_description ?? '') : '';
+            $extraContext = "Page Type: Core Static Page ({$pageName})\nBusiness: MLG Finedge (Leading Loan Advisory Firm in Gopalpura, Jaipur, Rajasthan).";
+        } elseif ($type === 'service') {
+            $service = \App\Models\Service::find($request->id);
+            if (!$service) return response()->json(['error' => 'Service not found'], 404);
+            $pageTitle = $service->service_name;
+            $pageUrl = $baseUrl . '/services/' . $service->slug;
+            $pageDescription = $service->summary ?: '';
+            $extraContext = "Service: {$service->service_name}\nInterest Rate: " . ($service->rate_value ?? 'Competitive') . "\nMax Loan: " . ($service->max_loan ?? 'High Limit') . "\nEligibility: " . ($service->eligibility_criteria ?? '');
+        } elseif ($type === 'blog') {
+            $blog = \App\Models\Blog::find($request->id);
+            if (!$blog) return response()->json(['error' => 'Blog not found'], 404);
+            $pageTitle = $blog->title;
+            $pageUrl = $baseUrl . '/blog/' . $blog->slug;
+            $pageDescription = $blog->summary ?: '';
+            $extraContext = "Category: {$blog->category}\nContent Excerpt: " . substr(strip_tags($blog->content), 0, 500);
+        } elseif ($type === 'landing') {
+            $lp = \App\Models\LandingPage::find($request->id);
+            if (!$lp) return response()->json(['error' => 'Landing page not found'], 404);
+            $pageTitle = $lp->title;
+            $pageUrl = $baseUrl . '/l/' . $lp->slug;
+            $pageDescription = $lp->meta_description ?: '';
+            $extraContext = "Landing Page Title: {$lp->title}";
+        }
+
+        $userKeywords = $request->keywords ? "User Focus Keywords: " . $request->keywords : "";
+
+        $systemPrompt = "You are an elite SEO Specialist and Web Structured Data Engineer for MLG Finedge (Jaipur, Rajasthan's top loan & credit advisory consultancy).
+Generate a complete, high-converting, Google 2026-compliant SEO package for the following page details.
+
+Page Information:
+- Type: {$type}
+- Current Title: {$pageTitle}
+- URL: {$pageUrl}
+- Description: {$pageDescription}
+- Context:
+{$extraContext}
+{$userKeywords}
+
+Requirements:
+1. meta_title: 50-60 characters, highly click-worthy with location (Jaipur / Rajasthan) and brand 'MLG Finedge'.
+2. meta_description: 140-155 characters, clear value proposition, enticing CTR with active CTA.
+3. meta_keywords: 6-10 targeted, comma-separated keywords with local intent.
+4. h1_tag: Authoritative, primary H1 heading for the page (6-12 words).
+5. image_alt: Descriptive, accessible alt text incorporating focus keyword naturally.
+6. schema_markup: Complete, valid JSON-LD script starting with '<script type=\"application/ld+json\">' and ending with '</script>'. Must be 100% Schema.org compliant for FinancialService, LocalBusiness, WebPage, Service, or Article.
+
+Output strictly valid JSON with this exact schema (no markdown enclosing, no code fences):
+{
+  \"meta_title\": \"...\",
+  \"meta_description\": \"...\",
+  \"meta_keywords\": \"...\",
+  \"h1_tag\": \"...\",
+  \"image_alt\": \"...\",
+  \"schema_markup\": \"<script type=\\\"application/ld+json\\\">...</script>\"
+}";
+
+        try {
+            $response = \Illuminate\Support\Facades\Http::withHeaders([
+                'Content-Type' => 'application/json',
+            ])->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={$apiKey}", [
+                'contents' => [
+                    ['parts' => [['text' => $systemPrompt]]]
+                ]
+            ]);
+
+            if ($response->failed()) {
+                return response()->json(['error' => 'Gemini API Error: ' . $response->body()], 500);
+            }
+
+            $resultText = $response->json('candidates.0.content.parts.0.text');
+            if (empty($resultText)) {
+                return response()->json(['error' => 'No content received from Gemini.'], 500);
+            }
+
+            // Clean up code fences if returned
+            $cleanJson = trim($resultText);
+            if (str_starts_with($cleanJson, '```json')) {
+                $cleanJson = trim(substr($cleanJson, 7));
+            }
+            if (str_starts_with($cleanJson, '```')) {
+                $cleanJson = trim(substr($cleanJson, 3));
+            }
+            if (str_ends_with($cleanJson, '```')) {
+                $cleanJson = trim(substr($cleanJson, 0, -3));
+            }
+
+            $decoded = json_decode($cleanJson, true);
+            if (!$decoded || !is_array($decoded)) {
+                // If json decoding failed, construct fallback
+                return response()->json([
+                    'success' => true,
+                    'data' => [
+                        'meta_title' => $pageTitle . ' | MLG Finedge Jaipur',
+                        'meta_description' => $pageDescription ?: 'Get the best loan deals in Jaipur with MLG Finedge. Quick approval and lowest interest rates.',
+                        'meta_keywords' => 'loan provider jaipur, loan advisory, mlg finedge',
+                        'h1_tag' => $pageTitle,
+                        'image_alt' => $pageTitle . ' - MLG Finedge',
+                        'schema_markup' => '<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"' . addslashes($pageTitle) . '"}</script>'
+                    ]
+                ]);
+            }
+
+            return response()->json(['success' => true, 'data' => $decoded]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'SEO generation failed: ' . $e->getMessage()], 500);
+        }
+    }
 }
+
 

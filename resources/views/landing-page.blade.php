@@ -1,7 +1,19 @@
 @extends('layouts.app')
 
-@section('title', $landingPage->title . ' - ' . ($site['site_name'] ?? 'MLG Finedge'))
-@section('meta_desc', $landingPage->meta_description ?? 'Secure premium loan consultation in Jaipur with custom matching parameters.')
+@section('title', (!empty($landingPage->meta_title) ? $landingPage->meta_title : ($landingPage->title . ' | ' . ($site['site_name'] ?? 'MLG Finedge'))))
+@section('meta_description', $landingPage->meta_description ?? 'Secure premium loan consultation in Jaipur with custom matching parameters.')
+@if(!empty($landingPage->meta_keywords))
+@section('meta_keywords', $landingPage->meta_keywords)
+@endif
+@if(!empty($landingPage->canonical_url))
+@section('canonical', $landingPage->canonical_url)
+@endif
+@if(!empty($landingPage->meta_robots))
+@section('meta_robots', $landingPage->meta_robots)
+@endif
+@if(!empty($landingPage->og_image))
+@section('og_image', seo_image($landingPage->og_image))
+@endif
 
 @section('schema')
     @if(!empty($landingPage->schema_markup))

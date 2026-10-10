@@ -1,7 +1,8 @@
 @extends('layouts.app')
 
-@section('title', 'Thank You | Lead Submitted | ' . ($site['site_name'] ?? 'MLG Finedge'))
-@section('meta_description', 'Thank you for submitting your lead details. One of our expert loan advisors will reach out to you within 2 hours.')
+@section('title', (!empty($pageSeo->meta_title) ? $pageSeo->meta_title : ('Thank You | Lead Submitted | ' . ($site['site_name'] ?? 'MLG Finedge'))))
+@section('meta_description', (!empty($pageSeo->meta_description) ? $pageSeo->meta_description : 'Thank you for submitting your lead details. One of our expert loan advisors will reach out to you within 2 hours.'))
+@section('meta_robots', (!empty($pageSeo->meta_robots) ? $pageSeo->meta_robots : 'noindex, follow'))
 
 @section('content')
     <section class="section" style="min-height: calc(100vh - 400px); display: flex; align-items: center; justify-content: center; padding: 4rem 1rem;">
@@ -10,7 +11,7 @@
                 <i data-lucide="check-circle-2" style="width: 52px; height: 52px;"></i>
             </div>
             
-            <h1 style="font-size: 2.5rem; margin-bottom: 1rem; color: var(--primary-teal-dark); font-weight: 800;">Thank You!</h1>
+            <h1 style="font-size: 2.5rem; margin-bottom: 1rem; color: var(--primary-teal-dark); font-weight: 800;">{{ $pageSeo->h1_tag ?? 'Thank You!' }}</h1>
             
             <p style="font-size: 1.15rem; line-height: 1.6; color: var(--text-muted); margin-bottom: 2rem;">
                 Your request has been successfully submitted and saved. One of our senior loan advisors will review your requirements and call you back shortly (typically within 2 hours).

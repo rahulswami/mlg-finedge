@@ -1,9 +1,26 @@
 @extends('layouts.app')
 
-@section('title', 'Trusted Loan Provider in Gopalpura Jaipur | ' . ($site['site_name'] ?? 'MLG FINEDGE'))
-@section('meta_description', 'MLG Finedge is the leading loan provider in Gopalpura Jaipur. We offer expert loan advisory & consultation for Personal Loans, Home Loans, Business Loans, and LAP. Get free advice now!')
+@section('title', (!empty($pageSeo->meta_title) ? $pageSeo->meta_title : ('Trusted Loan Provider in Gopalpura Jaipur | ' . ($site['site_name'] ?? 'MLG FINEDGE'))))
+@section('meta_description', (!empty($pageSeo->meta_description) ? $pageSeo->meta_description : 'MLG Finedge is the leading loan provider in Gopalpura Jaipur. We offer expert loan advisory & consultation for Personal Loans, Home Loans, Business Loans, and LAP. Get free advice now!'))
+@if(!empty($pageSeo->meta_keywords))
+@section('meta_keywords', $pageSeo->meta_keywords)
+@endif
+@if(!empty($pageSeo->canonical_url))
+@section('canonical', $pageSeo->canonical_url)
+@endif
+@if(!empty($pageSeo->meta_robots))
+@section('meta_robots', $pageSeo->meta_robots)
+@endif
+@if(!empty($pageSeo->og_image))
+@section('og_image', seo_image($pageSeo->og_image))
+@endif
 
 @section('schema')
+@if(!empty($pageSeo->schema_markup))
+{!! $pageSeo->schema_markup !!}
+@elseif(!empty($site['home_schema_markup']))
+{!! $site['home_schema_markup'] !!}
+@else
 <script type="application/ld+json">
 {
   "{{ '@' }}context": "https://schema.org",
@@ -79,6 +96,7 @@
   ]
 }
 </script>
+@endif
 @endsection
 
 @section('content')
@@ -164,7 +182,7 @@
                             <div class="hero-content" style="text-align: center; width: 100%;">
                                 <span class="color-mint font-semibold" style="text-transform: uppercase; letter-spacing: 1.5px; font-size: 0.95rem; display: block; margin-bottom: 1rem;">Welcome to MLG Finedge</span>
                                 <h1 style="font-size: 3rem; line-height: 1.2; margin-bottom: 1.5rem; color: var(--primary-teal-dark); font-weight: 800; letter-spacing: -0.5px;">
-                                    {{ $slide->title }}
+                                    {{ ($index === 0 && !empty($pageSeo->h1_tag)) ? $pageSeo->h1_tag : $slide->title }}
                                 </h1>
                                 <p class="subtitle" style="font-size: 1.2rem; color: var(--text-muted); margin-bottom: 2.5rem; line-height: 1.6; max-width: 700px; margin-left: auto; margin-right: auto;">
                                     {{ $slide->subtitle }}
@@ -217,7 +235,7 @@
                 <div class="hero-content" style="text-align: center; width: 100%;">
                     <span class="color-mint font-semibold" style="text-transform: uppercase; letter-spacing: 1.5px; font-size: 0.95rem; display: block; margin-bottom: 1rem;">Welcome to MLG Finedge</span>
                     <h1 style="font-size: 3rem; line-height: 1.2; margin-bottom: 1.5rem; color: var(--primary-teal-dark); font-weight: 800; letter-spacing: -0.5px;">
-                        {{ $pageContents['home']['hero']['title'] ?? 'Trusted Loan Provider in Gopalpura Jaipur' }}
+                        {{ !empty($pageSeo->h1_tag) ? $pageSeo->h1_tag : ($pageContents['home']['hero']['title'] ?? 'Trusted Loan Provider in Gopalpura Jaipur') }}
                     </h1>
                     <p class="subtitle" style="font-size: 1.2rem; color: var(--text-muted); margin-bottom: 2.5rem; line-height: 1.6; max-width: 700px; margin-left: auto; margin-right: auto;">
                         {{ $pageContents['home']['hero']['subtitle'] ?? 'Your Trusted Partner for Smart Loan Solutions, Quick Assistance, and Reliable Financial Guidance.' }}

@@ -13,6 +13,13 @@ class LandingPage extends Model
         'meta_description',
         'content',
         'schema_markup',
+        'meta_title',
+        'meta_keywords',
+        'canonical_url',
+        'meta_robots',
+        'og_image',
+        'h1_tag',
+        'image_alt',
     ];
 
     protected $casts = [

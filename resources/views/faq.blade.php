@@ -1,9 +1,24 @@
 @extends('layouts.app')
 
-@section('title', 'Frequently Asked Questions | ' . ($site['site_name'] ?? 'MLG Finedge'))
-@section('meta_description', 'Everything you need to know about processing timelines, rates, documents, and qualifications.')
+@section('title', (!empty($pageSeo->meta_title) ? $pageSeo->meta_title : ('Frequently Asked Questions | ' . ($site['site_name'] ?? 'MLG Finedge'))))
+@section('meta_description', (!empty($pageSeo->meta_description) ? $pageSeo->meta_description : 'Everything you need to know about processing timelines, rates, documents, and qualifications.'))
+@if(!empty($pageSeo->meta_keywords))
+@section('meta_keywords', $pageSeo->meta_keywords)
+@endif
+@if(!empty($pageSeo->canonical_url))
+@section('canonical', $pageSeo->canonical_url)
+@endif
+@if(!empty($pageSeo->meta_robots))
+@section('meta_robots', $pageSeo->meta_robots)
+@endif
+@if(!empty($pageSeo->og_image))
+@section('og_image', seo_image($pageSeo->og_image))
+@endif
 
 @section('schema')
+@if(!empty($pageSeo->schema_markup))
+{!! $pageSeo->schema_markup !!}
+@else
 <script type="application/ld+json">
 {
   "{{ '@' }}context": "https://schema.org",
@@ -28,6 +43,7 @@
   ]
 }
 </script>
+@endif
 @endsection
 
 @section('content')
@@ -36,7 +52,7 @@
     <section class="details-hero">
         <div class="container text-center">
             <span class="color-mint font-semibold" style="text-transform: uppercase; letter-spacing: 1.5px; font-size: 0.9rem;">KNOWLEDGE HUB</span>
-            <h1 style="margin-top: 10px;">Frequently Asked Questions</h1>
+            <h1 style="margin-top: 10px;">{{ $pageSeo->h1_tag ?? 'Frequently Asked Questions' }}</h1>
             <p style="color: var(--text-light-muted); max-width: 600px; margin: 0 auto;">Everything you need to know about processing timelines, rates, documents, and qualifications.</p>
         </div>
     </section>

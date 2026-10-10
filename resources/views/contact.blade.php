@@ -1,9 +1,24 @@
 @extends('layouts.app')
 
-@section('title', 'Contact Us | Get Free Loan Advisory | ' . ($site['site_name'] ?? 'MLG Finedge'))
-@section('meta_description', 'Contact MLG Finedge Jaipur. Get expert loan consultations, submit an inquiry form, or visit our office in Gopalpura Jaipur. Free callback within 2 hours.')
+@section('title', (!empty($pageSeo->meta_title) ? $pageSeo->meta_title : ('Contact Us | Get Free Loan Advisory | ' . ($site['site_name'] ?? 'MLG Finedge'))))
+@section('meta_description', (!empty($pageSeo->meta_description) ? $pageSeo->meta_description : 'Contact MLG Finedge Jaipur. Get expert loan consultations, submit an inquiry form, or visit our office in Gopalpura Jaipur. Free callback within 2 hours.'))
+@if(!empty($pageSeo->meta_keywords))
+@section('meta_keywords', $pageSeo->meta_keywords)
+@endif
+@if(!empty($pageSeo->canonical_url))
+@section('canonical', $pageSeo->canonical_url)
+@endif
+@if(!empty($pageSeo->meta_robots))
+@section('meta_robots', $pageSeo->meta_robots)
+@endif
+@if(!empty($pageSeo->og_image))
+@section('og_image', seo_image($pageSeo->og_image))
+@endif
 
 @section('schema')
+@if(!empty($pageSeo->schema_markup))
+{!! $pageSeo->schema_markup !!}
+@else
 <script type="application/ld+json">
 {
   "{{ '@' }}context": "https://schema.org",
@@ -12,8 +27,8 @@
       "{{ '@type' }}": "ContactPage",
       "{{ '@id' }}": "{{ route('contact') }}/#webpage",
       "url": "{{ route('contact') }}",
-      "name": "Contact Us | Get Free Loan Advisory | {{ $site['site_name'] ?? 'MLG Finedge' }}",
-      "description": "Contact MLG Finedge Jaipur. Get expert loan consultations, submit an inquiry form, or visit our office in Gopalpura Jaipur.",
+      "name": "{{ $pageSeo->meta_title ?? ('Contact Us | Get Free Loan Advisory | ' . ($site['site_name'] ?? 'MLG Finedge')) }}",
+      "description": "{{ $pageSeo->meta_description ?? 'Contact MLG Finedge Jaipur. Get expert loan consultations.' }}",
       "isPartOf": {
         "{{ '@type' }}": "WebSite",
         "{{ '@id' }}": "{{ route('home') }}/#website"
@@ -28,6 +43,7 @@
   ]
 }
 </script>
+@endif
 @endsection
 
 @section('content')
@@ -36,7 +52,7 @@
     <section class="details-hero">
         <div class="container text-center">
             <span class="color-mint font-semibold" style="text-transform: uppercase; letter-spacing: 1.5px; font-size: 0.9rem;">CONNECT WITH US</span>
-            <h1 style="margin-top: 10px;">Contact Our Loan Experts</h1>
+            <h1 style="margin-top: 10px;">{{ $pageSeo->h1_tag ?? 'Contact Our Loan Experts' }}</h1>
             <p style="color: var(--text-light-muted); max-width: 600px; margin: 0 auto;">Reach out for immediate assistance, interest rate queries, or loan processing status updates.</p>
         </div>
     </section>

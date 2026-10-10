@@ -27,6 +27,14 @@ class Service extends Model
         'is_active',
         'sort_order',
         'schema_markup',
+        'meta_title',
+        'meta_description',
+        'meta_keywords',
+        'canonical_url',
+        'meta_robots',
+        'og_image',
+        'h1_tag',
+        'image_alt',
     ];
 
     protected $casts = [

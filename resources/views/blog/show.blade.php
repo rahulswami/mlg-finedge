@@ -1,7 +1,19 @@
 @extends('layouts.app')
 
-@section('title', $blog->title . ' | MLG Finedge')
-@section('meta_description', $blog->summary)
+@section('title', (!empty($blog->meta_title) ? $blog->meta_title : ($blog->title . ' | ' . ($site['site_name'] ?? 'MLG Finedge'))))
+@section('meta_description', (!empty($blog->meta_description) ? $blog->meta_description : $blog->summary))
+@if(!empty($blog->meta_keywords))
+@section('meta_keywords', $blog->meta_keywords)
+@endif
+@if(!empty($blog->canonical_url))
+@section('canonical', $blog->canonical_url)
+@endif
+@if(!empty($blog->meta_robots))
+@section('meta_robots', $blog->meta_robots)
+@endif
+@section('og_type', 'article')
+@section('og_image', seo_image($blog->og_image ?: $blog->image_path))
+@section('og_image_alt', $blog->image_alt ?: ($blog->title . ' - MLG Finedge'))
 
 @section('schema')
     @if(!empty($blog->schema_markup))
@@ -16,8 +28,8 @@
               "{{ '@id' }}": "{{ route('blog.show', $blog->slug) }}/#post",
               "headline": "{{ $blog->title }}",
               "description": "{{ $blog->summary }}",
-              "datePublished": "{{ $blog->published_at->toIso8601String() }}",
-              "dateModified": "{{ $blog->updated_at->toIso8601String() }}",
+              "datePublished": "{{ $blog->published_at ? $blog->published_at->toIso8601String() : $blog->created_at->toIso8601String() }}",
+              "dateModified": "{{ $blog->updated_at ? $blog->updated_at->toIso8601String() : $blog->created_at->toIso8601String() }}",
               "mainEntityOfPage": "{{ route('blog.show', $blog->slug) }}",
               "image": "{{ $blog->image_path ? site_image($blog->image_path) : asset('assets/images/blog-default.jpg') }}",
               "author": {
@@ -44,7 +56,7 @@
     <header class="blog-article-header" style="padding: 100px 0 40px; background-color: var(--bg-light); text-align: center;">
         <div class="container">
             <span class="color-accent font-semibold" style="text-transform: uppercase; letter-spacing: 1.5px; font-size: 0.9rem;">{{ $blog->category }}</span>
-            <h1 style="margin-top: 10px; font-size: 2.5rem; color: var(--primary-teal-dark);">{{ $blog->title }}</h1>
+            <h1 style="margin-top: 10px; font-size: 2.5rem; color: var(--primary-teal-dark);">{{ $blog->h1_tag ?: $blog->title }}</h1>
             <div class="blog-article-meta" style="margin-top: 15px; color: var(--text-light-muted); font-size: 0.9rem;">
                 <span>Published on</span>
                 <span>•</span>
@@ -57,7 +69,7 @@
     <article class="blog-article-body" style="max-width: 800px; margin: 40px auto; padding: 0 20px; line-height: 1.8; color: var(--text-dark);">
         @if($blog->image_path)
             <div style="margin-bottom: 30px; border-radius: var(--radius-md); overflow: hidden;">
-                <img src="{{ site_image($blog->image_path) }}" alt="{{ $blog->title }}" style="width: 100%; height: auto; max-height: 400px; object-fit: cover;">
+                <img src="{{ site_image($blog->image_path) }}" alt="{{ $blog->image_alt ?: ($blog->title . ' - MLG Finedge') }}" style="width: 100%; height: auto; max-height: 400px; object-fit: cover;">
             </div>
         @endif
         

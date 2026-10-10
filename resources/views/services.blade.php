@@ -1,9 +1,24 @@
 @extends('layouts.app')
 
-@section('title', 'Our Loan Services Overview | ' . ($site['site_name'] ?? 'MLG Finedge'))
-@section('meta_description', 'Explore MLG Finedge\'s wide array of loan advisory services: Personal, Home, Car, Business, Working Capital, Project Funding, LAP, and Gold Loans in Jaipur.')
+@section('title', (!empty($pageSeo->meta_title) ? $pageSeo->meta_title : ('Our Loan Services Overview | ' . ($site['site_name'] ?? 'MLG Finedge'))))
+@section('meta_description', (!empty($pageSeo->meta_description) ? $pageSeo->meta_description : 'Explore MLG Finedge\'s wide array of loan advisory services: Personal, Home, Car, Business, Working Capital, Project Funding, LAP, and Gold Loans in Jaipur.'))
+@if(!empty($pageSeo->meta_keywords))
+@section('meta_keywords', $pageSeo->meta_keywords)
+@endif
+@if(!empty($pageSeo->canonical_url))
+@section('canonical', $pageSeo->canonical_url)
+@endif
+@if(!empty($pageSeo->meta_robots))
+@section('meta_robots', $pageSeo->meta_robots)
+@endif
+@if(!empty($pageSeo->og_image))
+@section('og_image', seo_image($pageSeo->og_image))
+@endif
 
 @section('schema')
+@if(!empty($pageSeo->schema_markup))
+{!! $pageSeo->schema_markup !!}
+@else
 <script type="application/ld+json">
 {
   "{{ '@' }}context": "https://schema.org",
@@ -12,8 +27,8 @@
       "{{ '@type' }}": "WebPage",
       "{{ '@id' }}": "{{ route('services') }}/#webpage",
       "url": "{{ route('services') }}",
-      "name": "Our Loan Services Overview | {{ $site['site_name'] ?? 'MLG Finedge' }}",
-      "description": "Explore MLG Finedge's wide array of loan advisory services: Personal, Home, Car, Business, Working Capital, Project Funding, LAP, and Gold Loans in Jaipur.",
+      "name": "{{ $pageSeo->meta_title ?? ('Our Loan Services Overview | ' . ($site['site_name'] ?? 'MLG Finedge')) }}",
+      "description": "{{ $pageSeo->meta_description ?? 'Explore MLG Finedge\'s wide array of loan advisory services in Jaipur.' }}",
       "isPartOf": {
         "{{ '@type' }}": "WebSite",
         "{{ '@id' }}": "{{ route('home') }}/#website"
@@ -35,6 +50,7 @@
   ]
 }
 </script>
+@endif
 @endsection
 
 @section('content')
@@ -43,7 +59,7 @@
     <section class="details-hero">
         <div class="container text-center">
             <span class="color-mint font-semibold" style="text-transform: uppercase; letter-spacing: 1.5px; font-size: 0.9rem;">OUR OFFERS</span>
-            <h1>Our Loan Consultation Services</h1>
+            <h1>{{ $pageSeo->h1_tag ?? 'Our Loan Consultation Services' }}</h1>
             <p style="color: var(--text-light-muted); max-width: 600px; margin: 0 auto;">We compare, analyze, and assist you in selecting the ideal loan products with the lowest interest burdens.</p>
         </div>
     </section>

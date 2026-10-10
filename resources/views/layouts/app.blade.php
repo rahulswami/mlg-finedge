@@ -3,8 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Trusted Loan Provider in Gopalpura Jaipur | MLG Finedge')</title>
-    <meta name="description" content="@yield('meta_description', 'MLG Finedge is the leading loan provider in Gopalpura Jaipur. We offer expert loan advisory & consultation for Personal Loans, Home Loans, Business Loans, and LAP. Get free advice now!')">
+    <title>@yield('title', (!empty($pageSeo->meta_title) ? $pageSeo->meta_title : (($site['site_name'] ?? 'MLG Finedge') . ' | Trusted Loan Provider in Jaipur')))</title>
+    <meta name="description" content="@yield('meta_description', (!empty($pageSeo->meta_description) ? $pageSeo->meta_description : ($site['seo_default_description'] ?? 'MLG Finedge is the leading loan provider in Gopalpura Jaipur. We offer expert loan advisory & consultation for Personal Loans, Home Loans, Business Loans, and LAP.')))">
+    <meta name="keywords" content="@yield('meta_keywords', (!empty($pageSeo->meta_keywords) ? $pageSeo->meta_keywords : ($site['seo_default_keywords'] ?? 'loan provider jaipur, loan advisor gopalpura, home loan, business loan, personal loan, loan against property jaipur, mlg finedge')))">
+    <meta name="robots" content="@yield('meta_robots', (!empty($pageSeo->meta_robots) ? $pageSeo->meta_robots : ($site['seo_default_robots'] ?? 'index, follow')))">
+    <link rel="canonical" href="@yield('canonical', (!empty($pageSeo->canonical_url) ? $pageSeo->canonical_url : seo_url()))">
+
+    <!-- Search Engine Verification -->
+    @if(!empty($site['seo_google_verification']))
+        <meta name="google-site-verification" content="{{ $site['seo_google_verification'] }}">
+    @endif
+    @if(!empty($site['seo_bing_verification']))
+        <meta name="msvalidate.01" content="{{ $site['seo_bing_verification'] }}">
+    @endif
+
+    <!-- Open Graph (OG) Meta Tags -->
+    <meta property="og:site_name" content="{{ $site['site_name'] ?? 'MLG Finedge' }}">
+    <meta property="og:type" content="@yield('og_type', (!empty($pageSeo->og_type) ? $pageSeo->og_type : 'website'))">
+    <meta property="og:title" content="@yield('og_title', (!empty($pageSeo->og_title) ? $pageSeo->og_title : (!empty($pageSeo->meta_title) ? $pageSeo->meta_title : ($site['site_name'] ?? 'MLG Finedge'))))">
+    <meta property="og:description" content="@yield('og_description', (!empty($pageSeo->og_description) ? $pageSeo->og_description : (!empty($pageSeo->meta_description) ? $pageSeo->meta_description : ($site['seo_default_description'] ?? ''))))">
+    <meta property="og:url" content="@yield('canonical', (!empty($pageSeo->canonical_url) ? $pageSeo->canonical_url : seo_url()))">
+    <meta property="og:image" content="@yield('og_image', seo_image(!empty($pageSeo->og_image) ? $pageSeo->og_image : null))">
+    <meta property="og:image:alt" content="@yield('og_image_alt', (!empty($pageSeo->hero_image_alt) ? $pageSeo->hero_image_alt : ($site['seo_logo_alt'] ?? ($site['site_name'] ?? 'MLG Finedge'))))">
+    <meta property="og:locale" content="en_IN">
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="@yield('twitter_card', (!empty($pageSeo->twitter_card) ? $pageSeo->twitter_card : 'summary_large_image'))">
+    @if(!empty($site['seo_twitter_handle']))
+        <meta name="twitter:site" content="{{ $site['seo_twitter_handle'] }}">
+    @endif
+    <meta name="twitter:title" content="@yield('twitter_title', (!empty($pageSeo->twitter_title) ? $pageSeo->twitter_title : (!empty($pageSeo->meta_title) ? $pageSeo->meta_title : ($site['site_name'] ?? 'MLG Finedge'))))">
+    <meta name="twitter:description" content="@yield('twitter_description', (!empty($pageSeo->twitter_description) ? $pageSeo->twitter_description : (!empty($pageSeo->meta_description) ? $pageSeo->meta_description : ($site['seo_default_description'] ?? ''))))">
+    <meta name="twitter:image" content="@yield('twitter_image', seo_image(!empty($pageSeo->twitter_image) ? $pageSeo->twitter_image : (!empty($pageSeo->og_image) ? $pageSeo->og_image : null)))">
     
     <!-- Dynamic Favicon -->
     @if(!empty($site['favicon_path']))
@@ -32,8 +62,11 @@
         {!! $site['header_scripts'] !!}
     @endif
 
-    <!-- Structured SEO Schemas -->
+    <!-- Global & Page Structured Schemas (JSON-LD) -->
     @yield('schema')
+    @if(!empty($site['seo_global_schema']))
+        {!! $site['seo_global_schema'] !!}
+    @endif
 
     @if(!empty($site['recaptcha_enabled']) && $site['recaptcha_enabled'] == '1' && !empty($site['recaptcha_site_key']))
         <script src="https://www.google.com/recaptcha/api.js" async defer></script>

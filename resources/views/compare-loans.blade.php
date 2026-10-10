@@ -1,9 +1,24 @@
 @extends('layouts.app')
 
-@section('title', 'Compare Loan Interest Rates of 10 Banks | ' . ($site['site_name'] ?? 'MLG Finedge'))
-@section('meta_description', 'Use our dynamic Loan Comparison Calculator to compare interest rates, monthly EMIs, and processing fees across 10 major Indian banks like SBI, HDFC, and ICICI.')
+@section('title', (!empty($pageSeo->meta_title) ? $pageSeo->meta_title : ('Compare Loan Interest Rates of 10 Banks | ' . ($site['site_name'] ?? 'MLG Finedge'))))
+@section('meta_description', (!empty($pageSeo->meta_description) ? $pageSeo->meta_description : 'Use our dynamic Loan Comparison Calculator to compare interest rates, monthly EMIs, and processing fees across 10 major Indian banks like SBI, HDFC, and ICICI.'))
+@if(!empty($pageSeo->meta_keywords))
+@section('meta_keywords', $pageSeo->meta_keywords)
+@endif
+@if(!empty($pageSeo->canonical_url))
+@section('canonical', $pageSeo->canonical_url)
+@endif
+@if(!empty($pageSeo->meta_robots))
+@section('meta_robots', $pageSeo->meta_robots)
+@endif
+@if(!empty($pageSeo->og_image))
+@section('og_image', seo_image($pageSeo->og_image))
+@endif
 
 @section('schema')
+@if(!empty($pageSeo->schema_markup))
+{!! $pageSeo->schema_markup !!}
+@else
 <script type="application/ld+json">
 {
   "{{ '@' }}context": "https://schema.org",
@@ -12,8 +27,8 @@
       "{{ '@type' }}": "WebPage",
       "{{ '@id' }}": "{{ route('compare') }}/#webpage",
       "url": "{{ route('compare') }}",
-      "name": "Compare Loan Interest Rates of 10 Banks | {{ $site['site_name'] ?? 'MLG Finedge' }}",
-      "description": "Use our dynamic Loan Comparison Calculator to compare interest rates, monthly EMIs, and processing fees across 10 major Indian banks.",
+      "name": "{{ $pageSeo->meta_title ?? ('Compare Loan Interest Rates of 10 Banks | ' . ($site['site_name'] ?? 'MLG Finedge')) }}",
+      "description": "{{ $pageSeo->meta_description ?? 'Use our dynamic Loan Comparison Calculator to compare interest rates across 10 major Indian banks.' }}",
       "isPartOf": {
         "{{ '@type' }}": "WebSite",
         "{{ '@id' }}": "{{ route('home') }}/#website"
@@ -35,6 +50,7 @@
   ]
 }
 </script>
+@endif
 @endsection
 
 @section('content')
@@ -43,7 +59,7 @@
     <section class="details-hero">
         <div class="container text-center">
             <span class="color-mint font-semibold" style="text-transform: uppercase; letter-spacing: 1.5px; font-size: 0.9rem;">ADVISORY COMPARISON</span>
-            <h1 style="margin-top: 10px;">Compare Bank Loan Offers</h1>
+            <h1 style="margin-top: 10px;">{{ $pageSeo->h1_tag ?? 'Compare Bank Loan Offers' }}</h1>
             <p style="color: var(--text-light-muted); max-width: 600px; margin: 0 auto;">Enter your requirements and credit profile to compare real-time EMIs and rates across 10 top Indian lenders.</p>
         </div>
     </section>

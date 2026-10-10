@@ -1,9 +1,24 @@
 @extends('layouts.app')
 
-@section('title', 'Client Testimonials & Success Stories | ' . ($site['site_name'] ?? 'MLG Finedge'))
-@section('meta_description', 'Read reviews from local home buyers, government employees, and business owners who secured optimal financing through MLG Finedge\'s loan advisory services.')
+@section('title', (!empty($pageSeo->meta_title) ? $pageSeo->meta_title : ('Client Testimonials & Success Stories | ' . ($site['site_name'] ?? 'MLG Finedge'))))
+@section('meta_description', (!empty($pageSeo->meta_description) ? $pageSeo->meta_description : 'Read reviews from local home buyers, government employees, and business owners who secured optimal financing through MLG Finedge\'s loan advisory services.'))
+@if(!empty($pageSeo->meta_keywords))
+@section('meta_keywords', $pageSeo->meta_keywords)
+@endif
+@if(!empty($pageSeo->canonical_url))
+@section('canonical', $pageSeo->canonical_url)
+@endif
+@if(!empty($pageSeo->meta_robots))
+@section('meta_robots', $pageSeo->meta_robots)
+@endif
+@if(!empty($pageSeo->og_image))
+@section('og_image', seo_image($pageSeo->og_image))
+@endif
 
 @section('schema')
+@if(!empty($pageSeo->schema_markup))
+{!! $pageSeo->schema_markup !!}
+@else
 <script type="application/ld+json">
 {
   "{{ '@' }}context": "https://schema.org",
@@ -12,8 +27,8 @@
       "{{ '@type' }}": "WebPage",
       "{{ '@id' }}": "{{ route('testimonials') }}/#webpage",
       "url": "{{ route('testimonials') }}",
-      "name": "Client Testimonials & Success Stories | {{ $site['site_name'] ?? 'MLG Finedge' }}",
-      "description": "Read reviews from local home buyers, government employees, and business owners who secured optimal financing through MLG Finedge.",
+      "name": "{{ $pageSeo->meta_title ?? ('Client Testimonials & Success Stories | ' . ($site['site_name'] ?? 'MLG Finedge')) }}",
+      "description": "{{ $pageSeo->meta_description ?? 'Read reviews from borrowers who secured funding through MLG Finedge.' }}",
       "isPartOf": {
         "{{ '@type' }}": "WebSite",
         "{{ '@id' }}": "{{ route('home') }}/#website"
@@ -60,6 +75,7 @@
   ]
 }
 </script>
+@endif
 @endsection
 
 @section('content')
@@ -68,7 +84,7 @@
     <section class="details-hero">
         <div class="container text-center">
             <span class="color-mint font-semibold" style="text-transform: uppercase; letter-spacing: 1.5px; font-size: 0.9rem;">SUCCESS STORIES</span>
-            <h1 style="margin-top: 10px;">What Our Clients Say</h1>
+            <h1 style="margin-top: 10px;">{{ $pageSeo->h1_tag ?? 'What Our Clients Say' }}</h1>
             <p style="color: var(--text-light-muted); max-width: 600px; margin: 0 auto;">Read real feedback from people who found the right funding with MLG Finedge's help.</p>
         </div>
     </section>

@@ -2892,186 +2892,879 @@
                 </div>
             </div>
 
-            <!-- SEO OPTIMIZER TAB -->
+            <!-- SEO OPTIMIZER & MANAGEMENT COMMAND CENTER -->
             <div class="tab-panel" id="tab-seo">
-                <div class="admin-card">
-                    <h2><i data-lucide="trending-up" style="display: inline-block; vertical-align: middle; margin-right: 5px;"></i> AI SEO Recommendations & Link-Building Blueprint</h2>
-                    <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem; margin-top: -1rem;">
-                        Enter the target keywords or topics you want to rank for. Our AI will analyze search intent and draft a comprehensive blueprint of content ideas, guest articles, Quora answers, social copy, bookmarking platforms, and backlink opportunities.
-                    </p>
-                    <div class="form-group">
-                        <label for="seo_keywords">Target Keywords (comma-separated or one per line)</label>
-                        <textarea id="seo_keywords" class="form-control" rows="3" placeholder="e.g. low interest home loan, best financial adviser jaipur, secure business loans for startups"></textarea>
+                <!-- Master Header & Overview Bar -->
+                <div class="admin-card" style="background: linear-gradient(135deg, rgba(12, 83, 84, 0.25) 0%, rgba(17, 27, 28, 0.95) 100%); border-color: rgba(92, 203, 179, 0.2);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 1.25rem;">
+                        <div>
+                            <h2 style="margin: 0; border: none; padding: 0; display: flex; align-items: center; gap: 10px; font-size: 1.4rem;">
+                                <i data-lucide="sparkles" style="color: var(--mint-green);"></i> Complete SEO & Structured Data Command Center
+                            </h2>
+                            <p style="font-size: 0.875rem; color: var(--admin-text-muted); margin: 6px 0 0 0;">
+                                Manage Meta Titles, Descriptions, OpenGraph tags, Twitter Cards, H1 Tags, Image Alt Texts, and JSON-LD Schemas across every page of your site.
+                            </p>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <a href="/sitemap.xml" target="_blank" class="btn-submit" style="background: rgba(255,255,255,0.06); color: #fff; padding: 0.5rem 1rem; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--admin-border); text-decoration: none;">
+                                <i data-lucide="external-link" style="width: 14px; height: 14px;"></i> View Sitemap
+                            </a>
+                            <a href="/robots.txt" target="_blank" class="btn-submit" style="background: rgba(255,255,255,0.06); color: #fff; padding: 0.5rem 1rem; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--admin-border); text-decoration: none;">
+                                <i data-lucide="file-text" style="width: 14px; height: 14px;"></i> Robots.txt
+                            </a>
+                        </div>
                     </div>
-                    <button type="button" class="btn-ai-sparkle" onclick="generateSeoRecommendations()" style="margin-top: 1rem; padding: 0.75rem 1.5rem; font-size: 0.95rem;">
-                        <i data-lucide="sparkles"></i> Generate SEO Blueprint
+
+                    <!-- SEO Quick Stat Counters -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-top: 1rem;">
+                        <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--admin-border); border-radius: var(--radius-md); padding: 1rem; text-align: center;">
+                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--mint-green);">9 / 9</div>
+                            <div style="font-size: 0.75rem; color: var(--admin-text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">Static Pages SEO</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--admin-border); border-radius: var(--radius-md); padding: 1rem; text-align: center;">
+                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--accent-orange);">{{ count($services) }}</div>
+                            <div style="font-size: 0.75rem; color: var(--admin-text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">Service Pages SEO</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--admin-border); border-radius: var(--radius-md); padding: 1rem; text-align: center;">
+                            <div style="font-size: 1.5rem; font-weight: 700; color: #8ab4f8;">{{ count($blogs) }}</div>
+                            <div style="font-size: 0.75rem; color: var(--admin-text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">Blog Articles SEO</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--admin-border); border-radius: var(--radius-md); padding: 1rem; text-align: center;">
+                            <div style="font-size: 1.5rem; font-weight: 700; color: #c084fc;">{{ count($landingPages) }}</div>
+                            <div style="font-size: 0.75rem; color: var(--admin-text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">Landing Pages SEO</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SEO Sub-Navigation Bar -->
+                <div style="display: flex; gap: 8px; overflow-x: auto; margin-bottom: 1.5rem; padding-bottom: 5px; border-bottom: 1px solid var(--admin-border);">
+                    <button type="button" class="btn-submit active" id="btn-seo-sub-pages" onclick="switchSeoSubTab('pages')" style="padding: 0.6rem 1.2rem; font-size: 0.85rem; width: auto; display: inline-flex; align-items: center; gap: 6px;">
+                        <i data-lucide="file-text" style="width: 15px; height: 15px;"></i> Core Pages SEO
+                    </button>
+                    <button type="button" class="btn-submit" id="btn-seo-sub-services" onclick="switchSeoSubTab('services')" style="padding: 0.6rem 1.2rem; font-size: 0.85rem; width: auto; background-color: var(--admin-input-bg); color: #fff; display: inline-flex; align-items: center; gap: 6px;">
+                        <i data-lucide="layers" style="width: 15px; height: 15px;"></i> Services SEO ({{ count($services) }})
+                    </button>
+                    <button type="button" class="btn-submit" id="btn-seo-sub-blogs" onclick="switchSeoSubTab('blogs')" style="padding: 0.6rem 1.2rem; font-size: 0.85rem; width: auto; background-color: var(--admin-input-bg); color: #fff; display: inline-flex; align-items: center; gap: 6px;">
+                        <i data-lucide="book-open" style="width: 15px; height: 15px;"></i> Blog Posts SEO ({{ count($blogs) }})
+                    </button>
+                    <button type="button" class="btn-submit" id="btn-seo-sub-landing" onclick="switchSeoSubTab('landing')" style="padding: 0.6rem 1.2rem; font-size: 0.85rem; width: auto; background-color: var(--admin-input-bg); color: #fff; display: inline-flex; align-items: center; gap: 6px;">
+                        <i data-lucide="layout" style="width: 15px; height: 15px;"></i> Landing Pages SEO ({{ count($landingPages) }})
+                    </button>
+                    <button type="button" class="btn-submit" id="btn-seo-sub-alts" onclick="switchSeoSubTab('alts')" style="padding: 0.6rem 1.2rem; font-size: 0.85rem; width: auto; background-color: var(--admin-input-bg); color: #fff; display: inline-flex; align-items: center; gap: 6px;">
+                        <i data-lucide="image" style="width: 15px; height: 15px;"></i> Image Alt Tags Auditor
+                    </button>
+                    <button type="button" class="btn-submit" id="btn-seo-sub-global" onclick="switchSeoSubTab('global')" style="padding: 0.6rem 1.2rem; font-size: 0.85rem; width: auto; background-color: var(--admin-input-bg); color: #fff; display: inline-flex; align-items: center; gap: 6px;">
+                        <i data-lucide="globe" style="width: 15px; height: 15px;"></i> Global & Social Defaults
+                    </button>
+                    <button type="button" class="btn-submit" id="btn-seo-sub-blueprints" onclick="switchSeoSubTab('blueprints')" style="padding: 0.6rem 1.2rem; font-size: 0.85rem; width: auto; background-color: var(--admin-input-bg); color: #fff; display: inline-flex; align-items: center; gap: 6px;">
+                        <i data-lucide="trending-up" style="width: 15px; height: 15px;"></i> AI Blueprints & Backlinks
+                    </button>
+                    <button type="button" class="btn-submit" id="btn-seo-sub-sitemap" onclick="switchSeoSubTab('sitemap')" style="padding: 0.6rem 1.2rem; font-size: 0.85rem; width: auto; background-color: var(--admin-input-bg); color: #fff; display: inline-flex; align-items: center; gap: 6px;">
+                        <i data-lucide="map" style="width: 15px; height: 15px;"></i> XML Sitemap & Indexing
                     </button>
                 </div>
 
-                <div class="admin-card" id="seo-loader" style="display: none; padding: 4rem 2rem; text-align: center;">
-                    <div class="ai-sparkle-loader" style="margin: 0 auto 1.5rem auto;"></div>
-                    <h3 style="margin: 0; font-size: 1.25rem;">Analyzing Keywords & Formulating SEO Blueprint...</h3>
-                    <p style="color: var(--admin-text-muted); margin-top: 5px; font-size: 0.9rem;">Gemini is researching backlink strategies and content maps in the background.</p>
+                <!-- SUBPANEL 1: CORE STATIC PAGES SEO -->
+                <div class="seo-subpanel" id="seo-subpanel-pages">
+                    <!-- Page Selector Pills -->
+                    <div class="admin-card" style="padding: 1.25rem 1.5rem; margin-bottom: 1.5rem;">
+                        <div style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+                            Select Page to Configure SEO:
+                        </div>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            @php
+                                $corePagesList = [
+                                    'home' => ['name' => 'Home Page', 'icon' => 'home', 'url' => '/'],
+                                    'about' => ['name' => 'About Us', 'icon' => 'info', 'url' => '/about'],
+                                    'services' => ['name' => 'Services Directory', 'icon' => 'layers', 'url' => '/services'],
+                                    'compare' => ['name' => 'Compare Loans', 'icon' => 'scale', 'url' => '/compare-loans'],
+                                    'testimonials' => ['name' => 'Testimonials', 'icon' => 'users', 'url' => '/testimonials'],
+                                    'faq' => ['name' => 'FAQ & Help', 'icon' => 'help-circle', 'url' => '/faq'],
+                                    'blog' => ['name' => 'Blog Index', 'icon' => 'book-open', 'url' => '/blog'],
+                                    'contact' => ['name' => 'Contact Us', 'icon' => 'mail', 'url' => '/contact'],
+                                    'thank_you' => ['name' => 'Thank You Page', 'icon' => 'check-circle', 'url' => '/thank-you'],
+                                ];
+                            @endphp
+                            @foreach($corePagesList as $pkey => $pinfo)
+                                <button type="button" class="btn-submit page-selector-btn @if($pkey === 'home') active @endif" id="btn-page-sel-{{ $pkey }}" onclick="selectPageSeoEditor('{{ $pkey }}')" style="padding: 0.5rem 1rem; font-size: 0.85rem; width: auto; @if($pkey !== 'home') background-color: var(--admin-input-bg); color: #fff; @endif display: inline-flex; align-items: center; gap: 6px;">
+                                    <i data-lucide="{{ $pinfo['icon'] }}" style="width: 14px; height: 14px;"></i> {{ $pinfo['name'] }}
+                                </button>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <!-- Individual Page SEO Editors -->
+                    @foreach($corePagesList as $pkey => $pinfo)
+                        @php
+                            $pSeo = $pageSeos[$pkey] ?? null;
+                            $pTitle = $pSeo->meta_title ?? ($pinfo['name'] . ' | ' . ($parameters['General']['site_name']->value ?? 'MLG Finedge'));
+                            $pDesc = $pSeo->meta_description ?? ($parameters['SEO']['seo_default_description']->value ?? 'MLG Finedge is Jaipur\'s premier loan advisory consultancy.');
+                            $pH1 = $pSeo->h1_tag ?? $pinfo['name'];
+                            $pKeywords = $pSeo->meta_keywords ?? '';
+                            $pCanonical = $pSeo->canonical_url ?? '';
+                            $pRobots = $pSeo->meta_robots ?? 'index, follow';
+                            $pOgTitle = $pSeo->og_title ?? '';
+                            $pOgDesc = $pSeo->og_description ?? '';
+                            $pOgImage = $pSeo->og_image ?? '';
+                            $pHeroAlt = $pSeo->hero_image_alt ?? '';
+                            $pSchema = $pSeo->schema_markup ?? '';
+                        @endphp
+                        <div class="page-seo-form-container" id="page-seo-box-{{ $pkey }}" style="@if($pkey !== 'home') display: none; @endif">
+                            <form action="{{ route('admin.seo.page.update') }}" method="POST" enctype="multipart/form-data">
+                                @csrf
+                                <input type="hidden" name="page_key" value="{{ $pkey }}">
+                                <input type="hidden" name="page_name" value="{{ $pinfo['name'] }}">
+
+                                <div class="form-grid" style="grid-template-columns: 1.2fr 0.8fr; gap: 1.5rem; align-items: start;">
+                                    <!-- Left Column: Primary SEO & Metadata -->
+                                    <div class="admin-card" style="margin-bottom: 0;">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--admin-border); padding-bottom: 0.75rem; margin-bottom: 1.25rem;">
+                                            <h3 style="margin: 0; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
+                                                <i data-lucide="edit-3" style="color: var(--mint-green);"></i> On-Page Meta & Heading Controls
+                                            </h3>
+                                            <button type="button" class="btn-ai-sparkle" onclick="triggerAiSeoGenerate('page', '{{ $pkey }}', null, '{{ $pinfo['name'] }}')" style="padding: 0.4rem 0.85rem; font-size: 0.8rem;">
+                                                <i data-lucide="sparkles"></i> AI Generate SEO
+                                            </button>
+                                        </div>
+
+                                        <!-- Meta Title -->
+                                        <div class="form-group">
+                                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                                <label for="meta_title_{{ $pkey }}" style="margin-bottom: 0;">Meta Title (Title Tag)</label>
+                                                <span class="char-counter" id="cnt_title_{{ $pkey }}" style="font-size: 0.75rem; color: var(--mint-green); font-weight: 600;">{{ strlen($pTitle) }} / 60 chars</span>
+                                            </div>
+                                            <input type="text" id="meta_title_{{ $pkey }}" name="meta_title" class="form-control" value="{{ $pTitle }}" oninput="updateSerpPreview('{{ $pkey }}')" placeholder="e.g. Best Loan Provider in Gopalpura Jaipur | MLG Finedge">
+                                        </div>
+
+                                        <!-- Meta Description -->
+                                        <div class="form-group">
+                                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                                <label for="meta_desc_{{ $pkey }}" style="margin-bottom: 0;">Meta Description</label>
+                                                <span class="char-counter" id="cnt_desc_{{ $pkey }}" style="font-size: 0.75rem; color: var(--mint-green); font-weight: 600;">{{ strlen($pDesc) }} / 160 chars</span>
+                                            </div>
+                                            <textarea id="meta_desc_{{ $pkey }}" name="meta_description" class="form-control" rows="3" oninput="updateSerpPreview('{{ $pkey }}')" placeholder="Summarize the page concisely with a compelling call to action...">{{ $pDesc }}</textarea>
+                                        </div>
+
+                                        <!-- Page H1 Tag -->
+                                        <div class="form-group" style="background: rgba(92, 203, 179, 0.05); border: 1px dashed rgba(92, 203, 179, 0.3); border-radius: var(--radius-md); padding: 1rem;">
+                                            <label for="h1_tag_{{ $pkey }}" style="color: var(--mint-green); font-weight: 700; display: flex; align-items: center; gap: 6px;">
+                                                <i data-lucide="heading" style="width: 14px; height: 14px;"></i> Page Primary &lt;H1&gt; Tag Control
+                                            </label>
+                                            <input type="text" id="h1_tag_{{ $pkey }}" name="h1_tag" class="form-control" value="{{ $pH1 }}" placeholder="Custom primary H1 heading on the page">
+                                            <span style="font-size: 0.75rem; color: var(--admin-text-muted); margin-top: 4px; display: block;">This controls the main visible `&lt;h1&gt;` text displayed at the top/hero of the page.</span>
+                                        </div>
+
+                                        <!-- Meta Keywords & Hero Image Alt -->
+                                        <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                            <div class="form-group">
+                                                <label for="meta_keywords_{{ $pkey }}">Meta Keywords</label>
+                                                <input type="text" id="meta_keywords_{{ $pkey }}" name="meta_keywords" class="form-control" value="{{ $pKeywords }}" placeholder="comma-separated phrases">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="hero_alt_{{ $pkey }}">Hero Image / Banner Alt Text</label>
+                                                <input type="text" id="hero_alt_{{ $pkey }}" name="hero_image_alt" class="form-control" value="{{ $pHeroAlt }}" placeholder="SEO-friendly alt attribute">
+                                            </div>
+                                        </div>
+
+                                        <!-- Canonical URL & Meta Robots -->
+                                        <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                            <div class="form-group">
+                                                <label for="canonical_{{ $pkey }}">Canonical URL (Optional)</label>
+                                                <input type="url" id="canonical_{{ $pkey }}" name="canonical_url" class="form-control" value="{{ $pCanonical }}" placeholder="https://mlgfinedge.com/...">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="robots_{{ $pkey }}">Robots Meta Directive</label>
+                                                <select id="robots_{{ $pkey }}" name="meta_robots" class="form-control">
+                                                    <option value="index, follow" @if($pRobots === 'index, follow') selected @endif>index, follow (Default - Recommended)</option>
+                                                    <option value="noindex, follow" @if($pRobots === 'noindex, follow') selected @endif>noindex, follow (Hide from SERP, follow links)</option>
+                                                    <option value="noindex, nofollow" @if($pRobots === 'noindex, nofollow') selected @endif>noindex, nofollow (Block completely)</option>
+                                                    <option value="index, nofollow" @if($pRobots === 'index, nofollow') selected @endif>index, nofollow (Index page, ignore links)</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <!-- Custom Schema JSON-LD -->
+                                        <div class="form-group">
+                                            <label for="schema_{{ $pkey }}" style="display: flex; justify-content: space-between; align-items: center;">
+                                                <span>Custom Structured Data (JSON-LD Schema)</span>
+                                                <button type="button" class="btn-submit" onclick="openAiSchemaModal('page', null, '{{ $pkey }}')" style="padding: 2px 8px; font-size: 0.75rem; width: auto; background: var(--admin-input-bg); color: var(--mint-green);">
+                                                    <i data-lucide="code" style="width: 12px; height: 12px;"></i> AI Schema Builder
+                                                </button>
+                                            </label>
+                                            <textarea id="schema_{{ $pkey }}" name="schema_markup" class="form-control" rows="4" style="font-family: monospace; font-size: 0.82rem;" placeholder="<script type=&quot;application/ld+json&quot;>...</script>">{{ $pSchema }}</textarea>
+                                        </div>
+
+                                        <button type="submit" class="btn-submit" style="width: 100%; margin-top: 1rem;">
+                                            <i data-lucide="save" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle;"></i> Save SEO Configuration for {{ $pinfo['name'] }}
+                                        </button>
+                                    </div>
+
+                                    <!-- Right Column: Live SERP Snippet & Social OpenGraph -->
+                                    <div>
+                                        <!-- Google SERP Live Snippet Preview Box -->
+                                        <div class="admin-card" style="background: #202124; border-color: rgba(255,255,255,0.12); color: #fff; margin-bottom: 1.5rem;">
+                                            <div style="font-size: 0.75rem; color: #9aa0a6; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: space-between;">
+                                                <span><i data-lucide="search" style="width: 12px; height: 12px; display: inline-block; vertical-align: middle;"></i> Google SERP Preview</span>
+                                                <span style="color: var(--mint-green); font-weight: 600;">Live Search Result</span>
+                                            </div>
+                                            <div style="background: #171717; border-radius: 8px; padding: 1rem; border: 1px solid rgba(255,255,255,0.06);">
+                                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                                                    <div style="width: 18px; height: 18px; border-radius: 50%; background: #303134; display: flex; align-items: center; justify-content: center; font-size: 10px;">🌐</div>
+                                                    <div>
+                                                        <div style="font-size: 0.8rem; color: #dadce0; line-height: 1.2;">{{ parse_url(url('/'), PHP_URL_HOST) ?? 'mlgfinedge.com' }}</div>
+                                                        <div style="font-size: 0.7rem; color: #9aa0a6;">{{ url($pinfo['url']) }}</div>
+                                                    </div>
+                                                </div>
+                                                <div id="serp_title_{{ $pkey }}" style="font-size: 1.15rem; color: #8ab4f8; line-height: 1.3; font-weight: 400; margin-bottom: 6px; cursor: pointer; text-decoration: none;">
+                                                    {{ $pTitle }}
+                                                </div>
+                                                <div id="serp_desc_{{ $pkey }}" style="font-size: 0.85rem; color: #bdc1c6; line-height: 1.5;">
+                                                    {{ $pDesc }}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- OpenGraph & Social Sharing Card -->
+                                        <div class="admin-card" style="margin-bottom: 0;">
+                                            <h3 style="margin: 0 0 1rem 0; font-size: 1rem; display: flex; align-items: center; gap: 8px;">
+                                                <i data-lucide="share-2" style="color: var(--accent-orange);"></i> OpenGraph & Social Cards
+                                            </h3>
+
+                                            <div class="form-group">
+                                                <label for="og_title_{{ $pkey }}">Custom OG / Social Title</label>
+                                                <input type="text" id="og_title_{{ $pkey }}" name="og_title" class="form-control" value="{{ $pOgTitle }}" placeholder="Defaults to Meta Title if blank">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="og_desc_{{ $pkey }}">Custom OG / Social Description</label>
+                                                <textarea id="og_desc_{{ $pkey }}" name="og_description" class="form-control" rows="2" placeholder="Defaults to Meta Description if blank">{{ $pOgDesc }}</textarea>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="og_image_file_{{ $pkey }}">Upload Page Social Image (1200x630px recommended)</label>
+                                                <input type="file" id="og_image_file_{{ $pkey }}" name="og_image_file" class="form-control" accept="image/*">
+                                                @if(!empty($pOgImage))
+                                                    <div style="margin-top: 8px; display: flex; align-items: center; gap: 10px;">
+                                                        <img src="{{ site_image($pOgImage) }}" alt="OG Preview" style="height: 45px; width: 80px; object-fit: cover; border-radius: 4px; border: 1px solid var(--admin-border);">
+                                                        <span style="font-size: 0.75rem; color: var(--admin-text-muted);">Current Social Image: {{ basename($pOgImage) }}</span>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    @endforeach
                 </div>
 
-                <div id="seo-results" style="display: none;">
-                    <!-- Quick tabs inside results to switch categories -->
-                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 1.5rem; border-bottom: 1px solid var(--admin-border); padding-bottom: 10px; flex-wrap: wrap;">
-                        <div style="display: flex; gap: 8px; overflow-x: auto; flex-grow: 1; padding-bottom: 5px;">
-                            <button type="button" class="btn-submit active" id="seo-tab-btn-content" onclick="switchSeoResultTab('content')" style="width: auto; padding: 0.5rem 1rem; font-size: 0.85rem;">Pages & Blogs</button>
-                            <button type="button" class="btn-submit" id="seo-tab-btn-backlinks" onclick="switchSeoResultTab('backlinks')" style="width: auto; padding: 0.5rem 1rem; font-size: 0.85rem; background-color: var(--admin-input-bg); color: #fff;">Backlink Targets</button>
-                            <button type="button" class="btn-submit" id="seo-tab-btn-quora" onclick="switchSeoResultTab('quora')" style="width: auto; padding: 0.5rem 1rem; font-size: 0.85rem; background-color: var(--admin-input-bg); color: #fff;">Quora & Q&A</button>
-                            <button type="button" class="btn-submit" id="seo-tab-btn-social" onclick="switchSeoResultTab('social')" style="width: auto; padding: 0.5rem 1rem; font-size: 0.85rem; background-color: var(--admin-input-bg); color: #fff;">Social & Pinterest</button>
-                            <button type="button" class="btn-submit" id="seo-tab-btn-bookmarking" onclick="switchSeoResultTab('bookmarking')" style="width: auto; padding: 0.5rem 1rem; font-size: 0.85rem; background-color: var(--admin-input-bg); color: #fff;">Bookmarking & Syndication</button>
-                            <button type="button" class="btn-submit" id="seo-tab-btn-other" onclick="switchSeoResultTab('other')" style="width: auto; padding: 0.5rem 1rem; font-size: 0.85rem; background-color: var(--admin-input-bg); color: #fff;">Growth Tactics</button>
+                <!-- SUBPANEL 2: SERVICES SEO MANAGER -->
+                <div class="seo-subpanel" id="seo-subpanel-services" style="display: none;">
+                    <div class="admin-card">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 10px;">
+                            <div>
+                                <h2 style="margin: 0; border: none; padding: 0;">Loan Services SEO Optimizer</h2>
+                                <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin: 4px 0 0 0;">Control titles, meta descriptions, controllable H1 headings, image alts, and structured schema for every loan product.</p>
+                            </div>
                         </div>
-                        <div>
-                            <button type="button" class="btn-submit" onclick="downloadSeoPdf()" style="width: auto; padding: 0.5rem 1.25rem; font-size: 0.85rem; background-color: var(--accent-teal); color: var(--primary-teal-dark); font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
-                                <i data-lucide="download" style="width: 16px; height: 16px;"></i> Download PDF Report
-                            </button>
-                        </div>
-                    </div>
 
-                    <!-- Result Panels -->
-                    <!-- 1. Content Panel -->
-                    <div class="seo-result-panel active" id="seo-panel-content">
-                        <div class="admin-card">
-                            <h2>On-Site Content Structure Recommendations</h2>
-                            <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem;">Create new pages or write detailed blog posts for these target keywords to establish topical authority.</p>
-                            <div class="admin-table-wrap">
-                                <table class="admin-table">
-                                    <thead>
+                        <div class="admin-table-wrap">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 20%;">Service & Slug</th>
+                                        <th style="width: 25%;">Meta Title & H1 Tag</th>
+                                        <th style="width: 30%;">Meta Description & Image Alt</th>
+                                        <th style="width: 10%;">Schema</th>
+                                        <th style="width: 15%; text-align: right;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($services as $ser)
                                         <tr>
-                                            <th style="width: 15%;">Type</th>
-                                            <th style="width: 25%;">Recommended Title</th>
-                                            <th style="width: 20%;">Target Keywords</th>
-                                            <th style="width: 40%;">Content Outline & Search Intent</th>
+                                            <td>
+                                                <div style="font-weight: 700; color: #fff;">{{ $ser->service_name }}</div>
+                                                <a href="{{ route('services.show', $ser->slug) }}" target="_blank" style="font-size: 0.75rem; color: var(--mint-green); text-decoration: underline;">
+                                                    /services/{{ $ser->slug }}
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; font-weight: 600; color: #dadce0;">
+                                                    {{ $ser->meta_title ?: ($ser->service_name . ' | MLG Finedge') }}
+                                                </div>
+                                                <div style="font-size: 0.75rem; color: var(--mint-green); margin-top: 3px;">
+                                                    <strong>H1:</strong> {{ $ser->h1_tag ?: $ser->hero_title }}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.8rem; color: var(--admin-text-muted); line-height: 1.4;">
+                                                    {{ \Illuminate\Support\Str::limit($ser->meta_description ?: $ser->summary, 80) }}
+                                                </div>
+                                                <div style="font-size: 0.75rem; color: #c084fc; margin-top: 3px;">
+                                                    <strong>Alt:</strong> {{ $ser->image_alt ?: ($ser->service_name . ' - MLG Finedge') }}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                @if(!empty($ser->schema_markup))
+                                                    <span style="background: rgba(92, 203, 179, 0.15); color: var(--mint-green); padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">Custom</span>
+                                                @else
+                                                    <span style="background: rgba(255, 255, 255, 0.05); color: var(--admin-text-muted); padding: 3px 8px; border-radius: 4px; font-size: 0.75rem;">Default</span>
+                                                @endif
+                                            </td>
+                                            <td style="text-align: right;">
+                                                <div style="display: flex; gap: 6px; justify-content: flex-end;">
+                                                    <button type="button" class="btn-submit" onclick="openServiceSeoModal({{ json_encode($ser) }})" style="padding: 0.4rem 0.75rem; font-size: 0.75rem; width: auto;">
+                                                        <i data-lucide="edit" style="width: 13px; height: 13px;"></i> Edit SEO
+                                                    </button>
+                                                    <button type="button" class="btn-ai-sparkle" onclick="triggerAiSeoGenerate('service', null, {{ $ser->id }}, '{{ addslashes($ser->service_name) }}')" style="padding: 0.4rem 0.75rem; font-size: 0.75rem;">
+                                                        <i data-lucide="sparkles" style="width: 13px; height: 13px;"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
                                         </tr>
-                                    </thead>
-                                    <tbody id="seo-table-content"></tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 2. Backlinks Panel -->
-                    <div class="seo-result-panel" id="seo-panel-backlinks" style="display: none;">
-                        <div class="admin-card">
-                            <h2>Third-Party Off-Site Content & Backlinks</h2>
-                            <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem;">Draft guest posts or articles to pitch to financial portals and external platforms to build domain authority.</p>
-                            <div class="admin-table-wrap">
-                                <table class="admin-table">
-                                    <thead>
-                                        <tr>
-                                            <th style="width: 20%;">Platform Type</th>
-                                            <th style="width: 30%;">Article Title Idea</th>
-                                            <th style="width: 20%;">Target Anchor Keywords</th>
-                                            <th style="width: 30%;">Backlink Integration Context</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="seo-table-backlinks"></tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 3. Quora Panel -->
-                    <div class="seo-result-panel" id="seo-panel-quora" style="display: none;">
-                        <div class="admin-card">
-                            <h2>Quora Authority Building & Referral Traffic</h2>
-                            <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem;">Answer these questions on Quora to capture high-intent referral traffic and establish financial niche expertise.</p>
-                            <div id="seo-cards-quora" style="display: flex; flex-direction: column; gap: 1rem;"></div>
-                        </div>
-                    </div>
-
-                    <!-- 4. Social & Pinterest Panel -->
-                    <div class="seo-result-panel" id="seo-panel-social" style="display: none;">
-                        <div class="form-grid">
-                            <div class="admin-card">
-                                <h2>Pinterest Graphic & Post Layouts</h2>
-                                <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem;">Create high-engagement pins targeting financial boards.</p>
-                                <div class="admin-table-wrap">
-                                    <table class="admin-table">
-                                        <thead>
-                                            <tr>
-                                                <th>Overlay Bold Text</th>
-                                                <th>Visual Graphic Concept</th>
-                                                <th>Category</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="seo-table-pinterest"></tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            <div class="admin-card">
-                                <h2>Written Social Media Posts</h2>
-                                <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem;">Ready-to-use captions and concepts for LinkedIn, Facebook, and Instagram.</p>
-                                <div id="seo-cards-social" style="display: flex; flex-direction: column; gap: 1rem;"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 5. Bookmarking & Syndication Panel -->
-                    <div class="seo-result-panel" id="seo-panel-bookmarking" style="display: none;">
-                        <div class="form-grid">
-                            <div class="admin-card">
-                                <h2>Bookmarking Websites & Submission Strategy</h2>
-                                <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem;">Share links to your newly written pages on these social bookmarking platforms.</p>
-                                <div class="admin-table-wrap">
-                                    <table class="admin-table">
-                                        <thead>
-                                            <tr>
-                                                <th style="width: 25%;">Platform</th>
-                                                <th style="width: 75%;">Tactical Submission Strategy</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="seo-table-bookmarking"></tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            <div class="admin-card">
-                                <h2>Blog Promotion & Syndication Websites</h2>
-                                <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem;">Republish or syndicate your blog posts to reach wider audiences.</p>
-                                <div class="admin-table-wrap">
-                                    <table class="admin-table">
-                                        <thead>
-                                            <tr>
-                                                <th style="width: 25%;">Platform</th>
-                                                <th style="width: 75%;">Tactical Syndication Strategy</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="seo-table-syndication"></tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 6. Other growth tactics -->
-                    <div class="seo-result-panel" id="seo-panel-other" style="display: none;">
-                        <div class="admin-card">
-                            <h2>Growth Tactics & Backlink Submission Blueprints</h2>
-                            <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem;">Implement these white-hat link acquisition strategies to grow domain authority.</p>
-                            <div id="seo-cards-other" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;"></div>
+                                    @endforeach
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
 
-                <!-- XML Sitemap Generator Card -->
-                <div class="admin-card" style="margin-top: 2rem;">
-                    <h2><i data-lucide="map" style="display: inline-block; vertical-align: middle; margin-right: 5px;"></i> XML Sitemap Generator</h2>
-                    <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem; margin-top: -1rem;">
-                        Regenerate the website XML sitemap to include all newly created service pages, blog articles, and landing pages for search engines like Google.
-                    </p>
-                    <form action="{{ route('admin.sitemap.generate') }}" method="POST">
+                <!-- SUBPANEL 3: BLOG POSTS SEO MANAGER -->
+                <div class="seo-subpanel" id="seo-subpanel-blogs" style="display: none;">
+                    <div class="admin-card">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 10px;">
+                            <div>
+                                <h2 style="margin: 0; border: none; padding: 0;">Blog Articles SEO Optimizer</h2>
+                                <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin: 4px 0 0 0;">Optimize rankings, meta tags, and schema for all educational blog posts.</p>
+                            </div>
+                        </div>
+
+                        <div class="admin-table-wrap">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 25%;">Article Title & Category</th>
+                                        <th style="width: 30%;">Meta Title & H1 Tag</th>
+                                        <th style="width: 25%;">Description & Image Alt</th>
+                                        <th style="width: 8%;">Schema</th>
+                                        <th style="width: 12%; text-align: right;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($blogs as $b)
+                                        <tr>
+                                            <td>
+                                                <div style="font-weight: 700; color: #fff;">{{ $b->title }}</div>
+                                                <span style="font-size: 0.75rem; color: var(--accent-orange);">{{ $b->category }}</span> • 
+                                                <a href="{{ route('blog.show', $b->slug) }}" target="_blank" style="font-size: 0.75rem; color: var(--mint-green); text-decoration: underline;">
+                                                    /blog/{{ $b->slug }}
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; font-weight: 600; color: #dadce0;">
+                                                    {{ $b->meta_title ?: ($b->title . ' | MLG Finedge') }}
+                                                </div>
+                                                <div style="font-size: 0.75rem; color: var(--mint-green); margin-top: 3px;">
+                                                    <strong>H1:</strong> {{ $b->h1_tag ?: $b->title }}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.8rem; color: var(--admin-text-muted); line-height: 1.4;">
+                                                    {{ \Illuminate\Support\Str::limit($b->meta_description ?: $b->summary, 80) }}
+                                                </div>
+                                                <div style="font-size: 0.75rem; color: #c084fc; margin-top: 3px;">
+                                                    <strong>Alt:</strong> {{ $b->image_alt ?: ($b->title . ' - MLG Finedge') }}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                @if(!empty($b->schema_markup))
+                                                    <span style="background: rgba(92, 203, 179, 0.15); color: var(--mint-green); padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">Custom</span>
+                                                @else
+                                                    <span style="background: rgba(255, 255, 255, 0.05); color: var(--admin-text-muted); padding: 3px 8px; border-radius: 4px; font-size: 0.75rem;">Default</span>
+                                                @endif
+                                            </td>
+                                            <td style="text-align: right;">
+                                                <div style="display: flex; gap: 6px; justify-content: flex-end;">
+                                                    <button type="button" class="btn-submit" onclick="openBlogSeoModal({{ json_encode($b) }})" style="padding: 0.4rem 0.75rem; font-size: 0.75rem; width: auto;">
+                                                        <i data-lucide="edit" style="width: 13px; height: 13px;"></i> Edit
+                                                    </button>
+                                                    <button type="button" class="btn-ai-sparkle" onclick="triggerAiSeoGenerate('blog', null, {{ $b->id }}, '{{ addslashes($b->title) }}')" style="padding: 0.4rem 0.75rem; font-size: 0.75rem;">
+                                                        <i data-lucide="sparkles" style="width: 13px; height: 13px;"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUBPANEL 4: LANDING PAGES SEO MANAGER -->
+                <div class="seo-subpanel" id="seo-subpanel-landing" style="display: none;">
+                    <div class="admin-card">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 10px;">
+                            <div>
+                                <h2 style="margin: 0; border: none; padding: 0;">AI Landing Pages SEO Optimizer</h2>
+                                <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin: 4px 0 0 0;">Control metadata, headings, and schema for paid search and targeted landing pages.</p>
+                            </div>
+                        </div>
+
+                        <div class="admin-table-wrap">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 25%;">Landing Page & Slug</th>
+                                        <th style="width: 30%;">Meta Title & H1 Tag</th>
+                                        <th style="width: 25%;">Description & Alt</th>
+                                        <th style="width: 8%;">Schema</th>
+                                        <th style="width: 12%; text-align: right;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse($landingPages as $lp)
+                                        <tr>
+                                            <td>
+                                                <div style="font-weight: 700; color: #fff;">{{ $lp->title }}</div>
+                                                <a href="{{ route('landing.show', $lp->slug) }}" target="_blank" style="font-size: 0.75rem; color: var(--mint-green); text-decoration: underline;">
+                                                    /l/{{ $lp->slug }}
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; font-weight: 600; color: #dadce0;">
+                                                    {{ $lp->meta_title ?: ($lp->title . ' | MLG Finedge') }}
+                                                </div>
+                                                <div style="font-size: 0.75rem; color: var(--mint-green); margin-top: 3px;">
+                                                    <strong>H1:</strong> {{ $lp->h1_tag ?: $lp->title }}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.8rem; color: var(--admin-text-muted); line-height: 1.4;">
+                                                    {{ \Illuminate\Support\Str::limit($lp->meta_description, 80) }}
+                                                </div>
+                                                <div style="font-size: 0.75rem; color: #c084fc; margin-top: 3px;">
+                                                    <strong>Alt:</strong> {{ $lp->image_alt ?: ($lp->title . ' - MLG Finedge') }}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                @if(!empty($lp->schema_markup))
+                                                    <span style="background: rgba(92, 203, 179, 0.15); color: var(--mint-green); padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">Custom</span>
+                                                @else
+                                                    <span style="background: rgba(255, 255, 255, 0.05); color: var(--admin-text-muted); padding: 3px 8px; border-radius: 4px; font-size: 0.75rem;">None</span>
+                                                @endif
+                                            </td>
+                                            <td style="text-align: right;">
+                                                <div style="display: flex; gap: 6px; justify-content: flex-end;">
+                                                    <button type="button" class="btn-submit" onclick="openLandingSeoModal({{ json_encode($lp) }})" style="padding: 0.4rem 0.75rem; font-size: 0.75rem; width: auto;">
+                                                        <i data-lucide="edit" style="width: 13px; height: 13px;"></i> Edit
+                                                    </button>
+                                                    <button type="button" class="btn-ai-sparkle" onclick="triggerAiSeoGenerate('landing', null, {{ $lp->id }}, '{{ addslashes($lp->title) }}')" style="padding: 0.4rem 0.75rem; font-size: 0.75rem;">
+                                                        <i data-lucide="sparkles" style="width: 13px; height: 13px;"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="5" style="text-align: center; color: var(--admin-text-muted); padding: 2rem;">
+                                                No landing pages created yet. Create one in the AI Landing Pages tab!
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUBPANEL 5: ALT TAGS & IMAGE SEO AUDITOR -->
+                <div class="seo-subpanel" id="seo-subpanel-alts" style="display: none;">
+                    <form action="{{ route('admin.seo.alts.update') }}" method="POST">
                         @csrf
-                        <button type="submit" class="btn-submit" style="width: auto; padding: 0.75rem 1.5rem;">
-                            <i data-lucide="refresh-cw" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 4px;"></i> Regenerate Sitemap
+                        <!-- Global & Brand Alt Tags -->
+                        <div class="admin-card">
+                            <h2><i data-lucide="image" style="color: var(--mint-green); margin-right: 6px;"></i> Brand & Global Component Alt Tags</h2>
+                            <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem; margin-top: -1rem;">
+                                Set descriptive alt texts for key brand assets and persistent images rendered in header, footer, and about sections.
+                            </p>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="alt_seo_logo">Header & Footer Logo Alt Text</label>
+                                    <input type="text" id="alt_seo_logo" name="seo_logo_alt" class="form-control" value="{{ $parameters['SEO']['seo_logo_alt']->value ?? 'MLG Finedge - Trusted Loan Advisor in Gopalpura Jaipur' }}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="alt_seo_about_img">About Us Showcase Badge Alt Text</label>
+                                    <input type="text" id="alt_seo_about_img" name="seo_about_img_alt" class="form-control" value="{{ $parameters['SEO']['seo_about_img_alt']->value ?? 'MLG Finedge Verified Loan Advisory Firm Jaipur' }}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Home Slides Alt Tags -->
+                        <div class="admin-card">
+                            <h2><i data-lucide="sliders" style="color: var(--accent-orange); margin-right: 6px;"></i> Homepage Slider Images Alt Tags</h2>
+                            <div class="admin-table-wrap">
+                                <table class="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 15%;">Slide Image</th>
+                                            <th style="width: 35%;">Slide Title</th>
+                                            <th style="width: 50%;">Image Alt Text</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($slides as $sl)
+                                            <tr>
+                                                <td>
+                                                    @if(!empty($sl->image_path))
+                                                        <img src="{{ site_image($sl->image_path) }}" alt="{{ $sl->title }}" style="width: 60px; height: 40px; object-fit: cover; border-radius: 4px; border: 1px solid var(--admin-border);">
+                                                    @else
+                                                        <span style="font-size: 0.75rem; color: var(--admin-text-muted);">Gradient BG</span>
+                                                    @endif
+                                                </td>
+                                                <td><strong>{{ $sl->title }}</strong></td>
+                                                <td>
+                                                    <input type="text" name="slides[{{ $sl->id }}]" class="form-control" value="{{ $sl->alt_text ?: ($sl->title . ' - MLG Finedge Jaipur') }}" placeholder="Descriptive Alt Text for this slide">
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Service Card Images Alt Tags -->
+                        <div class="admin-card">
+                            <h2><i data-lucide="layers" style="color: #8ab4f8; margin-right: 6px;"></i> Loan Services Alt Tags</h2>
+                            <div class="admin-table-wrap">
+                                <table class="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 35%;">Service Name</th>
+                                            <th style="width: 65%;">Service Image / Banner Alt Text</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($services as $ser)
+                                            <tr>
+                                                <td><strong>{{ $ser->service_name }}</strong></td>
+                                                <td>
+                                                    <input type="text" name="services[{{ $ser->id }}]" class="form-control" value="{{ $ser->image_alt ?: ($ser->service_name . ' - MLG Finedge Loan Solutions') }}" placeholder="Alt text for service card and banner">
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Blog Images Alt Tags -->
+                        <div class="admin-card">
+                            <h2><i data-lucide="book-open" style="color: #c084fc; margin-right: 6px;"></i> Blog Posts Featured Images Alt Tags</h2>
+                            <div class="admin-table-wrap">
+                                <table class="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 15%;">Thumbnail</th>
+                                            <th style="width: 35%;">Article Title</th>
+                                            <th style="width: 50%;">Featured Image Alt Text</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($blogs as $b)
+                                            <tr>
+                                                <td>
+                                                    @if(!empty($b->image_path))
+                                                        <img src="{{ site_image($b->image_path) }}" alt="{{ $b->title }}" style="width: 60px; height: 40px; object-fit: cover; border-radius: 4px; border: 1px solid var(--admin-border);">
+                                                    @else
+                                                        <span style="font-size: 0.75rem; color: var(--admin-text-muted);">Icon</span>
+                                                    @endif
+                                                </td>
+                                                <td><strong>{{ $b->title }}</strong></td>
+                                                <td>
+                                                    <input type="text" name="blogs[{{ $b->id }}]" class="form-control" value="{{ $b->image_alt ?: ($b->title . ' - MLG Finedge Blog') }}" placeholder="Alt text for blog article cover">
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-submit" style="padding: 0.85rem 2rem; font-size: 1rem;">
+                            <i data-lucide="save" style="display: inline-block; vertical-align: middle; margin-right: 6px;"></i> Update All Image Alt Tags
                         </button>
                     </form>
-                    <p style="font-size: 0.85rem; margin-top: 10px; color: var(--admin-text-muted);">
-                        Sitemap URL: <a href="/sitemap.xml" target="_blank" style="color: var(--mint-green); text-decoration: underline;">/sitemap.xml</a>
-                    </p>
+                </div>
+
+                <!-- SUBPANEL 6: GLOBAL SEO & SOCIAL DEFAULTS -->
+                <div class="seo-subpanel" id="seo-subpanel-global" style="display: none;">
+                    <form action="{{ route('admin.seo.global.update') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="admin-card">
+                            <h2><i data-lucide="globe" style="color: var(--mint-green); margin-right: 6px;"></i> Global Meta Defaults & Verification</h2>
+                            <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem; margin-top: -1rem;">
+                                These parameters act as universal fallbacks whenever a page or dynamic record does not specify custom values.
+                            </p>
+
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="seo_title_suffix">Meta Title Suffix (Appended to page titles)</label>
+                                    <input type="text" id="seo_title_suffix" name="seo_title_suffix" class="form-control" value="{{ $parameters['SEO']['seo_title_suffix']->value ?? ' | MLG Finedge Jaipur' }}" placeholder="e.g.  | MLG Finedge Jaipur">
+                                </div>
+                                <div class="form-group">
+                                    <label for="seo_default_robots">Default Robots Directive</label>
+                                    <select id="seo_default_robots" name="seo_default_robots" class="form-control">
+                                        @php $defRob = $parameters['SEO']['seo_default_robots']->value ?? 'index, follow'; @endphp
+                                        <option value="index, follow" @if($defRob === 'index, follow') selected @endif>index, follow (Recommended)</option>
+                                        <option value="noindex, follow" @if($defRob === 'noindex, follow') selected @endif>noindex, follow</option>
+                                        <option value="noindex, nofollow" @if($defRob === 'noindex, nofollow') selected @endif>noindex, nofollow</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="seo_default_description">Default Meta Description</label>
+                                <textarea id="seo_default_description" name="seo_default_description" class="form-control" rows="2">{{ $parameters['SEO']['seo_default_description']->value ?? 'MLG Finedge is the leading loan provider in Gopalpura Jaipur. We offer expert loan advisory & consultation for Personal Loans, Home Loans, Business Loans, and LAP.' }}</textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="seo_default_keywords">Default Meta Keywords</label>
+                                <input type="text" id="seo_default_keywords" name="seo_default_keywords" class="form-control" value="{{ $parameters['SEO']['seo_default_keywords']->value ?? 'loan provider jaipur, loan advisor gopalpura, home loan, business loan, personal loan, loan against property, mlg finedge' }}">
+                            </div>
+
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="seo_twitter_handle">Twitter / X Username</label>
+                                    <input type="text" id="seo_twitter_handle" name="seo_twitter_handle" class="form-control" value="{{ $parameters['SEO']['seo_twitter_handle']->value ?? '@mlgfinedge' }}" placeholder="@mlgfinedge">
+                                </div>
+                                <div class="form-group">
+                                    <label for="seo_google_verification">Google Search Console Verification Code</label>
+                                    <input type="text" id="seo_google_verification" name="seo_google_verification" class="form-control" value="{{ $parameters['SEO']['seo_google_verification']->value ?? '' }}" placeholder="Paste verification meta content string">
+                                </div>
+                                <div class="form-group">
+                                    <label for="seo_bing_verification">Bing Webmaster Verification Code</label>
+                                    <input type="text" id="seo_bing_verification" name="seo_bing_verification" class="form-control" value="{{ $parameters['SEO']['seo_bing_verification']->value ?? '' }}" placeholder="msvalidate.01 content">
+                                </div>
+                            </div>
+
+                            <!-- Default Social Share OG Image -->
+                            <div class="form-group" style="margin-top: 1rem;">
+                                <label for="seo_default_og_image">Default OG Social Sharing Image (1200x630px recommended)</label>
+                                <input type="file" id="seo_default_og_image" name="seo_default_og_image" class="form-control" accept="image/*">
+                                @if(!empty($parameters['SEO']['seo_default_og_image']->value))
+                                    <div style="margin-top: 8px; display: flex; align-items: center; gap: 10px;">
+                                        <img src="{{ site_image($parameters['SEO']['seo_default_og_image']->value) }}" alt="OG Default" style="height: 50px; width: 90px; object-fit: cover; border-radius: 4px; border: 1px solid var(--admin-border);">
+                                        <span style="font-size: 0.8rem; color: var(--admin-text-muted);">Current Global Image: {{ basename($parameters['SEO']['seo_default_og_image']->value) }}</span>
+                                    </div>
+                                @endif
+                            </div>
+
+                            <!-- Global Knowledge Graph Schema -->
+                            <div class="form-group" style="margin-top: 1.5rem;">
+                                <label for="seo_global_schema">Global Organization / LocalBusiness JSON-LD Schema (Injected on all pages)</label>
+                                <textarea id="seo_global_schema" name="seo_global_schema" class="form-control" rows="5" style="font-family: monospace; font-size: 0.82rem;" placeholder="<script type=&quot;application/ld+json&quot;>...</script>">{{ $parameters['SEO']['seo_global_schema']->value ?? '' }}</textarea>
+                            </div>
+
+                            <button type="submit" class="btn-submit" style="margin-top: 1rem;">
+                                <i data-lucide="save" style="display: inline-block; vertical-align: middle; margin-right: 4px;"></i> Save Global SEO Settings
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- SUBPANEL 7: AI BLUEPRINTS & KEYWORD STRATEGY -->
+                <div class="seo-subpanel" id="seo-subpanel-blueprints" style="display: none;">
+                    <div class="admin-card">
+                        <h2><i data-lucide="trending-up" style="display: inline-block; vertical-align: middle; margin-right: 5px;"></i> AI SEO Recommendations & Link-Building Blueprint</h2>
+                        <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem; margin-top: -1rem;">
+                            Enter the target keywords or topics you want to rank for. Our AI will analyze search intent and draft a comprehensive blueprint of content ideas, guest articles, Quora answers, social copy, bookmarking platforms, and backlink opportunities.
+                        </p>
+                        <div class="form-group">
+                            <label for="seo_keywords">Target Keywords (comma-separated or one per line)</label>
+                            <textarea id="seo_keywords" class="form-control" rows="3" placeholder="e.g. low interest home loan, best financial adviser jaipur, secure business loans for startups"></textarea>
+                        </div>
+                        <button type="button" class="btn-ai-sparkle" onclick="generateSeoRecommendations()" style="margin-top: 1rem; padding: 0.75rem 1.5rem; font-size: 0.95rem;">
+                            <i data-lucide="sparkles"></i> Generate SEO Blueprint
+                        </button>
+                    </div>
+
+                    <div class="admin-card" id="seo-loader" style="display: none; padding: 4rem 2rem; text-align: center;">
+                        <div class="ai-sparkle-loader" style="margin: 0 auto 1.5rem auto;"></div>
+                        <h3 style="margin: 0; font-size: 1.25rem;">Analyzing Keywords & Formulating SEO Blueprint...</h3>
+                        <p style="color: var(--admin-text-muted); margin-top: 5px; font-size: 0.9rem;">Gemini is researching backlink strategies and content maps in the background.</p>
+                    </div>
+
+                    <div id="seo-results" style="display: none;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 1.5rem; border-bottom: 1px solid var(--admin-border); padding-bottom: 10px; flex-wrap: wrap;">
+                            <div style="display: flex; gap: 8px; overflow-x: auto; flex-grow: 1; padding-bottom: 5px;">
+                                <button type="button" class="btn-submit active" id="seo-tab-btn-content" onclick="switchSeoResultTab('content')" style="width: auto; padding: 0.5rem 1rem; font-size: 0.85rem;">Pages & Blogs</button>
+                                <button type="button" class="btn-submit" id="seo-tab-btn-backlinks" onclick="switchSeoResultTab('backlinks')" style="width: auto; padding: 0.5rem 1rem; font-size: 0.85rem; background-color: var(--admin-input-bg); color: #fff;">Backlink Targets</button>
+                                <button type="button" class="btn-submit" id="seo-tab-btn-quora" onclick="switchSeoResultTab('quora')" style="width: auto; padding: 0.5rem 1rem; font-size: 0.85rem; background-color: var(--admin-input-bg); color: #fff;">Quora & Q&A</button>
+                                <button type="button" class="btn-submit" id="seo-tab-btn-social" onclick="switchSeoResultTab('social')" style="width: auto; padding: 0.5rem 1rem; font-size: 0.85rem; background-color: var(--admin-input-bg); color: #fff;">Social & Pinterest</button>
+                                <button type="button" class="btn-submit" id="seo-tab-btn-bookmarking" onclick="switchSeoResultTab('bookmarking')" style="width: auto; padding: 0.5rem 1rem; font-size: 0.85rem; background-color: var(--admin-input-bg); color: #fff;">Bookmarking & Syndication</button>
+                                <button type="button" class="btn-submit" id="seo-tab-btn-other" onclick="switchSeoResultTab('other')" style="width: auto; padding: 0.5rem 1rem; font-size: 0.85rem; background-color: var(--admin-input-bg); color: #fff;">Growth Tactics</button>
+                            </div>
+                            <div>
+                                <button type="button" class="btn-submit" onclick="downloadSeoPdf()" style="width: auto; padding: 0.5rem 1.25rem; font-size: 0.85rem; background-color: var(--accent-teal); color: var(--primary-teal-dark); font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
+                                    <i data-lucide="download" style="width: 16px; height: 16px;"></i> Download PDF Report
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Result Panels -->
+                        <div class="seo-result-panel active" id="seo-panel-content">
+                            <div class="admin-card">
+                                <h2>On-Site Content Structure Recommendations</h2>
+                                <div class="admin-table-wrap">
+                                    <table class="admin-table">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 15%;">Type</th>
+                                                <th style="width: 25%;">Recommended Title</th>
+                                                <th style="width: 20%;">Target Keywords</th>
+                                                <th style="width: 40%;">Content Outline & Search Intent</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="seo-table-content"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="seo-result-panel" id="seo-panel-backlinks" style="display: none;">
+                            <div class="admin-card">
+                                <h2>Third-Party Off-Site Content & Backlinks</h2>
+                                <div class="admin-table-wrap">
+                                    <table class="admin-table">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 20%;">Platform Type</th>
+                                                <th style="width: 30%;">Article Title Idea</th>
+                                                <th style="width: 20%;">Target Anchor Keywords</th>
+                                                <th style="width: 30%;">Backlink Integration Context</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="seo-table-backlinks"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="seo-result-panel" id="seo-panel-quora" style="display: none;">
+                            <div class="admin-card">
+                                <h2>Quora Authority Building & Referral Traffic</h2>
+                                <div id="seo-cards-quora" style="display: flex; flex-direction: column; gap: 1rem;"></div>
+                            </div>
+                        </div>
+
+                        <div class="seo-result-panel" id="seo-panel-social" style="display: none;">
+                            <div class="form-grid">
+                                <div class="admin-card">
+                                    <h2>Pinterest Graphic & Post Layouts</h2>
+                                    <div class="admin-table-wrap">
+                                        <table class="admin-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Overlay Bold Text</th>
+                                                    <th>Visual Graphic Concept</th>
+                                                    <th>Category</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="seo-table-pinterest"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="admin-card">
+                                    <h2>Written Social Media Posts</h2>
+                                    <div id="seo-cards-social" style="display: flex; flex-direction: column; gap: 1rem;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="seo-result-panel" id="seo-panel-bookmarking" style="display: none;">
+                            <div class="form-grid">
+                                <div class="admin-card">
+                                    <h2>Bookmarking Websites & Submission Strategy</h2>
+                                    <div class="admin-table-wrap">
+                                        <table class="admin-table">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width: 25%;">Platform</th>
+                                                    <th style="width: 75%;">Tactical Submission Strategy</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="seo-table-bookmarking"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="admin-card">
+                                    <h2>Blog Promotion & Syndication Websites</h2>
+                                    <div class="admin-table-wrap">
+                                        <table class="admin-table">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width: 25%;">Platform</th>
+                                                    <th style="width: 75%;">Tactical Syndication Strategy</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="seo-table-syndication"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="seo-result-panel" id="seo-panel-other" style="display: none;">
+                            <div class="admin-card">
+                                <h2>Growth Tactics & Backlink Submission Blueprints</h2>
+                                <div id="seo-cards-other" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUBPANEL 8: XML SITEMAP & SEARCH ENGINES -->
+                <div class="seo-subpanel" id="seo-subpanel-sitemap" style="display: none;">
+                    <div class="admin-card">
+                        <h2><i data-lucide="map" style="display: inline-block; vertical-align: middle; margin-right: 5px;"></i> XML Sitemap & Search Engine Indexing</h2>
+                        <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem; margin-top: -1rem;">
+                            Regenerate the website XML sitemap and notify search engines whenever you add new service pages, blogs, or landing pages.
+                        </p>
+                        
+                        <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                            <form action="{{ route('admin.sitemap.generate') }}" method="POST">
+                                @csrf
+                                <button type="submit" class="btn-submit" style="width: auto; padding: 0.75rem 1.75rem;">
+                                    <i data-lucide="refresh-cw" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 6px;"></i> Regenerate XML Sitemap
+                                </button>
+                            </form>
+                            <a href="/sitemap.xml" target="_blank" class="btn-submit" style="background: var(--admin-input-bg); color: #fff; width: auto; padding: 0.75rem 1.5rem; border: 1px solid var(--admin-border); text-decoration: none;">
+                                <i data-lucide="external-link" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle; margin-right: 4px;"></i> Open /sitemap.xml
+                            </a>
+                        </div>
+
+                        <div style="margin-top: 2rem; border-top: 1px solid var(--admin-border); padding-top: 1.5rem;">
+                            <h3 style="font-size: 1rem; margin-bottom: 0.75rem;">Search Engine Webmaster Tools Quick Links</h3>
+                            <ul style="list-style: none; padding: 0; margin: 0; display: flex; gap: 1.5rem; flex-wrap: wrap;">
+                                <li>
+                                    <a href="https://search.google.com/search-console" target="_blank" style="color: var(--mint-green); text-decoration: underline; display: inline-flex; align-items: center; gap: 4px;">
+                                        <i data-lucide="external-link" style="width: 14px; height: 14px;"></i> Google Search Console
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.bing.com/webmasters" target="_blank" style="color: var(--mint-green); text-decoration: underline; display: inline-flex; align-items: center; gap: 4px;">
+                                        <i data-lucide="external-link" style="width: 14px; height: 14px;"></i> Bing Webmaster Tools
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://developers.google.com/search/docs/appearance/structured-data" target="_blank" style="color: var(--mint-green); text-decoration: underline; display: inline-flex; align-items: center; gap: 4px;">
+                                        <i data-lucide="external-link" style="width: 14px; height: 14px;"></i> Google Rich Results Test Tool
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -3289,6 +3982,299 @@
                         <i data-lucide="copy" style="width: 14px; height: 14px; display: inline; vertical-align: middle;"></i> Copy URL
                     </button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Service SEO Modal -->
+    <div class="ai-modal-overlay" id="edit-service-seo-modal">
+        <div class="ai-modal-card" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
+            <button class="ai-modal-close" onclick="closeServiceSeoModal()">&times;</button>
+            <h3 style="color: var(--mint-green);"><i data-lucide="layers"></i> Edit Service SEO & Social Meta</h3>
+            
+            <form id="service-seo-form" action="" method="POST" enctype="multipart/form-data" style="margin-top: 1.25rem;">
+                @csrf
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Target Service</label>
+                        <input type="text" id="svc_seo_name" class="form-control" readonly style="opacity: 0.8; font-weight: 700;">
+                    </div>
+                    <div class="form-group">
+                        <label for="svc_h1_tag">Main H1 Heading Tag (Controllable on-page H1)</label>
+                        <input type="text" id="svc_h1_tag" name="h1_tag" class="form-control" placeholder="Defaults to service title if empty">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div style="display: flex; justify-content: space-between;">
+                        <label for="svc_meta_title">Meta Title Tag</label>
+                        <span id="svc_title_counter" style="font-size: 0.75rem; color: var(--admin-text-muted);">0 / 60 chars</span>
+                    </div>
+                    <input type="text" id="svc_meta_title" name="meta_title" class="form-control" oninput="countChars(this, 'svc_title_counter', 60)" placeholder="Primary keyword + Brand name">
+                </div>
+
+                <div class="form-group">
+                    <div style="display: flex; justify-content: space-between;">
+                        <label for="svc_meta_description">Meta Description</label>
+                        <span id="svc_desc_counter" style="font-size: 0.75rem; color: var(--admin-text-muted);">0 / 160 chars</span>
+                    </div>
+                    <textarea id="svc_meta_description" name="meta_description" class="form-control" rows="3" oninput="countChars(this, 'svc_desc_counter', 160)" placeholder="Compelling call-to-action summary for Google SERP snippet"></textarea>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="svc_meta_keywords">Meta Keywords (Comma separated)</label>
+                        <input type="text" id="svc_meta_keywords" name="meta_keywords" class="form-control" placeholder="e.g. home loan jaipur, lowest roi loan">
+                    </div>
+                    <div class="form-group">
+                        <label for="svc_image_alt">Featured Image / Banner Alt Text</label>
+                        <input type="text" id="svc_image_alt" name="image_alt" class="form-control" placeholder="Descriptive image alt text">
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="svc_canonical_url">Canonical URL (Optional)</label>
+                        <input type="text" id="svc_canonical_url" name="canonical_url" class="form-control" placeholder="https://mlgfinedge.com/services/...">
+                    </div>
+                    <div class="form-group">
+                        <label for="svc_meta_robots">Meta Robots Indexing Directive</label>
+                        <select id="svc_meta_robots" name="meta_robots" class="form-control">
+                            <option value="">Default (Inherit global setting)</option>
+                            <option value="index, follow">index, follow (Index and follow links)</option>
+                            <option value="noindex, follow">noindex, follow (Do not index)</option>
+                            <option value="noindex, nofollow">noindex, nofollow (Block completely)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="svc_og_image">Social Sharing OpenGraph Image (1200x630px recommended)</label>
+                    <input type="file" id="svc_og_image" name="og_image" class="form-control" accept="image/*">
+                </div>
+
+                <div class="form-group">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                        <label for="svc_schema_markup" style="margin: 0;">JSON-LD Structured Schema Markup</label>
+                        <span style="font-size: 0.75rem; color: var(--mint-green);">FinancialProduct / LoanOrCredit Schema</span>
+                    </div>
+                    <textarea id="svc_schema_markup" name="schema_markup" class="form-control" rows="5" style="font-family: monospace; font-size: 0.8rem;" placeholder="<script type=&quot;application/ld+json&quot;>
+{
+  &quot;@@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@@type&quot;: &quot;FinancialProduct&quot;,
+  &quot;name&quot;: &quot;Home Loan&quot;
+}
+</script>"></textarea>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 1.5rem;">
+                    <button type="button" class="btn-submit" style="background-color: var(--admin-input-bg); color: #fff; width: auto;" onclick="closeServiceSeoModal()">Cancel</button>
+                    <button type="submit" class="btn-submit" style="width: auto;">
+                        <i data-lucide="save" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle; margin-right: 4px;"></i> Save Service SEO
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Blog SEO Modal -->
+    <div class="ai-modal-overlay" id="edit-blog-seo-modal">
+        <div class="ai-modal-card" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
+            <button class="ai-modal-close" onclick="closeBlogSeoModal()">&times;</button>
+            <h3 style="color: #c084fc;"><i data-lucide="book-open"></i> Edit Blog Post SEO & Social Meta</h3>
+            
+            <form id="blog-seo-form" action="" method="POST" enctype="multipart/form-data" style="margin-top: 1.25rem;">
+                @csrf
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Target Article</label>
+                        <input type="text" id="blog_seo_name" class="form-control" readonly style="opacity: 0.8; font-weight: 700;">
+                    </div>
+                    <div class="form-group">
+                        <label for="blog_h1_tag">Controllable H1 Article Heading</label>
+                        <input type="text" id="blog_h1_tag" name="h1_tag" class="form-control" placeholder="Defaults to blog title if empty">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div style="display: flex; justify-content: space-between;">
+                        <label for="blog_meta_title">Meta Title Tag</label>
+                        <span id="blog_title_counter" style="font-size: 0.75rem; color: var(--admin-text-muted);">0 / 60 chars</span>
+                    </div>
+                    <input type="text" id="blog_meta_title" name="meta_title" class="form-control" oninput="countChars(this, 'blog_title_counter', 60)" placeholder="SEO Article Title">
+                </div>
+
+                <div class="form-group">
+                    <div style="display: flex; justify-content: space-between;">
+                        <label for="blog_meta_description">Meta Description</label>
+                        <span id="blog_desc_counter" style="font-size: 0.75rem; color: var(--admin-text-muted);">0 / 160 chars</span>
+                    </div>
+                    <textarea id="blog_meta_description" name="meta_description" class="form-control" rows="3" oninput="countChars(this, 'blog_desc_counter', 160)" placeholder="Meta snippet description"></textarea>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="blog_meta_keywords">Meta Keywords</label>
+                        <input type="text" id="blog_meta_keywords" name="meta_keywords" class="form-control" placeholder="e.g. loan interest tips, financial advisor">
+                    </div>
+                    <div class="form-group">
+                        <label for="blog_image_alt">Cover Image Alt Text</label>
+                        <input type="text" id="blog_image_alt" name="image_alt" class="form-control" placeholder="Alt text for featured cover">
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="blog_canonical_url">Canonical URL (Optional)</label>
+                        <input type="text" id="blog_canonical_url" name="canonical_url" class="form-control" placeholder="https://mlgfinedge.com/blog/...">
+                    </div>
+                    <div class="form-group">
+                        <label for="blog_meta_robots">Meta Robots Directive</label>
+                        <select id="blog_meta_robots" name="meta_robots" class="form-control">
+                            <option value="">Default (Inherit global setting)</option>
+                            <option value="index, follow">index, follow</option>
+                            <option value="noindex, follow">noindex, follow</option>
+                            <option value="noindex, nofollow">noindex, nofollow</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="blog_og_image">OG Social Share Image</label>
+                    <input type="file" id="blog_og_image" name="og_image" class="form-control" accept="image/*">
+                </div>
+
+                <div class="form-group">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                        <label for="blog_schema_markup" style="margin: 0;">BlogPosting / Article JSON-LD Schema</label>
+                        <span style="font-size: 0.75rem; color: #c084fc;">BlogPosting / NewsArticle Schema</span>
+                    </div>
+                    <textarea id="blog_schema_markup" name="schema_markup" class="form-control" rows="5" style="font-family: monospace; font-size: 0.8rem;" placeholder="<script type=&quot;application/ld+json&quot;>...</script>"></textarea>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 1.5rem;">
+                    <button type="button" class="btn-submit" style="background-color: var(--admin-input-bg); color: #fff; width: auto;" onclick="closeBlogSeoModal()">Cancel</button>
+                    <button type="submit" class="btn-submit" style="width: auto;">
+                        <i data-lucide="save" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle; margin-right: 4px;"></i> Save Blog SEO
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Landing Page SEO Modal -->
+    <div class="ai-modal-overlay" id="edit-landing-seo-modal">
+        <div class="ai-modal-card" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
+            <button class="ai-modal-close" onclick="closeLandingSeoModal()">&times;</button>
+            <h3 style="color: #8ab4f8;"><i data-lucide="file-text"></i> Edit Landing Page SEO & Schema</h3>
+            
+            <form id="landing-seo-form" action="" method="POST" enctype="multipart/form-data" style="margin-top: 1.25rem;">
+                @csrf
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Landing Page</label>
+                        <input type="text" id="landing_seo_name" class="form-control" readonly style="opacity: 0.8; font-weight: 700;">
+                    </div>
+                    <div class="form-group">
+                        <label for="landing_h1_tag">Controllable Main H1 Tag</label>
+                        <input type="text" id="landing_h1_tag" name="h1_tag" class="form-control" placeholder="Main H1 headline">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div style="display: flex; justify-content: space-between;">
+                        <label for="landing_meta_title">Meta Title Tag</label>
+                        <span id="landing_title_counter" style="font-size: 0.75rem; color: var(--admin-text-muted);">0 / 60 chars</span>
+                    </div>
+                    <input type="text" id="landing_meta_title" name="meta_title" class="form-control" oninput="countChars(this, 'landing_title_counter', 60)">
+                </div>
+
+                <div class="form-group">
+                    <div style="display: flex; justify-content: space-between;">
+                        <label for="landing_meta_description">Meta Description</label>
+                        <span id="landing_desc_counter" style="font-size: 0.75rem; color: var(--admin-text-muted);">0 / 160 chars</span>
+                    </div>
+                    <textarea id="landing_meta_description" name="meta_description" class="form-control" rows="3" oninput="countChars(this, 'landing_desc_counter', 160)"></textarea>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="landing_meta_keywords">Meta Keywords</label>
+                        <input type="text" id="landing_meta_keywords" name="meta_keywords" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="landing_image_alt">Hero Image Alt Text</label>
+                        <input type="text" id="landing_image_alt" name="image_alt" class="form-control">
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="landing_canonical_url">Canonical URL (Optional)</label>
+                        <input type="text" id="landing_canonical_url" name="canonical_url" class="form-control" placeholder="https://mlgfinedge.com/l/...">
+                    </div>
+                    <div class="form-group">
+                        <label for="landing_meta_robots">Meta Robots Directive</label>
+                        <select id="landing_meta_robots" name="meta_robots" class="form-control">
+                            <option value="">Default (Inherit global setting)</option>
+                            <option value="index, follow">index, follow</option>
+                            <option value="noindex, follow">noindex, follow</option>
+                            <option value="noindex, nofollow">noindex, nofollow</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="landing_og_image">OG Social Share Image</label>
+                    <input type="file" id="landing_og_image" name="og_image" class="form-control" accept="image/*">
+                </div>
+
+                <div class="form-group">
+                    <label for="landing_schema_markup">JSON-LD Structured Schema Markup</label>
+                    <textarea id="landing_schema_markup" name="schema_markup" class="form-control" rows="5" style="font-family: monospace; font-size: 0.8rem;" placeholder="<script type=&quot;application/ld+json&quot;>...</script>"></textarea>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 1.5rem;">
+                    <button type="button" class="btn-submit" style="background-color: var(--admin-input-bg); color: #fff; width: auto;" onclick="closeLandingSeoModal()">Cancel</button>
+                    <button type="submit" class="btn-submit" style="width: auto;">
+                        <i data-lucide="save" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle; margin-right: 4px;"></i> Save Landing SEO
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- AI SEO & Schema Generator Modal -->
+    <div class="ai-modal-overlay" id="ai-seo-generator-modal">
+        <div class="ai-modal-card" style="max-width: 650px;">
+            <button class="ai-modal-close" onclick="closeAiSeoModal()">&times;</button>
+            <h3><i data-lucide="sparkles" style="color: #a855f7;"></i> AI Complete SEO & Schema Generator</h3>
+            
+            <div id="ai-seo-form-wrapper">
+                <input type="hidden" id="ai_seo_type" value="page">
+                <input type="hidden" id="ai_seo_page_key" value="">
+                <input type="hidden" id="ai_seo_id" value="">
+                
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label>Target Page / Subject</label>
+                    <input type="text" id="ai_seo_target_name" class="form-control" readonly style="opacity: 0.85; font-weight: 700;">
+                </div>
+
+                <div class="form-group">
+                    <label for="ai_seo_extra_prompt">Target Keyword Focus & Intent (Optional)</label>
+                    <textarea id="ai_seo_extra_prompt" class="form-control" rows="3" placeholder="e.g. Focus on low interest rate home loans for first-time buyers in Gopalpura Jaipur, fast approval, minimal documentation"></textarea>
+                </div>
+
+                <div style="display: flex; gap: 10px; margin-top: 1.5rem; justify-content: flex-end;">
+                    <button type="button" class="btn-submit" style="background-color: var(--admin-input-bg); color: #fff; width: auto;" onclick="closeAiSeoModal()">Cancel</button>
+                    <button type="button" class="btn-ai-sparkle" onclick="executeAiSeoGeneration()"><i data-lucide="sparkles"></i> Generate SEO Suite</button>
+                </div>
+            </div>
+
+            <div class="ai-loader-container" id="ai-seo-loader" style="display: none; padding: 3rem 1rem; text-align: center;">
+                <div class="ai-sparkle-loader" style="margin: 0 auto 1.5rem auto;"></div>
+                <p class="ai-loader-text" style="font-weight: 600; font-size: 1.1rem; color: #fff;">Gemini is crafting high-CTR SEO Meta Tags & Schema...</p>
+                <p class="ai-loader-subtext" style="color: var(--admin-text-muted); font-size: 0.85rem; margin-top: 4px;">Optimizing character lengths for Google SERP and writing valid JSON-LD.</p>
             </div>
         </div>
     </div>
@@ -3590,10 +4576,345 @@
             }
         }
 
+        // Character counter utility
+        function countChars(input, counterId, targetMax) {
+            const len = input.value.length;
+            const counterEl = document.getElementById(counterId);
+            if (!counterEl) return;
+            
+            counterEl.textContent = `${len} / ${targetMax} chars`;
+            if (len > targetMax) {
+                counterEl.style.color = '#ef4444';
+            } else if (len >= (targetMax * 0.8)) {
+                counterEl.style.color = 'var(--mint-green)';
+            } else {
+                counterEl.style.color = 'var(--admin-text-muted)';
+            }
+        }
+
+        // Switch SEO Subtabs (Pages, Services, Blogs, Landing, Alts, Global, Blueprints, Sitemap)
+        function switchSeoSubTab(subTabId) {
+            document.querySelectorAll('.seo-subtab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelectorAll('.seo-subpanel').forEach(panel => {
+                panel.style.display = 'none';
+            });
+
+            const activeBtn = document.getElementById('seo-subtab-btn-' + subTabId);
+            const activePanel = document.getElementById('seo-subpanel-' + subTabId);
+
+            if (activeBtn) activeBtn.classList.add('active');
+            if (activePanel) {
+                activePanel.style.display = 'block';
+            }
+
+            localStorage.setItem('active_seo_subtab', subTabId);
+            setTimeout(() => lucide.createIcons(), 50);
+        }
+
+        function restoreSeoSubTab() {
+            const saved = localStorage.getItem('active_seo_subtab') || 'pages';
+            switchSeoSubTab(saved);
+        }
+
+        // Select which Core Page to Edit in Subpanel 1
+        function selectPageSeoEditor(pageKey) {
+            document.querySelectorAll('.page-seo-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelectorAll('.page-seo-editor-card').forEach(card => {
+                card.style.display = 'none';
+            });
+
+            const targetItem = document.querySelector(`.page-seo-item[data-page-key="${pageKey}"]`);
+            const targetCard = document.getElementById(`page-seo-card-${pageKey}`);
+
+            if (targetItem) targetItem.classList.add('active');
+            if (targetCard) targetCard.style.display = 'block';
+
+            updateSerpPreview(pageKey);
+        }
+
+        // Live Google SERP Previewer
+        function updateSerpPreview(pageKey) {
+            const titleInput = document.getElementById(`seo_title_${pageKey}`);
+            const descInput = document.getElementById(`seo_desc_${pageKey}`);
+            
+            const previewTitle = document.getElementById(`serp_preview_title_${pageKey}`);
+            const previewDesc = document.getElementById(`serp_preview_desc_${pageKey}`);
+            
+            const titleCount = document.getElementById(`title_count_${pageKey}`);
+            const descCount = document.getElementById(`desc_count_${pageKey}`);
+            
+            const titleProgress = document.getElementById(`title_progress_${pageKey}`);
+            const descProgress = document.getElementById(`desc_progress_${pageKey}`);
+
+            if (titleInput && previewTitle) {
+                const titleVal = titleInput.value.trim() || previewTitle.getAttribute('data-default') || 'Page Title';
+                previewTitle.textContent = titleVal;
+                
+                const len = titleInput.value.length;
+                if (titleCount) titleCount.textContent = `${len} / 60 chars`;
+                if (titleProgress) {
+                    const pct = Math.min(100, Math.round((len / 60) * 100));
+                    titleProgress.style.width = `${pct}%`;
+                    titleProgress.style.backgroundColor = len > 60 ? '#ef4444' : (len >= 45 ? '#5ccbb3' : '#e85c24');
+                }
+            }
+
+            if (descInput && previewDesc) {
+                const descVal = descInput.value.trim() || previewDesc.getAttribute('data-default') || 'Page meta description snippet.';
+                previewDesc.textContent = descVal;
+                
+                const len = descInput.value.length;
+                if (descCount) descCount.textContent = `${len} / 160 chars`;
+                if (descProgress) {
+                    const pct = Math.min(100, Math.round((len / 160) * 100));
+                    descProgress.style.width = `${pct}%`;
+                    descProgress.style.backgroundColor = len > 160 ? '#ef4444' : (len >= 130 ? '#5ccbb3' : '#e85c24');
+                }
+            }
+        }
+
+        // Modals Management for Service, Blog, Landing Page SEO
+        function openServiceSeoModal(service) {
+            const form = document.getElementById('service-seo-form');
+            if (form) form.action = `/admin/seo/services/${service.id}`;
+            
+            document.getElementById('svc_seo_name').value = service.service_name || '';
+            document.getElementById('svc_h1_tag').value = service.h1_tag || '';
+            document.getElementById('svc_meta_title').value = service.meta_title || '';
+            document.getElementById('svc_meta_description').value = service.meta_description || '';
+            document.getElementById('svc_meta_keywords').value = service.meta_keywords || '';
+            document.getElementById('svc_image_alt').value = service.image_alt || '';
+            document.getElementById('svc_canonical_url').value = service.canonical_url || '';
+            document.getElementById('svc_meta_robots').value = service.meta_robots || '';
+            document.getElementById('svc_schema_markup').value = service.schema_markup || '';
+
+            countChars(document.getElementById('svc_meta_title'), 'svc_title_counter', 60);
+            countChars(document.getElementById('svc_meta_description'), 'svc_desc_counter', 160);
+
+            const overlay = document.getElementById('edit-service-seo-modal');
+            if (overlay) {
+                overlay.style.display = 'flex';
+                setTimeout(() => overlay.classList.add('show'), 10);
+            }
+        }
+
+        function closeServiceSeoModal() {
+            const overlay = document.getElementById('edit-service-seo-modal');
+            if (overlay) {
+                overlay.classList.remove('show');
+                setTimeout(() => { overlay.style.display = 'none'; }, 300);
+            }
+        }
+
+        function openBlogSeoModal(blog) {
+            const form = document.getElementById('blog-seo-form');
+            if (form) form.action = `/admin/seo/blogs/${blog.id}`;
+            
+            document.getElementById('blog_seo_name').value = blog.title || '';
+            document.getElementById('blog_h1_tag').value = blog.h1_tag || '';
+            document.getElementById('blog_meta_title').value = blog.meta_title || '';
+            document.getElementById('blog_meta_description').value = blog.meta_description || '';
+            document.getElementById('blog_meta_keywords').value = blog.meta_keywords || '';
+            document.getElementById('blog_image_alt').value = blog.image_alt || '';
+            document.getElementById('blog_canonical_url').value = blog.canonical_url || '';
+            document.getElementById('blog_meta_robots').value = blog.meta_robots || '';
+            document.getElementById('blog_schema_markup').value = blog.schema_markup || '';
+
+            countChars(document.getElementById('blog_meta_title'), 'blog_title_counter', 60);
+            countChars(document.getElementById('blog_meta_description'), 'blog_desc_counter', 160);
+
+            const overlay = document.getElementById('edit-blog-seo-modal');
+            if (overlay) {
+                overlay.style.display = 'flex';
+                setTimeout(() => overlay.classList.add('show'), 10);
+            }
+        }
+
+        function closeBlogSeoModal() {
+            const overlay = document.getElementById('edit-blog-seo-modal');
+            if (overlay) {
+                overlay.classList.remove('show');
+                setTimeout(() => { overlay.style.display = 'none'; }, 300);
+            }
+        }
+
+        function openLandingSeoModal(landing) {
+            const form = document.getElementById('landing-seo-form');
+            if (form) form.action = `/admin/seo/landing/${landing.id}`;
+            
+            document.getElementById('landing_seo_name').value = landing.title || '';
+            document.getElementById('landing_h1_tag').value = landing.h1_tag || '';
+            document.getElementById('landing_meta_title').value = landing.meta_title || '';
+            document.getElementById('landing_meta_description').value = landing.meta_description || '';
+            document.getElementById('landing_meta_keywords').value = landing.meta_keywords || '';
+            document.getElementById('landing_image_alt').value = landing.image_alt || '';
+            document.getElementById('landing_canonical_url').value = landing.canonical_url || '';
+            document.getElementById('landing_meta_robots').value = landing.meta_robots || '';
+            document.getElementById('landing_schema_markup').value = landing.schema_markup || '';
+
+            countChars(document.getElementById('landing_meta_title'), 'landing_title_counter', 60);
+            countChars(document.getElementById('landing_meta_description'), 'landing_desc_counter', 160);
+
+            const overlay = document.getElementById('edit-landing-seo-modal');
+            if (overlay) {
+                overlay.style.display = 'flex';
+                setTimeout(() => overlay.classList.add('show'), 10);
+            }
+        }
+
+        function closeLandingSeoModal() {
+            const overlay = document.getElementById('edit-landing-seo-modal');
+            if (overlay) {
+                overlay.classList.remove('show');
+                setTimeout(() => { overlay.style.display = 'none'; }, 300);
+            }
+        }
+
+        // AI Complete SEO & Schema Generation
+        function triggerAiSeoGenerate(type, pageKey, id, name) {
+            document.getElementById('ai_seo_type').value = type;
+            document.getElementById('ai_seo_page_key').value = pageKey || '';
+            document.getElementById('ai_seo_id').value = id || '';
+            document.getElementById('ai_seo_target_name').value = name || (pageKey ? pageKey.toUpperCase() + ' Page' : 'Target Entity');
+            document.getElementById('ai_seo_extra_prompt').value = '';
+
+            const overlay = document.getElementById('ai-seo-generator-modal');
+            if (overlay) {
+                overlay.style.display = 'flex';
+                setTimeout(() => overlay.classList.add('show'), 10);
+            }
+        }
+
+        function closeAiSeoModal() {
+            const overlay = document.getElementById('ai-seo-generator-modal');
+            if (overlay) {
+                overlay.classList.remove('show');
+                setTimeout(() => { 
+                    overlay.style.display = 'none';
+                    document.getElementById('ai-seo-form-wrapper').style.display = 'block';
+                    document.getElementById('ai-seo-loader').style.display = 'none';
+                }, 300);
+            }
+        }
+
+        function executeAiSeoGeneration() {
+            const type = document.getElementById('ai_seo_type').value;
+            const pageKey = document.getElementById('ai_seo_page_key').value;
+            const id = document.getElementById('ai_seo_id').value;
+            const targetName = document.getElementById('ai_seo_target_name').value;
+            const extraPrompt = document.getElementById('ai_seo_extra_prompt').value.trim();
+
+            const formWrapper = document.getElementById('ai-seo-form-wrapper');
+            const loader = document.getElementById('ai-seo-loader');
+
+            formWrapper.style.display = 'none';
+            loader.style.display = 'block';
+
+            const jobId = 'ai-seo-' + Date.now();
+            showToast("Generating SEO Suite", `Gemini is generating meta tags & schema for ${targetName}...`, "info", jobId);
+
+            fetch("{{ route('admin.ai.seo-generate') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                body: JSON.stringify({
+                    type: type,
+                    page_key: pageKey,
+                    id: id,
+                    target_name: targetName,
+                    prompt: extraPrompt
+                })
+            })
+            .then(res => res.json())
+            .then(res => {
+                closeAiSeoModal();
+                if (res.success && res.data) {
+                    const d = res.data;
+                    showToast("SEO Suite Generated!", `Successfully generated SEO tags for ${targetName}`, "success", jobId);
+
+                    if (type === 'page' && pageKey) {
+                        // Populate page form fields
+                        const tIn = document.getElementById(`seo_title_${pageKey}`);
+                        const dIn = document.getElementById(`seo_desc_${pageKey}`);
+                        const kIn = document.getElementById(`seo_keywords_${pageKey}`);
+                        const hIn = document.getElementById(`seo_h1_${pageKey}`);
+                        const aIn = document.getElementById(`seo_alt_${pageKey}`);
+                        const sIn = document.getElementById(`seo_schema_${pageKey}`);
+
+                        if (tIn && d.meta_title) tIn.value = d.meta_title;
+                        if (dIn && d.meta_description) dIn.value = d.meta_description;
+                        if (kIn && d.meta_keywords) kIn.value = d.meta_keywords;
+                        if (hIn && d.h1_tag) hIn.value = d.h1_tag;
+                        if (aIn && d.image_alt) aIn.value = d.image_alt;
+                        if (sIn && d.schema_markup) sIn.value = d.schema_markup;
+
+                        updateSerpPreview(pageKey);
+                    } else if (type === 'service') {
+                        // Populate service modal form
+                        if (d.meta_title) document.getElementById('svc_meta_title').value = d.meta_title;
+                        if (d.meta_description) document.getElementById('svc_meta_description').value = d.meta_description;
+                        if (d.meta_keywords) document.getElementById('svc_meta_keywords').value = d.meta_keywords;
+                        if (d.h1_tag) document.getElementById('svc_h1_tag').value = d.h1_tag;
+                        if (d.image_alt) document.getElementById('svc_image_alt').value = d.image_alt;
+                        if (d.schema_markup) document.getElementById('svc_schema_markup').value = d.schema_markup;
+
+                        const overlay = document.getElementById('edit-service-seo-modal');
+                        if (overlay) {
+                            overlay.style.display = 'flex';
+                            setTimeout(() => overlay.classList.add('show'), 10);
+                        }
+                    } else if (type === 'blog') {
+                        // Populate blog modal form
+                        if (d.meta_title) document.getElementById('blog_meta_title').value = d.meta_title;
+                        if (d.meta_description) document.getElementById('blog_meta_description').value = d.meta_description;
+                        if (d.meta_keywords) document.getElementById('blog_meta_keywords').value = d.meta_keywords;
+                        if (d.h1_tag) document.getElementById('blog_h1_tag').value = d.h1_tag;
+                        if (d.image_alt) document.getElementById('blog_image_alt').value = d.image_alt;
+                        if (d.schema_markup) document.getElementById('blog_schema_markup').value = d.schema_markup;
+
+                        const overlay = document.getElementById('edit-blog-seo-modal');
+                        if (overlay) {
+                            overlay.style.display = 'flex';
+                            setTimeout(() => overlay.classList.add('show'), 10);
+                        }
+                    } else if (type === 'landing') {
+                        // Populate landing modal form
+                        if (d.meta_title) document.getElementById('landing_meta_title').value = d.meta_title;
+                        if (d.meta_description) document.getElementById('landing_meta_description').value = d.meta_description;
+                        if (d.meta_keywords) document.getElementById('landing_meta_keywords').value = d.meta_keywords;
+                        if (d.h1_tag) document.getElementById('landing_h1_tag').value = d.h1_tag;
+                        if (d.image_alt) document.getElementById('landing_image_alt').value = d.image_alt;
+                        if (d.schema_markup) document.getElementById('landing_schema_markup').value = d.schema_markup;
+
+                        const overlay = document.getElementById('edit-landing-seo-modal');
+                        if (overlay) {
+                            overlay.style.display = 'flex';
+                            setTimeout(() => overlay.classList.add('show'), 10);
+                        }
+                    }
+                } else {
+                    showToast("SEO Generation Failed", res.error || "Failed to generate SEO data.", "error", jobId);
+                    alert("AI Error: " + (res.error || "Failed to generate SEO suite."));
+                }
+            })
+            .catch(err => {
+                closeAiSeoModal();
+                showToast("Request Failed", err.message, "error", jobId);
+                alert("Network Error: " + err.message);
+            });
+        }
+
         // Initialize active tab from localStorage, defaulting to 'leads'
         window.addEventListener('DOMContentLoaded', () => {
             const activeTab = localStorage.getItem('active_tab') || 'leads';
             switchTab(activeTab);
+            restoreSeoSubTab();
         });
 
         // SEO Recommendations Switch Result Tab
