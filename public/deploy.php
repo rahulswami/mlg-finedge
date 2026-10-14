@@ -98,11 +98,13 @@ $testBinaries = [
     'php84',
     'php',
 ];
-foreach ($testBinaries as $bin) {
-    $ver = @shell_exec($bin . ' -r "echo PHP_VERSION;" 2>/dev/null');
-    if ($ver && version_compare(trim($ver), '8.3.0', '>=')) {
-        $phpCli = $bin;
-        break;
+if (function_exists('shell_exec')) {
+    foreach ($testBinaries as $bin) {
+        $ver = @shell_exec($bin . ' -r "echo PHP_VERSION;" 2>/dev/null');
+        if ($ver && version_compare(trim($ver), '8.3.0', '>=')) {
+            $phpCli = $bin;
+            break;
+        }
     }
 }
 
@@ -113,7 +115,27 @@ function runCommand($cmd, $desc) {
     
     $output = [];
     $returnVar = 0;
-    exec($cmd . ' 2>&1', $output, $returnVar);
+    
+    if (function_exists('exec')) {
+        @exec($cmd . ' 2>&1', $output, $returnVar);
+    } elseif (function_exists('shell_exec')) {
+        $res = @shell_exec($cmd . ' 2>&1');
+        $output = $res !== null ? explode("\n", $res) : [];
+        $returnVar = 0;
+    } elseif (function_exists('system')) {
+        ob_start();
+        @system($cmd . ' 2>&1', $returnVar);
+        $res = ob_get_clean();
+        $output = explode("\n", $res);
+    } elseif (function_exists('passthru')) {
+        ob_start();
+        @passthru($cmd . ' 2>&1', $returnVar);
+        $res = ob_get_clean();
+        $output = explode("\n", $res);
+    } else {
+        $output = ['Command execution is disabled in PHP configuration (exec, shell_exec, system).'];
+        $returnVar = 1;
+    }
     
     echo "<pre class='terminal-box " . ($returnVar === 0 ? "success" : "warning") . "'>";
     echo htmlspecialchars(implode("\n", $output));
