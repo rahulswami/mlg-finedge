@@ -271,12 +271,12 @@
             background-color: var(--admin-dark-bg);
         }
 
-        /* Specific Category Dropdown Styling to match screenshot */
+        /* Specific Category Dropdown Styling to match URL Slug input box */
         #blog_category {
             color-scheme: dark;
             background-color: var(--admin-dark-bg);
             color: #ffffff;
-            border: 1px solid var(--mint-green) !important;
+            border: 1px solid var(--admin-border);
             padding: 0.75rem 2.5rem 0.75rem 1rem;
             border-radius: var(--radius-md);
             font-family: 'Outfit', sans-serif;
@@ -295,11 +295,10 @@
             transition: all 0.3s ease;
         }
 
-        #blog_category:focus,
-        #blog_category:hover {
+        #blog_category:focus {
             outline: none;
             border-color: var(--mint-green);
-            box-shadow: 0 0 0 3px rgba(92, 203, 179, 0.25);
+            box-shadow: 0 0 0 2px rgba(92, 203, 179, 0.25);
             background-color: var(--admin-dark-bg);
         }
 
