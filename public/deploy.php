@@ -75,6 +75,36 @@ if (isset($headers['X-Hub-Signature-256'])) {
 $projectRoot = dirname(__DIR__);
 chdir($projectRoot);
 
+// Ensure HOME and COMPOSER_HOME are set for web server environments
+putenv('HOME=' . $projectRoot);
+putenv('COMPOSER_HOME=' . $projectRoot . '/storage/framework/composer');
+if (!is_dir($projectRoot . '/storage/framework/composer')) {
+    @mkdir($projectRoot . '/storage/framework/composer', 0755, true);
+}
+
+// Detect PHP 8.4+ CLI binary (especially for Hostinger CloudLinux / cPanel environments)
+$phpCli = 'php';
+$candidates = [
+    '/opt/alt/php84/usr/bin/php',
+    '/usr/bin/php8.4',
+    '/usr/bin/php84',
+    '/usr/local/bin/ea-php84',
+    '/usr/local/bin/php84',
+    '/opt/alt/php83/usr/bin/php',
+    '/usr/bin/php8.3',
+    PHP_BINARY,
+    str_replace('-cgi', '', PHP_BINARY),
+];
+foreach ($candidates as $cand) {
+    if (!empty($cand) && @file_exists($cand) && @is_executable($cand)) {
+        $ver = @shell_exec($cand . ' -r "echo PHP_VERSION;" 2>&1');
+        if ($ver && version_compare(trim($ver), '8.3.0', '>=')) {
+            $phpCli = $cand;
+            break;
+        }
+    }
+}
+
 // Execution helper
 function runCommand($cmd, $desc) {
     echo "<div class='step-title'>➤ {$desc}</div>";
@@ -122,7 +152,7 @@ if (!$isWebhook):
     <div class="container">
         <div class="header">
             <div class="brand">🚀 MLG Finedge Deployment Console</div>
-            <div class="status-badge">Timestamp: <?= date('Y-m-d H:i:s T') ?></div>
+            <div class="status-badge">PHP CLI: <?= htmlspecialchars($phpCli) ?></div>
         </div>
 <?php
 endif;
@@ -134,18 +164,18 @@ runCommand('git fetch origin main && git reset --hard origin/main', '1. Pulling 
 
 // 2. Install / Update Composer Dependencies
 if (file_exists($projectRoot . '/composer.lock')) {
-    runCommand('composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev', '2. Optimizing Composer Dependencies');
+    runCommand('composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev --ignore-platform-reqs', '2. Optimizing Composer Dependencies');
 }
 
 // 3. Run Database Migrations
-runCommand('php artisan migrate --force', '3. Running Database Migrations (Page SEO, Services, Blogs)');
+runCommand("{$phpCli} artisan migrate --force", '3. Running Database Migrations (Page SEO, Services, Blogs)');
 
 // 4. Clear and Rebuild Optimized Caches
-runCommand('php artisan optimize:clear', '4. Clearing Compiled Views, Routes & Config Caches');
-runCommand('php artisan config:cache && php artisan route:cache && php artisan view:cache', '5. Recompiling High-Performance Application Caches');
+runCommand("{$phpCli} artisan optimize:clear", '4. Clearing Compiled Views, Routes & Config Caches');
+runCommand("{$phpCli} artisan config:cache && {$phpCli} artisan route:cache && {$phpCli} artisan view:cache", '5. Recompiling High-Performance Application Caches');
 
 // 5. Ensure Storage Symlink
-runCommand('php artisan storage:link', '6. Verifying Storage Symlink');
+runCommand("{$phpCli} artisan storage:link", '6. Verifying Storage Symlink');
 
 $duration = round(microtime(true) - $startTime, 2);
 
