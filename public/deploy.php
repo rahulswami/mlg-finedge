@@ -84,24 +84,21 @@ if (!is_dir($projectRoot . '/storage/framework/composer')) {
 
 // Detect PHP 8.4+ CLI binary (especially for Hostinger CloudLinux / cPanel environments)
 $phpCli = 'php';
-$candidates = [
+$testBinaries = [
     '/opt/alt/php84/usr/bin/php',
     '/usr/bin/php8.4',
     '/usr/bin/php84',
     '/usr/local/bin/ea-php84',
     '/usr/local/bin/php84',
-    '/opt/alt/php83/usr/bin/php',
-    '/usr/bin/php8.3',
-    PHP_BINARY,
-    str_replace('-cgi', '', PHP_BINARY),
+    'php8.4',
+    'php84',
+    'php',
 ];
-foreach ($candidates as $cand) {
-    if (!empty($cand) && @file_exists($cand) && @is_executable($cand)) {
-        $ver = @shell_exec($cand . ' -r "echo PHP_VERSION;" 2>&1');
-        if ($ver && version_compare(trim($ver), '8.3.0', '>=')) {
-            $phpCli = $cand;
-            break;
-        }
+foreach ($testBinaries as $bin) {
+    $ver = @shell_exec($bin . ' -r "echo PHP_VERSION;" 2>/dev/null');
+    if ($ver && version_compare(trim($ver), '8.3.0', '>=')) {
+        $phpCli = $bin;
+        break;
     }
 }
 
