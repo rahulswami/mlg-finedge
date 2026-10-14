@@ -382,9 +382,11 @@ class AdminController extends Controller
             $imagePath = $request->input('image_url');
         }
 
+        $slug = \Illuminate\Support\Str::slug($request->slug ?: $request->title);
+
         $blog->update([
             'title' => $request->title,
-            'slug' => $request->slug,
+            'slug' => $slug,
             'category' => $request->category,
             'summary' => $request->summary,
             'content' => $request->content,

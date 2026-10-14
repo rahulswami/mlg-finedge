@@ -29,3 +29,5 @@ database_backup.sql
 mlg_finedge_backup.zip
 test_home.html
 _static_backup/
+composer.phar
+composer.bat

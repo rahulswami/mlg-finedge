@@ -990,6 +990,19 @@
                     <span>{{ session('error') }}</span>
                 </div>
             @endif
+            @if($errors->any())
+                <div class="alert-success" style="background-color: rgba(255,107,107,0.12); border-color: rgba(255,107,107,0.35); color: #ff6b6b; display: block; padding: 1rem 1.25rem;">
+                    <div style="display: flex; align-items: center; gap: 8px; font-weight: 600; margin-bottom: 6px;">
+                        <i data-lucide="alert-triangle"></i>
+                        <span>Validation errors occurred:</span>
+                    </div>
+                    <ul style="margin: 0; padding-left: 20px; list-style-type: disc;">
+                        @foreach($errors->all() as $err)
+                            <li style="margin-bottom: 3px;">{{ $err }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
             <!-- 1. GENERAL & CONTACT SETTINGS TAB -->
             <div class="tab-panel" id="tab-general">
@@ -2542,17 +2555,7 @@
                                         <td>
                                             <div class="action-btns">
                                                 <button type="button" class="btn-action edit" title="Edit Article" 
-                                                    onclick="editBlog({
-                                                        id: {{ $b->id }},
-                                                        title: '{{ addslashes($b->title) }}',
-                                                        slug: '{{ addslashes($b->slug) }}',
-                                                        category: '{{ addslashes($b->category) }}',
-                                                        published_at: '{{ $b->published_at ? $b->published_at->format('Y-m-d\TH:i') : $b->created_at->format('Y-m-d\TH:i') }}',
-                                                        summary: '{{ addslashes(str_replace(["\r", "\n"], ' ', $b->summary)) }}',
-                                                        content: '{{ addslashes(str_replace(["\r", "\n"], ' ', $b->content)) }}',
-                                                        image_path: '{{ addslashes($b->image_path) }}',
-                                                        schema_markup: '{{ addslashes(str_replace(["\r", "\n"], ' ', $b->schema_markup)) }}'
-                                                    })"><i data-lucide="edit"></i></button>
+                                                    onclick="editBlogById({{ $b->id }})"><i data-lucide="edit"></i></button>
                                                 <button type="button" class="btn-action" style="background-color: rgba(66, 133, 244, 0.1); color: #4285f4; border: 1px solid rgba(66, 133, 244, 0.3);" title="Share to Google Business Profile" 
                                                     onclick="openGmbShareModal('blog', {id: {{ $b->id }}, title: '{{ addslashes($b->title) }}', summary: '{{ addslashes(str_replace(["\r", "\n"], ' ', $b->summary)) }}'})"><i data-lucide="share-2"></i></button>
                                                 <form action="{{ route('admin.blogs.delete', $b->id) }}" method="POST" onsubmit="return confirm('Delete this blog post?')">
@@ -4345,22 +4348,43 @@
     </div>
 
 
-    <!-- Add CKEditor CSS custom overrides -->
+    <!-- TinyMCE Rich Text & HTML Source Code Editor Overrides -->
     <style>
-        .ck-editor__editable {
-            color: #111111 !important;
-            min-height: 250px;
+        .tox-tinymce {
+            border-radius: var(--radius-md) !important;
+            border: 1px solid var(--admin-border) !important;
+            overflow: hidden;
+        }
+        .tox-tinymce-aux {
+            z-index: 100000 !important;
         }
     </style>
 
-    <!-- Lucide CDN & CKEditor CDN -->
+    <!-- Lucide CDN & TinyMCE CDN -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/classic/ckeditor.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.8.3/tinymce.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- html2pdf.js CDN for PDF Download -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script>
         lucide.createIcons();
+
+        // Safe JSON storage for blog articles (avoids inline HTML escaping corruption)
+        const adminBlogsData = {
+            @foreach($blogs as $b)
+                {{ $b->id }}: {
+                    id: {{ $b->id }},
+                    title: @json($b->title),
+                    slug: @json($b->slug),
+                    category: @json($b->category),
+                    published_at: @json($b->published_at ? $b->published_at->format('Y-m-d\TH:i') : $b->created_at->format('Y-m-d\TH:i')),
+                    summary: @json($b->summary),
+                    content: @json($b->content),
+                    image_path: @json($b->image_path),
+                    schema_markup: @json($b->schema_markup)
+                },
+            @endforeach
+        };
 
         let cloudflareChartInstance = null;
 
@@ -5628,36 +5652,84 @@
             }
         }
 
-        // Initialize CKEditor
-        let blogEditor;
-        ClassicEditor
-            .create(document.querySelector('#blog_content'))
-            .then(editor => {
-                blogEditor = editor;
-            })
-            .catch(error => {
-                console.error(error);
+        // Initialize TinyMCE for Rich Text and Raw HTML Source Code Editing
+        function initAdminTinyMCE() {
+            tinymce.init({
+                selector: '#blog_content, #ser_intro_content, #ser_tips_content',
+                height: 480,
+                menubar: 'file edit view insert format tools table',
+                plugins: [
+                    'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                    'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                    'insertdatetime', 'media', 'table', 'help', 'wordcount'
+                ],
+                toolbar: 'undo redo | blocks | bold italic underline strikethrough | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image table | code preview fullscreen',
+                block_formats: 'Paragraph=p; Heading 2=h2; Heading 3=h3; Heading 4=h4; Heading 5=h5; Heading 6=h6; Blockquote=blockquote; Preformatted=pre',
+                content_style: `
+                    body {
+                        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+                        font-size: 15px;
+                        line-height: 1.75;
+                        color: #1e293b;
+                        padding: 12px;
+                    }
+                    h2 { font-size: 1.85rem; font-weight: 700; color: #0c5354; margin: 1.5rem 0 0.75rem 0; }
+                    h3 { font-size: 1.4rem; font-weight: 600; color: #135859; margin: 1.25rem 0 0.5rem 0; }
+                    h4 { font-size: 1.15rem; font-weight: 600; color: #1e293b; margin: 1rem 0 0.5rem 0; }
+                    p { margin-bottom: 1rem; color: #1e293b; }
+                    ul { list-style-type: disc !important; padding-left: 2rem !important; margin: 1rem 0 !important; }
+                    ol { list-style-type: decimal !important; padding-left: 2rem !important; margin: 1rem 0 !important; }
+                    li { margin-bottom: 0.4rem !important; }
+                    blockquote { border-left: 4px solid #ff6b35; padding: 0.5rem 1rem; background: #f8fafc; font-style: italic; margin: 1rem 0; }
+                    table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+                    th, td { border: 1px solid #cbd5e1; padding: 8px 12px; }
+                    th { background-color: #f1f5f9; }
+                `,
+                branding: false,
+                promotion: false,
+                convert_urls: false,
+                relative_urls: false,
+                remove_script_host: false,
+                setup: function (editor) {
+                    editor.on('change keyup NodeChange blur', function () {
+                        editor.save();
+                    });
+                }
             });
+        }
+        initAdminTinyMCE();
 
-        let serviceIntroEditor;
-        let serviceTipsEditor;
-        ClassicEditor
-            .create(document.querySelector('#ser_intro_content'))
-            .then(editor => {
-                serviceIntroEditor = editor;
-            })
-            .catch(error => {
-                console.error(error);
-            });
+        // Helper to set editor content safely
+        function setEditorHtml(editorId, html) {
+            const editor = tinymce.get(editorId);
+            if (editor) {
+                editor.setContent(html || '');
+            }
+            const textarea = document.getElementById(editorId);
+            if (textarea) {
+                textarea.value = html || '';
+            }
+        }
 
-        ClassicEditor
-            .create(document.querySelector('#ser_tips_content'))
-            .then(editor => {
-                serviceTipsEditor = editor;
-            })
-            .catch(error => {
-                console.error(error);
-            });
+        // Helper to get editor content safely
+        function getEditorHtml(editorId) {
+            const editor = tinymce.get(editorId);
+            if (editor) {
+                return editor.getContent();
+            }
+            const textarea = document.getElementById(editorId);
+            return textarea ? textarea.value : '';
+        }
+
+        // Edit Blog by ID using safe JSON dictionary
+        function editBlogById(id) {
+            const data = adminBlogsData[id];
+            if (!data) {
+                console.error("Blog ID " + id + " not found in adminBlogsData");
+                return;
+            }
+            editBlog(data);
+        }
 
         // Blog Edit functions
         function editBlog(data) {
@@ -5671,11 +5743,10 @@
             document.getElementById('blog_published_at').value = data.published_at;
             document.getElementById('blog_summary').value = data.summary;
             document.getElementById('blog_schema_markup').value = data.schema_markup || '';
-            if (blogEditor) {
-                blogEditor.setData(data.content);
-            } else {
-                document.getElementById('blog_content').value = data.content;
-            }
+            
+            // Set content in TinyMCE & underlying textarea
+            setEditorHtml('blog_content', data.content);
+            
             document.getElementById('blog-submit-btn').innerText = 'Update Blog Article';
             document.getElementById('blog_image_url').value = (data.image_path && (data.image_path.startsWith('http') || data.image_path.startsWith('//'))) ? data.image_path : '';
             document.getElementById('blog-cancel-btn').style.display = 'inline-block';
@@ -5695,14 +5766,48 @@
             document.getElementById('blog_summary').value = '';
             document.getElementById('blog_schema_markup').value = '';
             document.getElementById('blog_image_url').value = '';
-            if (blogEditor) {
-                blogEditor.setData('');
-            } else {
-                document.getElementById('blog_content').value = '';
-            }
+            
+            setEditorHtml('blog_content', '');
+            
             document.getElementById('blog-submit-btn').innerText = 'Publish Blog Article';
             document.getElementById('blog-cancel-btn').style.display = 'none';
         }
+
+        // Form submission handlers to guarantee editor content is saved and validated before submission
+        document.addEventListener('DOMContentLoaded', function () {
+            const blogForm = document.getElementById('blog-form');
+            if (blogForm) {
+                blogForm.addEventListener('submit', function (e) {
+                    if (typeof tinymce !== 'undefined') {
+                        tinymce.triggerSave();
+                    }
+                    const title = (document.getElementById('blog_title')?.value || '').trim();
+                    const content = getEditorHtml('blog_content').trim();
+                    if (!title) {
+                        alert('Please enter an article title.');
+                        e.preventDefault();
+                        return false;
+                    }
+                    if (!content) {
+                        alert('Please enter article content before publishing or updating.');
+                        e.preventDefault();
+                        return false;
+                    }
+                    // Sync into textarea explicitly
+                    const txt = document.getElementById('blog_content');
+                    if (txt) txt.value = content;
+                });
+            }
+
+            const serviceForm = document.getElementById('service-form');
+            if (serviceForm) {
+                serviceForm.addEventListener('submit', function () {
+                    if (typeof tinymce !== 'undefined') {
+                        tinymce.triggerSave();
+                    }
+                });
+            }
+        });
 
         // HTML escaping helper
         function escapeHtml(text) {
@@ -5758,21 +5863,13 @@
             document.getElementById('ser_tenure').value = data.tenure || '';
             document.getElementById('ser_intro_title').value = data.intro_title || '';
             
-            if (serviceIntroEditor) {
-                serviceIntroEditor.setData(data.intro_content || '');
-            } else {
-                document.getElementById('ser_intro_content').value = data.intro_content || '';
-            }
+            setEditorHtml('ser_intro_content', data.intro_content || '');
             
             document.getElementById('ser_eligibility_criteria').value = data.eligibility_criteria || '';
             document.getElementById('ser_documents_required').value = data.documents_required || '';
             document.getElementById('ser_tips_title').value = data.tips_title || '';
             
-            if (serviceTipsEditor) {
-                serviceTipsEditor.setData(data.tips_content || '');
-            } else {
-                document.getElementById('ser_tips_content').value = data.tips_content || '';
-            }
+            setEditorHtml('ser_tips_content', data.tips_content || '');
             
             document.getElementById('ser_summary').value = data.summary || '';
             document.getElementById('ser_schema_markup').value = data.schema_markup || '';
@@ -5823,21 +5920,13 @@
             document.getElementById('ser_tenure').value = '';
             document.getElementById('ser_intro_title').value = '';
             
-            if (serviceIntroEditor) {
-                serviceIntroEditor.setData('');
-            } else {
-                document.getElementById('ser_intro_content').value = '';
-            }
+            setEditorHtml('ser_intro_content', '');
             
             document.getElementById('ser_eligibility_criteria').value = '';
             document.getElementById('ser_documents_required').value = '';
             document.getElementById('ser_tips_title').value = '';
             
-            if (serviceTipsEditor) {
-                serviceTipsEditor.setData('');
-            } else {
-                document.getElementById('ser_tips_content').value = '';
-            }
+            setEditorHtml('ser_tips_content', '');
             
             document.getElementById('ser_summary').value = '';
             document.getElementById('ser_schema_markup').value = '';
@@ -6187,11 +6276,7 @@
                     document.getElementById('blog_category').value = data.category || 'Financial Tips';
                     document.getElementById('blog_summary').value = data.summary || '';
                     
-                    if (blogEditor) {
-                        blogEditor.setData(data.content || '');
-                    } else {
-                        document.getElementById('blog_content').value = data.content || '';
-                    }
+                    setEditorHtml('blog_content', data.content || '');
 
                     closeAiModal('blog');
                     
@@ -6289,21 +6374,13 @@
                     document.getElementById('ser_tenure').value = data.tenure || '';
                     document.getElementById('ser_intro_title').value = data.intro_title || '';
                     
-                    if (serviceIntroEditor) {
-                        serviceIntroEditor.setData(data.intro_content || '');
-                    } else {
-                        document.getElementById('ser_intro_content').value = data.intro_content || '';
-                    }
+                    setEditorHtml('ser_intro_content', data.intro_content || '');
                     
                     document.getElementById('ser_eligibility_criteria').value = data.eligibility_criteria || '';
                     document.getElementById('ser_documents_required').value = data.documents_required || '';
                     document.getElementById('ser_tips_title').value = data.tips_title || '';
                     
-                    if (serviceTipsEditor) {
-                        serviceTipsEditor.setData(data.tips_content || '');
-                    } else {
-                        document.getElementById('ser_tips_content').value = data.tips_content || '';
-                    }
+                    setEditorHtml('ser_tips_content', data.tips_content || '');
                     
                     document.getElementById('ser_summary').value = data.summary || '';
 
