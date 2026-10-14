@@ -9,15 +9,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
+            color-scheme: dark;
             --admin-sidebar-w: 260px;
             --admin-dark-bg: #111b1c;
             --admin-dark-sidebar: #0a1112;
             --admin-border: rgba(255,255,255,0.08);
             --admin-text-muted: rgba(255,255,255,0.5);
             --admin-input-bg: rgba(255,255,255,0.04);
+            --primary-teal: #5ccbb3;
+            --mint-green: #5ccbb3;
         }
         
-        body {
+        html, body {
+            color-scheme: dark;
             background-color: var(--admin-dark-bg);
             color: #ffffff;
             font-family: 'Outfit', sans-serif;
@@ -235,6 +239,89 @@
             outline: none;
             border-color: var(--mint-green);
             background-color: rgba(255,255,255,0.06);
+        }
+
+        /* Select Form Controls Base Dark Styling */
+        select.form-control {
+            color-scheme: dark;
+            background-color: var(--admin-dark-bg);
+            color: #ffffff;
+            border: 1px solid var(--admin-border);
+            padding: 0.75rem 2.5rem 0.75rem 1rem;
+            border-radius: var(--radius-md);
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            height: 46px;
+            cursor: pointer;
+            box-sizing: border-box;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 16px 16px;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+        }
+
+        select.form-control:focus {
+            outline: none;
+            border-color: var(--mint-green);
+            box-shadow: 0 0 0 2px rgba(92, 203, 179, 0.25);
+            background-color: var(--admin-dark-bg);
+        }
+
+        /* Specific Category Dropdown Styling to match screenshot */
+        #blog_category {
+            color-scheme: dark;
+            background-color: var(--admin-dark-bg);
+            color: #ffffff;
+            border: 1px solid var(--mint-green) !important;
+            padding: 0.75rem 2.5rem 0.75rem 1rem;
+            border-radius: var(--radius-md);
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            height: 46px;
+            cursor: pointer;
+            box-sizing: border-box;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 16px 16px;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            transition: all 0.3s ease;
+        }
+
+        #blog_category:focus,
+        #blog_category:hover {
+            outline: none;
+            border-color: var(--mint-green);
+            box-shadow: 0 0 0 3px rgba(92, 203, 179, 0.25);
+            background-color: var(--admin-dark-bg);
+        }
+
+        /* Dropdown options styling: dark background, white text, no white blank area */
+        select.form-control option,
+        #blog_category option {
+            color-scheme: dark;
+            background-color: #111b1c !important;
+            color: #ffffff !important;
+            padding: 10px 14px;
+            font-size: 0.95rem;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        select.form-control option:hover,
+        select.form-control option:checked,
+        select.form-control option:focus,
+        #blog_category option:hover,
+        #blog_category option:checked,
+        #blog_category option:focus {
+            background-color: #192a2b !important;
+            color: var(--mint-green) !important;
         }
 
         textarea.form-control {
