@@ -1,4 +1,8 @@
 <?php
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+error_reporting(E_ALL);
+
 /**
  * MLG Finedge - One-Click Git Webhook & Browser Deployment Script
  *
@@ -15,7 +19,7 @@ $secretKey = getenv('DEPLOY_KEY') ?: 'mlg_deploy_secret_2026';
 
 // Detect if triggered via GitHub Webhook or Browser
 $isWebhook = false;
-$headers = getallheaders();
+$headers = function_exists('getallheaders') ? getallheaders() : [];
 
 // Verify Authentication
 $providedKey = $_GET['key'] ?? $_POST['key'] ?? '';
@@ -76,8 +80,8 @@ $projectRoot = dirname(__DIR__);
 chdir($projectRoot);
 
 // Ensure HOME and COMPOSER_HOME are set for web server environments
-putenv('HOME=' . $projectRoot);
-putenv('COMPOSER_HOME=' . $projectRoot . '/storage/framework/composer');
+@putenv('HOME=' . $projectRoot);
+@putenv('COMPOSER_HOME=' . $projectRoot . '/storage/framework/composer');
 if (!is_dir($projectRoot . '/storage/framework/composer')) {
     @mkdir($projectRoot . '/storage/framework/composer', 0755, true);
 }
