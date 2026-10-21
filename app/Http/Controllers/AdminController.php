@@ -1074,7 +1074,7 @@ You MUST return the output ONLY as a raw, single-line valid JSON object matching
 JSON Schema:
 {
   \"title\": \"A compelling SEO-optimized blog title\",
-  \"category\": \"Choose the most appropriate category from: Personal Loans, Home Loans, Business Loans, Loan Against Property, Financial Tips\",
+  \"category\": \"Choose the most appropriate category from: Builder Funding in Jaipur for Real Estate Projects, Personal Loan in Jaipur: Explore Your Options, Home Loan, Car Loan, Business Loan, Working Capital, Loan Against Property, Project Funding, Gold Loan, Financial Tips\",
   \"summary\": \"A short, engaging 1-2 sentence summary of the article to be shown on listing cards\",
   \"content\": \"The full blog article content formatted in clean, modern HTML. Use paragraphs <p>, subheadings <h3>/<h4>, lists <ul>/<li>, and emphasized text. Do not include raw CSS or javascript. Make the article comprehensive, informative, and around 400-600 words.\",
   \"image_prompt\": \"A detailed, descriptive text-to-image prompt to generate a high-quality featured cover image matching this article's topic. Do not include adjectives like 'photorealistic', instead describe lighting, context, objects, and style (e.g. 'A professional photograph of ...')\"

@@ -2567,10 +2567,35 @@
                             <div class="form-group">
                                 <label for="blog_category">Category</label>
                                 <select id="blog_category" name="category" class="form-control" required>
-                                    <option value="Personal Loans">Personal Loans</option>
-                                    <option value="Home Loans">Home Loans</option>
-                                    <option value="Business Loans">Business Loans</option>
-                                    <option value="Loan Against Property">Loan Against Property</option>
+                                    @php
+                                        $predefinedCategories = [
+                                            'Builder Funding in Jaipur for Real Estate Projects',
+                                            'Personal Loan in Jaipur: Explore Your Options',
+                                            'Home Loan',
+                                            'Car Loan',
+                                            'Business Loan',
+                                            'Working Capital',
+                                            'Loan Against Property',
+                                            'Project Funding',
+                                            'Gold Loan',
+                                        ];
+                                        $availableCategories = collect();
+                                        if (isset($services) && $services->count() > 0) {
+                                            foreach ($services as $srv) {
+                                                if (!empty($srv->service_name) && !$availableCategories->contains($srv->service_name)) {
+                                                    $availableCategories->push($srv->service_name);
+                                                }
+                                            }
+                                        }
+                                        foreach ($predefinedCategories as $pCat) {
+                                            if (!$availableCategories->contains($pCat)) {
+                                                $availableCategories->push($pCat);
+                                            }
+                                        }
+                                    @endphp
+                                    @foreach($availableCategories as $catOption)
+                                        <option value="{{ $catOption }}">{{ $catOption }}</option>
+                                    @endforeach
                                     <option value="Financial Tips">Financial Tips</option>
                                 </select>
                             </div>
@@ -5825,7 +5850,15 @@
             document.getElementById('blog-form-method').value = 'POST';
             document.getElementById('blog_title').value = data.title;
             document.getElementById('blog_slug').value = data.slug;
-            document.getElementById('blog_category').value = data.category;
+            const blogCategorySelect = document.getElementById('blog_category');
+            blogCategorySelect.value = data.category;
+            if (data.category && blogCategorySelect.value !== data.category) {
+                const opt = document.createElement('option');
+                opt.value = data.category;
+                opt.text = data.category;
+                blogCategorySelect.appendChild(opt);
+                blogCategorySelect.value = data.category;
+            }
             document.getElementById('blog_published_at').value = data.published_at;
             document.getElementById('blog_summary').value = data.summary;
             document.getElementById('blog_schema_markup').value = data.schema_markup || '';
