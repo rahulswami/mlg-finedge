@@ -328,6 +328,15 @@ class AdminController extends Controller
             'image_url' => 'nullable|string',
             'slug' => 'nullable|string|max:255|unique:blogs,slug',
             'schema_markup' => 'nullable|string',
+            'meta_title' => 'nullable|string|max:255',
+            'meta_description' => 'nullable|string',
+            'meta_keywords' => 'nullable|string',
+            'canonical_url' => 'nullable|string|max:500',
+            'meta_robots' => 'nullable|string|max:100',
+            'h1_tag' => 'nullable|string|max:255',
+            'image_alt' => 'nullable|string|max:255',
+            'og_image' => 'nullable|string',
+            'og_image_file' => 'nullable|image|max:5000',
         ]);
 
         $slug = $request->slug ?: \Illuminate\Support\Str::slug($request->title);
@@ -343,6 +352,15 @@ class AdminController extends Controller
             $imagePath = $request->input('image_url');
         }
 
+        $ogImage = null;
+        if ($request->hasFile('og_image_file')) {
+            $ogImage = $request->file('og_image_file')->store('seo', 'public');
+        } elseif ($request->filled('og_image')) {
+            $ogImage = $request->input('og_image');
+        } else {
+            $ogImage = $imagePath;
+        }
+
         \App\Models\Blog::create([
             'title' => $request->title,
             'slug' => $slug,
@@ -352,6 +370,14 @@ class AdminController extends Controller
             'image_path' => $imagePath,
             'published_at' => $request->published_at ? \Carbon\Carbon::parse($request->published_at) : now(),
             'schema_markup' => $request->schema_markup,
+            'meta_title' => $request->meta_title,
+            'meta_description' => $request->meta_description,
+            'meta_keywords' => $request->meta_keywords,
+            'canonical_url' => $request->canonical_url,
+            'meta_robots' => $request->meta_robots ?: 'index, follow',
+            'h1_tag' => $request->h1_tag,
+            'image_alt' => $request->image_alt,
+            'og_image' => $ogImage,
         ]);
 
         return redirect()->back()->with('success', 'Blog post created successfully!');
@@ -368,6 +394,15 @@ class AdminController extends Controller
             'image_url' => 'nullable|string',
             'slug' => 'required|string|max:255|unique:blogs,slug,' . $id,
             'schema_markup' => 'nullable|string',
+            'meta_title' => 'nullable|string|max:255',
+            'meta_description' => 'nullable|string',
+            'meta_keywords' => 'nullable|string',
+            'canonical_url' => 'nullable|string|max:500',
+            'meta_robots' => 'nullable|string|max:100',
+            'h1_tag' => 'nullable|string|max:255',
+            'image_alt' => 'nullable|string|max:255',
+            'og_image' => 'nullable|string',
+            'og_image_file' => 'nullable|image|max:5000',
         ]);
 
         $blog = \App\Models\Blog::findOrFail($id);
@@ -384,6 +419,13 @@ class AdminController extends Controller
 
         $slug = \Illuminate\Support\Str::slug($request->slug ?: $request->title);
 
+        $ogImage = $blog->og_image;
+        if ($request->hasFile('og_image_file')) {
+            $ogImage = $request->file('og_image_file')->store('seo', 'public');
+        } elseif ($request->has('og_image')) {
+            $ogImage = $request->input('og_image');
+        }
+
         $blog->update([
             'title' => $request->title,
             'slug' => $slug,
@@ -393,6 +435,14 @@ class AdminController extends Controller
             'image_path' => $imagePath,
             'published_at' => $request->published_at ? \Carbon\Carbon::parse($request->published_at) : $blog->published_at,
             'schema_markup' => $request->schema_markup,
+            'meta_title' => $request->meta_title,
+            'meta_description' => $request->meta_description,
+            'meta_keywords' => $request->meta_keywords,
+            'canonical_url' => $request->canonical_url,
+            'meta_robots' => $request->meta_robots ?: 'index, follow',
+            'h1_tag' => $request->h1_tag,
+            'image_alt' => $request->image_alt,
+            'og_image' => $ogImage,
         ]);
 
         return redirect()->back()->with('success', 'Blog post updated successfully!');
@@ -652,6 +702,15 @@ class AdminController extends Controller
             'summary' => 'nullable|string',
             'sort_order' => 'nullable|integer',
             'schema_markup' => 'nullable|string',
+            'meta_title' => 'nullable|string|max:255',
+            'meta_description' => 'nullable|string',
+            'meta_keywords' => 'nullable|string',
+            'canonical_url' => 'nullable|string|max:500',
+            'meta_robots' => 'nullable|string|max:100',
+            'h1_tag' => 'nullable|string|max:255',
+            'image_alt' => 'nullable|string|max:255',
+            'og_image' => 'nullable|string',
+            'og_image_file' => 'nullable|image|max:5000',
         ]);
 
         if (empty($validated['slug'])) {
@@ -672,6 +731,13 @@ class AdminController extends Controller
         $validated['faqs'] = $faqs;
         $validated['is_active'] = $request->boolean('is_active', true);
         $validated['sort_order'] = $validated['sort_order'] ?? 0;
+
+        // Handle Social OG Image
+        if ($request->hasFile('og_image_file')) {
+            $validated['og_image'] = $request->file('og_image_file')->store('seo', 'public');
+        } elseif ($request->filled('og_image')) {
+            $validated['og_image'] = $request->input('og_image');
+        }
 
         \App\Models\Service::create($validated);
 
@@ -701,6 +767,15 @@ class AdminController extends Controller
             'summary' => 'nullable|string',
             'sort_order' => 'nullable|integer',
             'schema_markup' => 'nullable|string',
+            'meta_title' => 'nullable|string|max:255',
+            'meta_description' => 'nullable|string',
+            'meta_keywords' => 'nullable|string',
+            'canonical_url' => 'nullable|string|max:500',
+            'meta_robots' => 'nullable|string|max:100',
+            'h1_tag' => 'nullable|string|max:255',
+            'image_alt' => 'nullable|string|max:255',
+            'og_image' => 'nullable|string',
+            'og_image_file' => 'nullable|image|max:5000',
         ]);
 
         $faqs = [];
@@ -716,6 +791,13 @@ class AdminController extends Controller
         $validated['faqs'] = $faqs;
         $validated['is_active'] = $request->boolean('is_active', true);
         $validated['sort_order'] = $validated['sort_order'] ?? 0;
+
+        // Handle Social OG Image
+        if ($request->hasFile('og_image_file')) {
+            $validated['og_image'] = $request->file('og_image_file')->store('seo', 'public');
+        } elseif ($request->has('og_image')) {
+            $validated['og_image'] = $request->input('og_image');
+        }
 
         $service->update($validated);
 
@@ -1077,6 +1159,11 @@ JSON Schema:
   \"category\": \"Choose the most appropriate category from: Builder Funding in Jaipur for Real Estate Projects, Personal Loan in Jaipur: Explore Your Options, Home Loan, Car Loan, Business Loan, Working Capital, Loan Against Property, Project Funding, Gold Loan, Financial Tips\",
   \"summary\": \"A short, engaging 1-2 sentence summary of the article to be shown on listing cards\",
   \"content\": \"The full blog article content formatted in clean, modern HTML. Use paragraphs <p>, subheadings <h3>/<h4>, lists <ul>/<li>, and emphasized text. Do not include raw CSS or javascript. Make the article comprehensive, informative, and around 400-600 words.\",
+  \"meta_title\": \"SEO title tag (under 60 chars) with primary keyword and brand suffix, e.g. 'How to Get Fast Loan Approval | MLG Finedge'\",
+  \"meta_description\": \"Search engine meta description (130-155 chars) summarizing the article with a clear call-to-action\",
+  \"meta_keywords\": \"5 to 8 comma-separated search keywords and loan phrases\",
+  \"h1_tag\": \"Primary H1 article heading (defaults to title if same)\",
+  \"image_alt\": \"Concise, descriptive alt text for featured cover image\",
   \"image_prompt\": \"A detailed, descriptive text-to-image prompt to generate a high-quality featured cover image matching this article's topic. Do not include adjectives like 'photorealistic', instead describe lighting, context, objects, and style (e.g. 'A professional photograph of ...')\"
 }
 
@@ -1153,6 +1240,11 @@ JSON Schema:
   \"tips_content\": \"A helpful tip guide content formatted in HTML paragraphs (<p>)\",
   \"badge\": \"A short promo badge tag (e.g. Instant Approval, Low Interest)\",
   \"summary\": \"A short description of the service (1-2 sentences) shown in footers or small layouts\",
+  \"meta_title\": \"SEO title tag (under 60 chars) with service keyword and brand, e.g. 'Home Loan in Jaipur at Lowest Rates | MLG Finedge'\",
+  \"meta_description\": \"Search engine meta description (130-155 chars) highlighting interest rate, tenure, and call to action\",
+  \"meta_keywords\": \"5 to 8 comma-separated search keywords for this loan product in Jaipur\",
+  \"h1_tag\": \"Primary H1 page heading (defaults to hero_title if same)\",
+  \"image_alt\": \"Descriptive alt text for service hero imagery\",
   \"faqs\": [
     {
       \"question\": \"An important, frequently asked question about this service\",

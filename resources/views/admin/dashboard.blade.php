@@ -2271,7 +2271,7 @@
                             <i data-lucide="sparkles"></i> Generate with AI
                         </button>
                     </h2>
-                    <form id="service-form" action="{{ route('admin.services.store') }}" method="POST">
+                    <form id="service-form" action="{{ route('admin.services.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <input type="hidden" name="_method" id="service-form-method" value="POST">
                         
@@ -2344,10 +2344,136 @@
                                 <label for="ser_summary">Short Summary (shown in lists & footer)</label>
                                 <textarea id="ser_summary" name="summary" class="form-control" rows="2" placeholder="Brief summary of the service..."></textarea>
                             </div>
-                            <div class="form-group" style="grid-column: span 2;">
-                                <label for="ser_schema_markup">Custom Schema Markup (JSON-LD script)</label>
-                                <textarea id="ser_schema_markup" name="schema_markup" class="form-control" rows="3" placeholder='<script type="application/ld+json">...</script>'></textarea>
-                                <span style="font-size: 0.75rem; color: var(--admin-text-muted);">Paste the complete <code>&lt;script type="application/ld+json"&gt;...&lt;/script&gt;</code> block to override the default service schema.</span>
+                            <!-- Comprehensive SEO & Social Meta Settings for Service -->
+                            <div class="admin-card" style="grid-column: span 2; background: rgba(14, 23, 24, 0.7); border: 1px solid rgba(92, 203, 179, 0.25); border-radius: var(--radius-md); padding: 1.5rem; margin-top: 1rem;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--admin-border); padding-bottom: 0.75rem; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 10px;">
+                                    <div>
+                                        <h3 style="margin: 0; font-size: 1.15rem; color: var(--mint-green); display: flex; align-items: center; gap: 8px;">
+                                            <i data-lucide="search" style="width: 18px; height: 18px;"></i> Search Engine Optimization (SEO) & Social Meta
+                                        </h3>
+                                        <p style="margin: 4px 0 0; font-size: 0.8rem; color: var(--admin-text-muted);">
+                                            Optimize Google rankings, search snippet, OpenGraph social sharing, and structured schema for this service page.
+                                        </p>
+                                    </div>
+                                    <button type="button" class="btn-submit" onclick="autoFillServiceSeo()" style="background: var(--admin-input-bg); color: var(--mint-green); border: 1px solid rgba(92, 203, 179, 0.3); padding: 0.4rem 0.85rem; font-size: 0.8rem; width: auto; display: flex; align-items: center; gap: 6px;">
+                                        <i data-lucide="sparkles" style="width: 14px; height: 14px;"></i> Smart Auto-Fill SEO
+                                    </button>
+                                </div>
+
+                                <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 1.5rem; align-items: start;">
+                                    <!-- Left Column: SEO Input Controls -->
+                                    <div>
+                                        <!-- Meta Title -->
+                                        <div class="form-group" style="margin-bottom: 1rem;">
+                                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+                                                <label for="ser_meta_title" style="margin: 0; font-weight: 600;">Meta Title (Title Tag)</label>
+                                                <span id="ser_meta_title_cnt" style="font-size: 0.75rem; color: var(--mint-green); font-weight: 600;">0 / 60 chars</span>
+                                            </div>
+                                            <input type="text" id="ser_meta_title" name="meta_title" class="form-control" oninput="updateServiceSerpPreview()" placeholder="e.g. Personal Loan in Jaipur at Lowest Interest Rates | MLG Finedge">
+                                            <span style="font-size: 0.72rem; color: var(--admin-text-muted);">Recommended length: 50-60 characters. Clickable headline in Google search results.</span>
+                                        </div>
+
+                                        <!-- Meta Description -->
+                                        <div class="form-group" style="margin-bottom: 1rem;">
+                                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+                                                <label for="ser_meta_description" style="margin: 0; font-weight: 600;">Meta Description</label>
+                                                <span id="ser_meta_desc_cnt" style="font-size: 0.75rem; color: var(--mint-green); font-weight: 600;">0 / 160 chars</span>
+                                            </div>
+                                            <textarea id="ser_meta_description" name="meta_description" class="form-control" rows="3" oninput="updateServiceSerpPreview()" placeholder="Apply for hassle-free loans in Jaipur with MLG Finedge. Best bank offers, lowest interest rates, minimal documentation..."></textarea>
+                                            <span style="font-size: 0.72rem; color: var(--admin-text-muted);">Recommended length: 140-160 characters. Summarizes the page in Google search snippets.</span>
+                                        </div>
+
+                                        <!-- Primary H1 Tag Override & Alt Text -->
+                                        <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                                            <div class="form-group">
+                                                <label for="ser_h1_tag">Custom Primary H1 Tag</label>
+                                                <input type="text" id="ser_h1_tag" name="h1_tag" class="form-control" placeholder="Defaults to Hero Main Title if blank">
+                                                <span style="font-size: 0.72rem; color: var(--admin-text-muted);">Controls visible main &lt;h1&gt; on the service page.</span>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="ser_image_alt">Featured Image Alt Text</label>
+                                                <input type="text" id="ser_image_alt" name="image_alt" class="form-control" placeholder="e.g. Personal loan consultant in Jaipur">
+                                                <span style="font-size: 0.72rem; color: var(--admin-text-muted);">Important for Google Image search & accessibility.</span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Meta Keywords & Canonical URL -->
+                                        <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                                            <div class="form-group">
+                                                <label for="ser_meta_keywords">Meta Keywords (Comma separated)</label>
+                                                <input type="text" id="ser_meta_keywords" name="meta_keywords" class="form-control" placeholder="e.g. personal loan, jaipur loan, lowest interest rates">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="ser_canonical_url">Canonical URL (Optional)</label>
+                                                <input type="text" id="ser_canonical_url" name="canonical_url" class="form-control" placeholder="https://mlgfinedge.com/services/personal-loan">
+                                            </div>
+                                        </div>
+
+                                        <!-- Robots Directive & OG Image -->
+                                        <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                                            <div class="form-group">
+                                                <label for="ser_meta_robots">Meta Robots Indexing</label>
+                                                <select id="ser_meta_robots" name="meta_robots" class="form-control">
+                                                    <option value="index, follow" selected>index, follow (Default - Recommended)</option>
+                                                    <option value="noindex, follow">noindex, follow (Hide from Google, follow links)</option>
+                                                    <option value="noindex, nofollow">noindex, nofollow (Block indexing completely)</option>
+                                                    <option value="index, nofollow">index, nofollow (Index page, do not follow links)</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="ser_og_image">Social Sharing (OG) Image URL</label>
+                                                <input type="text" id="ser_og_image" name="og_image" class="form-control" placeholder="https://images.mlgfinedge.com/service-og.webp">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group" style="margin-bottom: 1rem;">
+                                            <label for="ser_og_image_file">Or Upload Social Share Image (1200 x 630 px)</label>
+                                            <input type="file" id="ser_og_image_file" name="og_image_file" class="form-control" accept="image/*">
+                                        </div>
+
+                                        <!-- Custom Schema Markup -->
+                                        <div class="form-group" style="margin-bottom: 0;">
+                                            <label for="ser_schema_markup" style="display: flex; justify-content: space-between; align-items: center;">
+                                                <span>Custom Schema Markup (JSON-LD script)</span>
+                                                <span style="font-size: 0.72rem; color: var(--mint-green);">Overrides default Service schema if provided</span>
+                                            </label>
+                                            <textarea id="ser_schema_markup" name="schema_markup" class="form-control" rows="3" placeholder='<script type="application/ld+json">...</script>'></textarea>
+                                            <span style="font-size: 0.72rem; color: var(--admin-text-muted);">Paste the complete <code>&lt;script type="application/ld+json"&gt;...&lt;/script&gt;</code> block to override the default service schema.</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Right Column: Live Google SERP Snippet Preview Box -->
+                                    <div>
+                                        <div style="background: #202124; border: 1px solid rgba(255,255,255,0.12); border-radius: var(--radius-md); padding: 1.25rem; color: #fff; position: sticky; top: 20px;">
+                                            <div style="font-size: 0.75rem; color: #9aa0a6; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: space-between;">
+                                                <span><i data-lucide="search" style="width: 12px; height: 12px; display: inline-block; vertical-align: middle;"></i> Google SERP Preview</span>
+                                                <span style="color: var(--mint-green); font-weight: 600; font-size: 0.72rem;">Live Preview</span>
+                                            </div>
+                                            <div style="background: #171717; border-radius: 8px; padding: 1rem; border: 1px solid rgba(255,255,255,0.06);">
+                                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                                                    <div style="width: 20px; height: 20px; border-radius: 50%; background: #303134; display: flex; align-items: center; justify-content: center; font-size: 11px;">🌐</div>
+                                                    <div>
+                                                        <div style="font-size: 0.8rem; color: #dadce0; line-height: 1.2;">mlgfinedge.com</div>
+                                                        <div id="ser_serp_url" style="font-size: 0.7rem; color: #9aa0a6;">https://mlgfinedge.com/services/personal-loan</div>
+                                                    </div>
+                                                </div>
+                                                <div id="ser_serp_title" style="font-size: 1.15rem; color: #8ab4f8; line-height: 1.3; font-weight: 400; margin-bottom: 6px; cursor: pointer;">
+                                                    Personal Loan in Jaipur | MLG Finedge
+                                                </div>
+                                                <div id="ser_serp_desc" style="font-size: 0.85rem; color: #bdc1c6; line-height: 1.5;">
+                                                    Apply for personal loans in Jaipur with MLG Finedge. Lowest interest rates, fast processing, minimal documentation.
+                                                </div>
+                                            </div>
+
+                                            <div style="margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.08); font-size: 0.78rem; color: var(--admin-text-muted);">
+                                                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px; color: var(--mint-green);">
+                                                    <i data-lucide="check-circle" style="width: 13px; height: 13px;"></i> Automatic Dynamic Fallbacks
+                                                </div>
+                                                If left blank, Meta Title will automatically fall back to <code>[Service Name] | MLG Finedge</code> and Description will fall back to your Short Summary.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="form-group">
                                 <label style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer; margin-top: 1rem;">
@@ -2386,6 +2512,7 @@
                                     <th>Name</th>
                                     <th>Slug</th>
                                     <th>Rate</th>
+                                    <th>SEO Status</th>
                                     <th>Status</th>
                                     <th style="text-align: right;">Actions</th>
                                 </tr>
@@ -2397,6 +2524,17 @@
                                         <td style="font-weight: 500;">{{ $s->service_name }}</td>
                                         <td style="color: var(--admin-text-muted);">{{ $s->slug }}</td>
                                         <td>{{ $s->rate_value ?? 'N/A' }}</td>
+                                        <td>
+                                            @if(!empty($s->meta_title))
+                                                <span style="color: var(--mint-green); font-size: 0.75rem; background: rgba(92, 203, 179, 0.12); padding: 2px 7px; border-radius: 4px; border: 1px solid rgba(92, 203, 179, 0.25);" title="{{ $s->meta_title }}">
+                                                    ✓ Custom SEO
+                                                </span>
+                                            @else
+                                                <span style="color: var(--admin-text-muted); font-size: 0.75rem; background: rgba(255, 255, 255, 0.05); padding: 2px 7px; border-radius: 4px;" title="Using dynamic defaults">
+                                                    Default SEO
+                                                </span>
+                                            @endif
+                                        </td>
                                         <td>
                                             @if($s->is_active)
                                                 <span style="color: var(--accent-teal); font-size: 0.85rem; font-weight: 600;">● Active</span>
@@ -2616,10 +2754,136 @@
                             <label for="blog_summary">Short Summary (shown in blog listing card)</label>
                             <textarea id="blog_summary" name="summary" class="form-control" required placeholder="A brief 1-2 sentence description of the article..." rows="2"></textarea>
                         </div>
-                        <div class="form-group" style="margin-top: 1.25rem;">
-                            <label for="blog_schema_markup">Custom Schema Markup (JSON-LD script)</label>
-                            <textarea id="blog_schema_markup" name="schema_markup" class="form-control" placeholder='<script type="application/ld+json">...</script>' rows="3"></textarea>
-                            <span style="font-size: 0.75rem; color: var(--admin-text-muted);">Paste the complete <code>&lt;script type="application/ld+json"&gt;...&lt;/script&gt;</code> block to override the default blog posting schema.</span>
+                        <!-- Comprehensive SEO & Social Meta Settings for Blog Post -->
+                        <div class="admin-card" style="background: rgba(14, 23, 24, 0.7); border: 1px solid rgba(192, 132, 252, 0.3); border-radius: var(--radius-md); padding: 1.5rem; margin-top: 1.5rem; margin-bottom: 1.5rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--admin-border); padding-bottom: 0.75rem; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 10px;">
+                                <div>
+                                    <h3 style="margin: 0; font-size: 1.15rem; color: #c084fc; display: flex; align-items: center; gap: 8px;">
+                                        <i data-lucide="search" style="width: 18px; height: 18px;"></i> Search Engine Optimization (SEO) & Social Meta
+                                    </h3>
+                                    <p style="margin: 4px 0 0; font-size: 0.8rem; color: var(--admin-text-muted);">
+                                        Optimize Google rankings, search snippet, OpenGraph social sharing, and structured schema for this blog post.
+                                    </p>
+                                </div>
+                                <button type="button" class="btn-submit" onclick="autoFillBlogSeo()" style="background: var(--admin-input-bg); color: #c084fc; border: 1px solid rgba(192, 132, 252, 0.4); padding: 0.4rem 0.85rem; font-size: 0.8rem; width: auto; display: flex; align-items: center; gap: 6px;">
+                                    <i data-lucide="sparkles" style="width: 14px; height: 14px;"></i> Smart Auto-Fill SEO
+                                </button>
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 1.5rem; align-items: start;">
+                                <!-- Left Column: SEO Input Controls -->
+                                <div>
+                                    <!-- Meta Title -->
+                                    <div class="form-group" style="margin-bottom: 1rem;">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+                                            <label for="post_meta_title" style="margin: 0; font-weight: 600;">Meta Title (Title Tag)</label>
+                                            <span id="post_meta_title_cnt" style="font-size: 0.75rem; color: #c084fc; font-weight: 600;">0 / 60 chars</span>
+                                        </div>
+                                        <input type="text" id="post_meta_title" name="meta_title" class="form-control" oninput="updateBlogSerpPreview()" placeholder="e.g. 7 Crucial Tips for Fastest Loan Approval in Jaipur | MLG Finedge">
+                                        <span style="font-size: 0.72rem; color: var(--admin-text-muted);">Recommended length: 50-60 characters. Clickable headline in Google search results.</span>
+                                    </div>
+
+                                    <!-- Meta Description -->
+                                    <div class="form-group" style="margin-bottom: 1rem;">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+                                            <label for="post_meta_description" style="margin: 0; font-weight: 600;">Meta Description</label>
+                                            <span id="post_meta_desc_cnt" style="font-size: 0.75rem; color: #c084fc; font-weight: 600;">0 / 160 chars</span>
+                                        </div>
+                                        <textarea id="post_meta_description" name="meta_description" class="form-control" rows="3" oninput="updateBlogSerpPreview()" placeholder="Looking for financial tips? Discover how to improve your loan eligibility with our expert step-by-step guide..."></textarea>
+                                        <span style="font-size: 0.72rem; color: var(--admin-text-muted);">Recommended length: 140-160 characters. Displayed beneath the title on Google search results.</span>
+                                    </div>
+
+                                    <!-- Primary Article H1 Tag Override & Alt Text -->
+                                    <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                                        <div class="form-group">
+                                            <label for="post_h1_tag">Custom Article H1 Tag (Optional)</label>
+                                            <input type="text" id="post_h1_tag" name="h1_tag" class="form-control" placeholder="Defaults to Article Title if blank">
+                                            <span style="font-size: 0.72rem; color: var(--admin-text-muted);">Controls visible main &lt;h1&gt; heading at top of the article.</span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="post_image_alt">Cover Image Alt Text</label>
+                                            <input type="text" id="post_image_alt" name="image_alt" class="form-control" placeholder="e.g. Loan eligibility checklist in Jaipur">
+                                            <span style="font-size: 0.72rem; color: var(--admin-text-muted);">SEO alt tag for the article's featured cover image.</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Meta Keywords & Canonical URL -->
+                                    <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                                        <div class="form-group">
+                                            <label for="post_meta_keywords">Meta Keywords (Comma separated)</label>
+                                            <input type="text" id="post_meta_keywords" name="meta_keywords" class="form-control" placeholder="e.g. loan guide, jaipur finances, credit score improvement">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="post_canonical_url">Canonical URL (Optional)</label>
+                                            <input type="text" id="post_canonical_url" name="canonical_url" class="form-control" placeholder="https://mlgfinedge.com/blog/loan-guide">
+                                        </div>
+                                    </div>
+
+                                    <!-- Robots Directive & OG Image -->
+                                    <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                                        <div class="form-group">
+                                            <label for="post_meta_robots">Meta Robots Indexing</label>
+                                            <select id="post_meta_robots" name="meta_robots" class="form-control">
+                                                <option value="index, follow" selected>index, follow (Default - Recommended)</option>
+                                                <option value="noindex, follow">noindex, follow (Hide from Google, follow links)</option>
+                                                <option value="noindex, nofollow">noindex, nofollow (Block indexing completely)</option>
+                                                <option value="index, nofollow">index, nofollow (Index page, do not follow links)</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="post_og_image">Social Sharing (OG) Image URL</label>
+                                            <input type="text" id="post_og_image" name="og_image" class="form-control" placeholder="Defaults to Cover Image if empty">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group" style="margin-bottom: 1rem;">
+                                        <label for="post_og_image_file">Or Upload Social Share Image (1200 x 630 px)</label>
+                                        <input type="file" id="post_og_image_file" name="og_image_file" class="form-control" accept="image/*">
+                                    </div>
+
+                                    <!-- Custom Schema Markup -->
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label for="blog_schema_markup" style="display: flex; justify-content: space-between; align-items: center;">
+                                            <span>Custom Schema Markup (JSON-LD script)</span>
+                                            <span style="font-size: 0.72rem; color: #c084fc;">Overrides default BlogPosting schema if provided</span>
+                                        </label>
+                                        <textarea id="blog_schema_markup" name="schema_markup" class="form-control" rows="3" placeholder='<script type="application/ld+json">...</script>'></textarea>
+                                        <span style="font-size: 0.72rem; color: var(--admin-text-muted);">Paste the complete <code>&lt;script type="application/ld+json"&gt;...&lt;/script&gt;</code> block to override the default blog posting schema.</span>
+                                    </div>
+                                </div>
+
+                                <!-- Right Column: Live Google SERP Snippet Preview Box -->
+                                <div>
+                                    <div style="background: #202124; border: 1px solid rgba(255,255,255,0.12); border-radius: var(--radius-md); padding: 1.25rem; color: #fff; position: sticky; top: 20px;">
+                                        <div style="font-size: 0.75rem; color: #9aa0a6; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: space-between;">
+                                            <span><i data-lucide="search" style="width: 12px; height: 12px; display: inline-block; vertical-align: middle;"></i> Google SERP Preview</span>
+                                            <span style="color: #c084fc; font-weight: 600; font-size: 0.72rem;">Live Preview</span>
+                                        </div>
+                                        <div style="background: #171717; border-radius: 8px; padding: 1rem; border: 1px solid rgba(255,255,255,0.06);">
+                                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                                                <div style="width: 20px; height: 20px; border-radius: 50%; background: #303134; display: flex; align-items: center; justify-content: center; font-size: 11px;">🌐</div>
+                                                <div>
+                                                    <div style="font-size: 0.8rem; color: #dadce0; line-height: 1.2;">mlgfinedge.com</div>
+                                                    <div id="blog_serp_url" style="font-size: 0.7rem; color: #9aa0a6;">https://mlgfinedge.com/blog/article-slug</div>
+                                                </div>
+                                            </div>
+                                            <div id="blog_serp_title" style="font-size: 1.15rem; color: #8ab4f8; line-height: 1.3; font-weight: 400; margin-bottom: 6px; cursor: pointer;">
+                                                Article Title | MLG Finedge
+                                            </div>
+                                            <div id="blog_serp_desc" style="font-size: 0.85rem; color: #bdc1c6; line-height: 1.5;">
+                                                A brief 1-2 sentence description of the article...
+                                            </div>
+                                        </div>
+
+                                        <div style="margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.08); font-size: 0.78rem; color: var(--admin-text-muted);">
+                                            <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px; color: #c084fc;">
+                                                <i data-lucide="check-circle" style="width: 13px; height: 13px;"></i> Automatic Dynamic Fallbacks
+                                            </div>
+                                            If left blank, Meta Title will automatically fall back to <code>[Article Title] | MLG Finedge</code> and Description will fall back to your Short Summary.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="form-group" style="margin-top: 1.25rem;">
                             <label for="blog_content">Article Content (HTML Editor)</label>
@@ -2643,6 +2907,7 @@
                                     <th>Title</th>
                                     <th>Category</th>
                                     <th>Slug</th>
+                                    <th>SEO Status</th>
                                     <th>Published Date</th>
                                     <th>Actions</th>
                                 </tr>
@@ -2662,6 +2927,17 @@
                                         <td><strong>{{ $b->title }}</strong></td>
                                         <td><span class="badge-webp" style="background-color: var(--primary-teal);">{{ $b->category }}</span></td>
                                         <td><code>{{ $b->slug }}</code></td>
+                                        <td>
+                                            @if(!empty($b->meta_title))
+                                                <span style="color: #c084fc; font-size: 0.75rem; background: rgba(192, 132, 252, 0.12); padding: 2px 7px; border-radius: 4px; border: 1px solid rgba(192, 132, 252, 0.25);" title="{{ $b->meta_title }}">
+                                                    ✓ Custom SEO
+                                                </span>
+                                            @else
+                                                <span style="color: var(--admin-text-muted); font-size: 0.75rem; background: rgba(255, 255, 255, 0.05); padding: 2px 7px; border-radius: 4px;" title="Using dynamic defaults">
+                                                    Default SEO
+                                                </span>
+                                            @endif
+                                        </td>
                                         <td>{{ $b->published_at ? $b->published_at->format('M d, Y H:i') : $b->created_at->format('M d, Y H:i') }}</td>
                                         <td>
                                             <div class="action-btns">
@@ -4492,7 +4768,15 @@
                     summary: @json($b->summary),
                     content: @json($b->content),
                     image_path: @json($b->image_path),
-                    schema_markup: @json($b->schema_markup)
+                    schema_markup: @json($b->schema_markup),
+                    meta_title: @json($b->meta_title),
+                    meta_description: @json($b->meta_description),
+                    meta_keywords: @json($b->meta_keywords),
+                    canonical_url: @json($b->canonical_url),
+                    meta_robots: @json($b->meta_robots ?? 'index, follow'),
+                    h1_tag: @json($b->h1_tag),
+                    image_alt: @json($b->image_alt),
+                    og_image: @json($b->og_image)
                 },
             @endforeach
         };
@@ -5832,6 +6116,130 @@
             return textarea ? textarea.value : '';
         }
 
+        // Live Google SERP Preview for Services Manager
+        function updateServiceSerpPreview() {
+            const titleInput = document.getElementById('ser_meta_title');
+            const descInput = document.getElementById('ser_meta_description');
+            const nameInput = document.getElementById('ser_service_name');
+            const slugInput = document.getElementById('ser_slug');
+            const summaryInput = document.getElementById('ser_summary');
+
+            const titleVal = (titleInput?.value || '').trim();
+            const serviceName = (nameInput?.value || '').trim();
+            const descVal = (descInput?.value || '').trim();
+            const summaryVal = (summaryInput?.value || '').trim();
+            const slugVal = (slugInput?.value || '').trim() || (serviceName ? serviceName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') : 'personal-loan');
+
+            const finalTitle = titleVal || (serviceName ? `${serviceName} | MLG Finedge` : 'Personal Loan in Jaipur | MLG Finedge');
+            const finalDesc = descVal || summaryVal || 'Apply for personal loans in Jaipur with MLG Finedge. Lowest interest rates, fast processing, minimal documentation.';
+
+            const titleEl = document.getElementById('ser_serp_title');
+            const descEl = document.getElementById('ser_serp_desc');
+            const urlEl = document.getElementById('ser_serp_url');
+            const titleCnt = document.getElementById('ser_meta_title_cnt');
+            const descCnt = document.getElementById('ser_meta_desc_cnt');
+
+            if (titleEl) titleEl.innerText = finalTitle;
+            if (descEl) descEl.innerText = finalDesc;
+            if (urlEl) urlEl.innerText = 'https://mlgfinedge.com/services/' + slugVal;
+
+            if (titleCnt) {
+                titleCnt.innerText = `${titleVal.length} / 60 chars`;
+                titleCnt.style.color = titleVal.length > 60 ? '#f87171' : 'var(--mint-green)';
+            }
+            if (descCnt) {
+                descCnt.innerText = `${descVal.length} / 160 chars`;
+                descCnt.style.color = descVal.length > 160 ? '#f87171' : 'var(--mint-green)';
+            }
+        }
+
+        // Live Google SERP Preview for Blog Manager
+        function updateBlogSerpPreview() {
+            const titleInput = document.getElementById('post_meta_title');
+            const descInput = document.getElementById('post_meta_description');
+            const nameInput = document.getElementById('blog_title');
+            const slugInput = document.getElementById('blog_slug');
+            const summaryInput = document.getElementById('blog_summary');
+
+            const titleVal = (titleInput?.value || '').trim();
+            const articleTitle = (nameInput?.value || '').trim();
+            const descVal = (descInput?.value || '').trim();
+            const summaryVal = (summaryInput?.value || '').trim();
+            const slugVal = (slugInput?.value || '').trim() || (articleTitle ? articleTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') : 'article-slug');
+
+            const finalTitle = titleVal || (articleTitle ? `${articleTitle} | MLG Finedge` : 'Article Title | MLG Finedge');
+            const finalDesc = descVal || summaryVal || 'A brief 1-2 sentence description of the article...';
+
+            const titleEl = document.getElementById('blog_serp_title');
+            const descEl = document.getElementById('blog_serp_desc');
+            const urlEl = document.getElementById('blog_serp_url');
+            const titleCnt = document.getElementById('post_meta_title_cnt');
+            const descCnt = document.getElementById('post_meta_desc_cnt');
+
+            if (titleEl) titleEl.innerText = finalTitle;
+            if (descEl) descEl.innerText = finalDesc;
+            if (urlEl) urlEl.innerText = 'https://mlgfinedge.com/blog/' + slugVal;
+
+            if (titleCnt) {
+                titleCnt.innerText = `${titleVal.length} / 60 chars`;
+                titleCnt.style.color = titleVal.length > 60 ? '#f87171' : '#c084fc';
+            }
+            if (descCnt) {
+                descCnt.innerText = `${descVal.length} / 160 chars`;
+                descCnt.style.color = descVal.length > 160 ? '#f87171' : '#c084fc';
+            }
+        }
+
+        // Smart Auto-Fill SEO for Service
+        function autoFillServiceSeo() {
+            const name = (document.getElementById('ser_service_name')?.value || '').trim();
+            const rate = (document.getElementById('ser_rate_value')?.value || '').trim();
+            const summary = (document.getElementById('ser_summary')?.value || '').trim();
+            if (!name) {
+                alert('Please enter a Service Name first to auto-fill SEO tags.');
+                return;
+            }
+            const ratePart = rate ? ` at ${rate}` : '';
+            const suggestedTitle = `${name} in Jaipur${ratePart} | MLG Finedge`;
+            const suggestedDesc = summary || `Apply for ${name} in Jaipur with MLG Finedge. Enjoy lowest interest rates${rate ? ' starting from ' + rate : ''}, minimal documentation, and instant approval.`;
+            const cleanName = name.toLowerCase().replace(/[^a-z0-9 ]/g, '');
+            const suggestedKeywords = `${cleanName}, ${cleanName} in jaipur, best ${cleanName} interest rate, mlg finedge`;
+
+            if (document.getElementById('ser_meta_title')) document.getElementById('ser_meta_title').value = suggestedTitle.substring(0, 60);
+            if (document.getElementById('ser_meta_description')) document.getElementById('ser_meta_description').value = suggestedDesc.substring(0, 160);
+            if (document.getElementById('ser_meta_keywords')) document.getElementById('ser_meta_keywords').value = suggestedKeywords;
+            if (document.getElementById('ser_h1_tag')) document.getElementById('ser_h1_tag').value = name;
+            if (document.getElementById('ser_image_alt')) document.getElementById('ser_image_alt').value = `${name} - MLG Finedge Jaipur`;
+
+            updateServiceSerpPreview();
+            showToast("SEO Autofilled", `Generated SEO meta tags for ${name}`, "success");
+        }
+
+        // Smart Auto-Fill SEO for Blog
+        function autoFillBlogSeo() {
+            const title = (document.getElementById('blog_title')?.value || '').trim();
+            const category = (document.getElementById('blog_category')?.value || '').trim();
+            const summary = (document.getElementById('blog_summary')?.value || '').trim();
+            if (!title) {
+                alert('Please enter an Article Title first to auto-fill SEO tags.');
+                return;
+            }
+            const suggestedTitle = title.length > 45 ? title : `${title} | MLG Finedge`;
+            const suggestedDesc = summary || `Read our complete guide on ${title}. Expert financial insights and loan advisory from MLG Finedge Jaipur.`;
+            const cleanCat = category ? category.toLowerCase().replace(/[^a-z0-9 ]/g, '') : '';
+            const cleanTitle = title.toLowerCase().replace(/[^a-z0-9 ]/g, '').substring(0, 40);
+            const suggestedKeywords = `${cleanCat}, ${cleanTitle}, loan advisory jaipur, mlg finedge`;
+
+            if (document.getElementById('post_meta_title')) document.getElementById('post_meta_title').value = suggestedTitle.substring(0, 60);
+            if (document.getElementById('post_meta_description')) document.getElementById('post_meta_description').value = suggestedDesc.substring(0, 160);
+            if (document.getElementById('post_meta_keywords')) document.getElementById('post_meta_keywords').value = suggestedKeywords;
+            if (document.getElementById('post_h1_tag')) document.getElementById('post_h1_tag').value = title;
+            if (document.getElementById('post_image_alt')) document.getElementById('post_image_alt').value = `${title} - MLG Finedge`;
+
+            updateBlogSerpPreview();
+            showToast("SEO Autofilled", `Generated SEO meta tags for ${title}`, "success");
+        }
+
         // Edit Blog by ID using safe JSON dictionary
         function editBlogById(id) {
             const data = adminBlogsData[id];
@@ -5862,6 +6270,20 @@
             document.getElementById('blog_published_at').value = data.published_at;
             document.getElementById('blog_summary').value = data.summary;
             document.getElementById('blog_schema_markup').value = data.schema_markup || '';
+
+            // Populate SEO Fields
+            if (document.getElementById('post_meta_title')) document.getElementById('post_meta_title').value = data.meta_title || '';
+            if (document.getElementById('post_meta_description')) document.getElementById('post_meta_description').value = data.meta_description || '';
+            if (document.getElementById('post_meta_keywords')) document.getElementById('post_meta_keywords').value = data.meta_keywords || '';
+            if (document.getElementById('post_canonical_url')) document.getElementById('post_canonical_url').value = data.canonical_url || '';
+            if (document.getElementById('post_meta_robots')) document.getElementById('post_meta_robots').value = data.meta_robots || 'index, follow';
+            if (document.getElementById('post_h1_tag')) document.getElementById('post_h1_tag').value = data.h1_tag || '';
+            if (document.getElementById('post_image_alt')) document.getElementById('post_image_alt').value = data.image_alt || '';
+            if (document.getElementById('post_og_image')) document.getElementById('post_og_image').value = data.og_image || '';
+            const postOgFile = document.getElementById('post_og_image_file');
+            if (postOgFile) postOgFile.value = '';
+
+            updateBlogSerpPreview();
             
             // Set content in TinyMCE & underlying textarea
             setEditorHtml('blog_content', data.content);
@@ -5885,6 +6307,20 @@
             document.getElementById('blog_summary').value = '';
             document.getElementById('blog_schema_markup').value = '';
             document.getElementById('blog_image_url').value = '';
+
+            // Reset SEO Fields
+            if (document.getElementById('post_meta_title')) document.getElementById('post_meta_title').value = '';
+            if (document.getElementById('post_meta_description')) document.getElementById('post_meta_description').value = '';
+            if (document.getElementById('post_meta_keywords')) document.getElementById('post_meta_keywords').value = '';
+            if (document.getElementById('post_canonical_url')) document.getElementById('post_canonical_url').value = '';
+            if (document.getElementById('post_meta_robots')) document.getElementById('post_meta_robots').value = 'index, follow';
+            if (document.getElementById('post_h1_tag')) document.getElementById('post_h1_tag').value = '';
+            if (document.getElementById('post_image_alt')) document.getElementById('post_image_alt').value = '';
+            if (document.getElementById('post_og_image')) document.getElementById('post_og_image').value = '';
+            const postOgFile = document.getElementById('post_og_image_file');
+            if (postOgFile) postOgFile.value = '';
+
+            updateBlogSerpPreview();
             
             setEditorHtml('blog_content', '');
             
@@ -5926,6 +6362,26 @@
                     }
                 });
             }
+
+            // Live SERP Preview input bindings for Service Form
+            ['ser_service_name', 'ser_slug', 'ser_summary', 'ser_meta_title', 'ser_meta_description'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('input', updateServiceSerpPreview);
+                }
+            });
+
+            // Live SERP Preview input bindings for Blog Form
+            ['blog_title', 'blog_slug', 'blog_summary', 'post_meta_title', 'post_meta_description'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('input', updateBlogSerpPreview);
+                }
+            });
+
+            // Initial trigger for live SERP previews
+            updateServiceSerpPreview();
+            updateBlogSerpPreview();
         });
 
         // HTML escaping helper
@@ -5993,6 +6449,20 @@
             document.getElementById('ser_summary').value = data.summary || '';
             document.getElementById('ser_schema_markup').value = data.schema_markup || '';
             document.getElementById('ser_is_active').checked = !!data.is_active;
+
+            // Populate SEO Fields
+            if (document.getElementById('ser_meta_title')) document.getElementById('ser_meta_title').value = data.meta_title || '';
+            if (document.getElementById('ser_meta_description')) document.getElementById('ser_meta_description').value = data.meta_description || '';
+            if (document.getElementById('ser_meta_keywords')) document.getElementById('ser_meta_keywords').value = data.meta_keywords || '';
+            if (document.getElementById('ser_canonical_url')) document.getElementById('ser_canonical_url').value = data.canonical_url || '';
+            if (document.getElementById('ser_meta_robots')) document.getElementById('ser_meta_robots').value = data.meta_robots || 'index, follow';
+            if (document.getElementById('ser_h1_tag')) document.getElementById('ser_h1_tag').value = data.h1_tag || '';
+            if (document.getElementById('ser_image_alt')) document.getElementById('ser_image_alt').value = data.image_alt || '';
+            if (document.getElementById('ser_og_image')) document.getElementById('ser_og_image').value = data.og_image || '';
+            const serOgFile = document.getElementById('ser_og_image_file');
+            if (serOgFile) serOgFile.value = '';
+
+            updateServiceSerpPreview();
             
             // Clear and rebuild FAQs
             const container = document.getElementById('faq-repeater-container');
@@ -6050,6 +6520,20 @@
             document.getElementById('ser_summary').value = '';
             document.getElementById('ser_schema_markup').value = '';
             document.getElementById('ser_is_active').checked = true;
+
+            // Reset SEO Fields
+            if (document.getElementById('ser_meta_title')) document.getElementById('ser_meta_title').value = '';
+            if (document.getElementById('ser_meta_description')) document.getElementById('ser_meta_description').value = '';
+            if (document.getElementById('ser_meta_keywords')) document.getElementById('ser_meta_keywords').value = '';
+            if (document.getElementById('ser_canonical_url')) document.getElementById('ser_canonical_url').value = '';
+            if (document.getElementById('ser_meta_robots')) document.getElementById('ser_meta_robots').value = 'index, follow';
+            if (document.getElementById('ser_h1_tag')) document.getElementById('ser_h1_tag').value = '';
+            if (document.getElementById('ser_image_alt')) document.getElementById('ser_image_alt').value = '';
+            if (document.getElementById('ser_og_image')) document.getElementById('ser_og_image').value = '';
+            const serOgFile = document.getElementById('ser_og_image_file');
+            if (serOgFile) serOgFile.value = '';
+
+            updateServiceSerpPreview();
             
             document.getElementById('faq-repeater-container').innerHTML = '';
             
@@ -6395,6 +6879,13 @@
                     document.getElementById('blog_category').value = data.category || 'Financial Tips';
                     document.getElementById('blog_summary').value = data.summary || '';
                     
+                    if (data.meta_title && document.getElementById('post_meta_title')) document.getElementById('post_meta_title').value = data.meta_title;
+                    if (data.meta_description && document.getElementById('post_meta_description')) document.getElementById('post_meta_description').value = data.meta_description;
+                    if (data.meta_keywords && document.getElementById('post_meta_keywords')) document.getElementById('post_meta_keywords').value = data.meta_keywords;
+                    if (data.h1_tag && document.getElementById('post_h1_tag')) document.getElementById('post_h1_tag').value = data.h1_tag;
+                    if (data.image_alt && document.getElementById('post_image_alt')) document.getElementById('post_image_alt').value = data.image_alt;
+                    updateBlogSerpPreview();
+                    
                     setEditorHtml('blog_content', data.content || '');
 
                     closeAiModal('blog');
@@ -6502,6 +6993,13 @@
                     setEditorHtml('ser_tips_content', data.tips_content || '');
                     
                     document.getElementById('ser_summary').value = data.summary || '';
+
+                    if (data.meta_title && document.getElementById('ser_meta_title')) document.getElementById('ser_meta_title').value = data.meta_title;
+                    if (data.meta_description && document.getElementById('ser_meta_description')) document.getElementById('ser_meta_description').value = data.meta_description;
+                    if (data.meta_keywords && document.getElementById('ser_meta_keywords')) document.getElementById('ser_meta_keywords').value = data.meta_keywords;
+                    if (data.h1_tag && document.getElementById('ser_h1_tag')) document.getElementById('ser_h1_tag').value = data.h1_tag;
+                    if (data.image_alt && document.getElementById('ser_image_alt')) document.getElementById('ser_image_alt').value = data.image_alt;
+                    updateServiceSerpPreview();
 
                     // Clear existing FAQs
                     const faqContainer = document.getElementById('faq-repeater-container');
