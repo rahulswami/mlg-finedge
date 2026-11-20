@@ -192,7 +192,7 @@
                 <h3>{{ $pageContents['footer']['headings']['contact'] ?? 'Contact Info' }}</h3>
                 <ul class="footer-contact-info">
                     <li>
-                        <i data-lucide="map-pin"></i>
+                        <i data-lucide="map-pin" class="footer-address-icon" style="width: 24px; height: 24px; min-width: 24px; flex-shrink: 0; margin-top: 2px;"></i>
                         <span>{{ $site['address'] ?? 'B-13 A, 10 B Scheme, Gopalpura Byepass, Behind The Park Classic, Jaipur - 302018' }}</span>
                     </li>
                     <li>
