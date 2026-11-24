@@ -51,6 +51,7 @@ class PageSeo extends Model
         'blog' => 'Blog Index',
         'contact' => 'Contact Us',
         'thank_you' => 'Thank You Page',
+        'privacy_policy' => 'Privacy Policy',
     ];
 
     public static function getForPage($pageKey)

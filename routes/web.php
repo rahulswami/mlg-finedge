@@ -17,6 +17,7 @@ Route::get('/blog', [HomeController::class, 'blog'])->name('blog');
 Route::get('/blog/{slug}', [HomeController::class, 'blogShow'])->name('blog.show');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
 Route::get('/thank-you', [HomeController::class, 'thankYou'])->name('thank-you');
+Route::get('/privacy-policy', [HomeController::class, 'privacyPolicy'])->name('privacy.policy');
 Route::post('/contact/submit', [HomeController::class, 'contactSubmit'])->name('contact.submit');
 Route::get('/l/{slug}', [HomeController::class, 'landingShow'])->name('landing.show');
 Route::post('/api/database/import', [AdminController::class, 'importLiveDatabase']);

@@ -2338,6 +2338,105 @@ img {
     font-weight: 600;
 }
 
+/* --- Legal & Policy Pages --- */
+.policy-card {
+    background: var(--bg-white);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+    padding: 3.5rem 4rem;
+    max-width: 960px;
+    margin: 0 auto;
+}
+
+.policy-section {
+    margin-bottom: 2.75rem;
+}
+
+.policy-title {
+    font-family: var(--font-heading);
+    color: var(--primary-teal-dark);
+    font-size: 1.55rem;
+    font-weight: 700;
+    margin-bottom: 1.15rem;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 0.5rem;
+}
+
+.policy-subtitle {
+    font-family: var(--font-heading);
+    color: var(--primary-teal);
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.policy-card p {
+    color: var(--text-dark);
+    font-size: 1.02rem;
+    line-height: 1.8;
+    margin-bottom: 1.15rem;
+}
+
+.policy-list {
+    margin: 1rem 0 1.5rem 1.5rem;
+    padding-left: 1rem;
+    list-style-type: disc !important;
+}
+
+.policy-list li {
+    color: var(--text-dark);
+    font-size: 1.02rem;
+    line-height: 1.75;
+    margin-bottom: 0.5rem;
+    display: list-item !important;
+}
+
+.policy-contact-card {
+    background-color: var(--bg-light);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+    border-left: 4px solid var(--accent-orange);
+    padding: 1.75rem 2rem;
+    margin-top: 1.5rem;
+}
+
+.contact-card-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 0.85rem;
+    color: var(--text-dark);
+    font-size: 0.98rem;
+    line-height: 1.6;
+}
+
+.contact-card-item:last-child {
+    margin-bottom: 0;
+}
+
+.contact-card-item i,
+.contact-card-item svg {
+    color: var(--accent-orange);
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.contact-card-item a {
+    color: var(--primary-teal);
+    font-weight: 500;
+    transition: var(--transition-fast);
+}
+
+.contact-card-item a:hover {
+    color: var(--accent-orange);
+    text-decoration: underline;
+}
+
 /* --- Media Queries --- */
 @media (max-width: 1024px) {
     .hero-content h1 { font-size: 2.5rem; }
@@ -2670,6 +2769,18 @@ img {
     
     .dropdown-menu a:hover {
         padding-left: 1.5rem;
+    }
+
+    .policy-card {
+        padding: 2.25rem 1.25rem;
+    }
+    
+    .policy-title {
+        font-size: 1.35rem;
+    }
+    
+    .policy-contact-card {
+        padding: 1.25rem 1rem;
     }
 }
 

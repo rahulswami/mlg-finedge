@@ -176,6 +176,7 @@
                     <li><a href="{{ route('testimonials') }}">Testimonials</a></li>
                     <li><a href="{{ route('faq') }}">FAQs Hub</a></li>
                     <li><a href="{{ route('blog') }}">Fintech Blog</a></li>
+                    <li><a href="{{ route('privacy.policy') }}">Privacy Policy</a></li>
                 </ul>
             </div>
             
@@ -210,7 +211,7 @@
         <div class="container footer-bottom">
             <p>&copy; {{ date('Y') }} {{ $site['site_name'] ?? 'MLG Finedge' }}. {{ $pageContents['footer']['bottom']['copyright'] ?? 'All Rights Reserved.' }} {{ $pageContents['footer']['bottom']['disclaimer'] ?? 'Disclaimer: Interest rates and terms are subject to bank/NBFC guidelines and customer credit profile assessment.' }}</p>
             <div class="footer-bottom-links">
-                <a href="#">Privacy Policy</a>
+                <a href="{{ route('privacy.policy') }}">Privacy Policy</a>
                 <a href="#">Terms of Service</a>
             </div>
         </div>

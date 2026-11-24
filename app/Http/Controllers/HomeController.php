@@ -91,6 +91,12 @@ class HomeController extends Controller
         return view('thank-you', compact('pageSeo'));
     }
 
+    public function privacyPolicy()
+    {
+        $pageSeo = \App\Models\PageSeo::getForPage('privacy_policy');
+        return view('privacy-policy', compact('pageSeo'));
+    }
+
     public function contactSubmit(Request $request)
     {
         $request->validate([

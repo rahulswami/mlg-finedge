@@ -44,6 +44,7 @@ class GenerateSitemap extends Command
             '/faq' => ['priority' => '0.7', 'changefreq' => 'monthly'],
             '/blog' => ['priority' => '0.8', 'changefreq' => 'weekly'],
             '/contact' => ['priority' => '0.8', 'changefreq' => 'monthly'],
+            '/privacy-policy' => ['priority' => '0.6', 'changefreq' => 'monthly'],
         ];
 
         foreach ($staticRoutes as $route => $config) {

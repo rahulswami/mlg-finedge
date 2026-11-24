@@ -2257,6 +2257,28 @@
                         </div>
                     </div>
 
+                    <!-- Privacy Policy Page Content -->
+                    <div class="admin-card">
+                        <h2>Privacy Policy Page Header & Meta</h2>
+                        <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem; margin-top: -1rem;">
+                            Customize header title, last updated notice date, and hero subtitle for the Privacy Policy page.
+                        </p>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Hero Main Title</label>
+                                <input type="text" name="contents[privacy_policy][hero][title]" class="form-control" value="{{ $pageContents->where('page', 'privacy_policy')->where('section', 'hero')->where('key', 'title')->first()->value ?? 'Privacy Policy' }}">
+                            </div>
+                            <div class="form-group">
+                                <label>Last Updated Notice</label>
+                                <input type="text" name="contents[privacy_policy][meta][last_updated]" class="form-control" value="{{ $pageContents->where('page', 'privacy_policy')->where('section', 'meta')->where('key', 'last_updated')->first()->value ?? 'November 24, 2026' }}">
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin-top: 1rem;">
+                            <label>Hero Subtitle / Description</label>
+                            <textarea name="contents[privacy_policy][hero][subtitle]" class="form-control" rows="2">{{ $pageContents->where('page', 'privacy_policy')->where('section', 'hero')->where('key', 'subtitle')->first()->value ?? 'Our commitment to protecting your personal and financial information with transparency, security, and integrity.' }}</textarea>
+                        </div>
+                    </div>
+
                     <button type="submit" class="btn-submit">Save Page Content</button>
                 </form>
             </div>
