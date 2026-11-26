@@ -113,7 +113,7 @@
                 <p>{{ $pageContents['about']['team']['subtitle'] ?? 'Meet the credit specialists guiding you through terms, rates, and approval cycles.' }}</p>
             </div>
             
-            <div class="why-grid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
+            <div class="why-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); max-width: 820px; margin-left: auto; margin-right: auto;">
                 <!-- Advisor 1 -->
                 <div class="service-card text-center animate-on-scroll">
                     <div style="width:100px; height:100px; border-radius:50%; background-color:var(--primary-teal-light); margin:0 auto 1.5rem auto; display:flex; align-items:center; justify-content:center; color:white; font-size:2rem; font-weight:700;">{{ $pageContents['about']['team']['advisor1_initials'] ?? 'MG' }}</div>
@@ -129,17 +129,9 @@
                     <span class="color-accent" style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:1rem;">{{ $pageContents['about']['team']['advisor2_role'] ?? 'Senior Retail Loan Head' }}</span>
                     <p style="font-size:0.85rem;">{{ $pageContents['about']['team']['advisor2_bio'] ?? 'Retail specialist overseeing home loan approvals, government schemes, and salary eligibility multipliers.' }}</p>
                 </div>
-                
-                <!-- Advisor 3 -->
-                <div class="service-card text-center animate-on-scroll">
-                    <div style="width:100px; height:100px; border-radius:50%; background-color:var(--mint-green); margin:0 auto 1.5rem auto; display:flex; align-items:center; justify-content:center; color:white; font-size:2rem; font-weight:700;">{{ $pageContents['about']['team']['advisor3_initials'] ?? 'AJ' }}</div>
-                    <h3>{{ $pageContents['about']['team']['advisor3_name'] ?? 'Amit Jain' }}</h3>
-                    <span class="color-accent" style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:1rem;">{{ $pageContents['about']['team']['advisor3_role'] ?? 'Business Finance Specialist' }}</span>
-                    <p style="font-size:0.85rem;">{{ $pageContents['about']['team']['advisor3_bio'] ?? 'Advisor matching SMEs and startups with cash credit, overdraft, and working capital lines.' }}</p>
-                </div>
             </div>
         </div>
-    </section>n>
+    </section>
 
     <!-- Final Call to Action -->
     <section class="final-cta-section">

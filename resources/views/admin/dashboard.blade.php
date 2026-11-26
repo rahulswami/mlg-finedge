@@ -2235,26 +2235,6 @@
                                 <textarea name="contents[about][team][advisor2_bio]" class="form-control" rows="2">{{ $pageContents->where('page', 'about')->where('section', 'team')->where('key', 'advisor2_bio')->first()->value ?? '' }}</textarea>
                             </div>
                         </div>
-
-                        <h4 style="margin: 1.5rem 0 0.5rem 0; color: var(--mint-green); font-size: 0.9rem; text-transform: uppercase;">Advisor 3 Profile</h4>
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label>Name</label>
-                                <input type="text" name="contents[about][team][advisor3_name]" class="form-control" value="{{ $pageContents->where('page', 'about')->where('section', 'team')->where('key', 'advisor3_name')->first()->value ?? 'Amit Jain' }}">
-                            </div>
-                            <div class="form-group">
-                                <label>Role / Subtitle</label>
-                                <input type="text" name="contents[about][team][advisor3_role]" class="form-control" value="{{ $pageContents->where('page', 'about')->where('section', 'team')->where('key', 'advisor3_role')->first()->value ?? 'Business Finance Specialist' }}">
-                            </div>
-                            <div class="form-group">
-                                <label>Initials</label>
-                                <input type="text" name="contents[about][team][advisor3_initials]" class="form-control" value="{{ $pageContents->where('page', 'about')->where('section', 'team')->where('key', 'advisor3_initials')->first()->value ?? 'AJ' }}" placeholder="AJ">
-                            </div>
-                            <div class="form-group" style="grid-column: span 3; margin-top: 0.5rem;">
-                                <label>Bio / Description summary</label>
-                                <textarea name="contents[about][team][advisor3_bio]" class="form-control" rows="2">{{ $pageContents->where('page', 'about')->where('section', 'team')->where('key', 'advisor3_bio')->first()->value ?? '' }}</textarea>
-                            </div>
-                        </div>
                     </div>
 
                     <!-- Privacy Policy Page Content -->
